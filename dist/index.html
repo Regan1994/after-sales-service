@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>售服作業台｜案件管理</title>
+  <style>
+    :root {
+      --ink: #1e293b;
+      --muted: #6b7280;
+      --muted-2: #94a3b8;
+      --line: #e7e5e4;
+      --paper: #fffdfa;
+      --canvas: #f7f4ef;
+      --navy: #17324d;
+      --navy-2: #234b6e;
+      --teal: #0f766e;
+      --teal-soft: #dff4ef;
+      --orange: #d97706;
+      --orange-soft: #fff1d6;
+      --blue-soft: #e6eff9;
+      --rose-soft: #fee8e7;
+      --shadow: 0 16px 45px rgba(26, 39, 52, .08);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--canvas);
+      font-family: "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif;
+      letter-spacing: .01em;
+    }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+
+    .app-shell { min-height: 100vh; display: flex; }
+    .sidebar {
+      width: 254px;
+      flex: 0 0 254px;
+      background: var(--navy);
+      color: #d8e3eb;
+      padding: 26px 18px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; padding: 0 10px; }
+    .brand-mark {
+      width: 38px; height: 38px; border-radius: 12px;
+      background: #f4a13f; color: var(--navy);
+      display: grid; place-items: center; font-weight: 900; font-size: 19px;
+      box-shadow: 0 6px 16px rgba(244,161,63,.22);
+    }
+    .brand strong { display: block; color: #fff; font-size: 16px; letter-spacing: .08em; }
+    .brand small { display: block; margin-top: 3px; color: #91a8ba; font-size: 11px; }
+    .nav-section { display: grid; gap: 7px; }
+    .nav-label { padding: 0 12px 4px; color: #7f98aa; font-size: 11px; letter-spacing: .13em; }
+    .nav-item {
+      border: 0; background: transparent; color: #c9d7e0; width: 100%;
+      padding: 12px 12px; border-radius: 11px; display: flex; align-items: center; gap: 12px;
+      text-align: left; transition: .2s ease; font-size: 14px;
+    }
+    .nav-item:hover { background: rgba(255,255,255,.07); color: #fff; }
+    .nav-item.active { background: #315c7d; color: #fff; box-shadow: inset 3px 0 0 #f4a13f; }
+    .nav-icon { width: 18px; text-align: center; color: #94b1c4; font-size: 16px; }
+    .nav-item.active .nav-icon { color: #f4a13f; }
+    .nav-count { margin-left: auto; color: #a9c1d1; font-size: 12px; }
+    .sidebar-spacer { flex: 1; }
+    .help-card { border: 1px solid rgba(255,255,255,.12); border-radius: 14px; padding: 14px; background: rgba(255,255,255,.06); }
+    .help-card p { margin: 0; font-size: 12px; line-height: 1.7; color: #b6cad7; }
+    .help-card strong { display:block; color: #fff; font-size: 13px; margin-bottom: 5px; }
+    .user-mini { display: flex; align-items: center; gap: 10px; padding: 8px 10px 0; }
+    .avatar { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 50%; background: #dfb585; color: #563b22; font-weight: 800; font-size: 12px; }
+    .user-mini strong { color: #fff; font-size: 13px; }
+    .user-mini small { display: block; color: #8ca5b7; margin-top: 2px; font-size: 11px; }
+
+    .main { min-width: 0; flex: 1; padding: 24px 32px 36px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 24px; }
+    .eyebrow { color: var(--orange); font-weight: 800; font-size: 12px; letter-spacing: .15em; }
+    h1 { margin: 5px 0 0; font-size: 29px; line-height: 1.25; letter-spacing: -.04em; }
+    .top-actions { display: flex; gap: 10px; align-items: center; }
+    .icon-btn, .outline-btn, .primary-btn {
+      border: 1px solid var(--line); background: var(--paper); color: var(--ink);
+      border-radius: 10px; min-height: 40px; padding: 0 14px; transition: .2s ease;
+    }
+    .icon-btn { width: 40px; padding: 0; font-size: 18px; }
+    .icon-btn:hover, .outline-btn:hover { border-color: #c6d1d9; background: #fff; transform: translateY(-1px); }
+    .primary-btn { border-color: var(--navy); background: var(--navy); color: #fff; font-weight: 800; box-shadow: 0 7px 16px rgba(23,50,77,.16); }
+    .primary-btn:hover { background: var(--navy-2); transform: translateY(-1px); }
+    .primary-btn .plus { font-size: 18px; vertical-align: -1px; margin-right: 5px; }
+
+    .metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-bottom: 22px; }
+    .metric { background: var(--paper); border: 1px solid #eeeae5; border-radius: 15px; padding: 16px 17px; position: relative; overflow: hidden; }
+    .metric::after { content: ""; position: absolute; width: 62px; height: 62px; border-radius: 50%; right: -18px; top: -18px; background: var(--blue-soft); }
+    .metric:nth-child(2)::after { background: var(--orange-soft); }
+    .metric:nth-child(3)::after { background: var(--teal-soft); }
+    .metric:nth-child(4)::after { background: var(--rose-soft); }
+    .metric-label { position: relative; z-index: 1; color: var(--muted); font-size: 12px; }
+    .metric-value { position: relative; z-index: 1; margin-top: 8px; font-size: 28px; font-weight: 900; letter-spacing: -.05em; }
+    .metric-note { position: relative; z-index: 1; margin-top: 4px; color: var(--muted-2); font-size: 11px; }
+    .metric-note b { color: var(--teal); }
+
+    .workspace { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 18px; align-items: start; }
+    .panel { background: var(--paper); border: 1px solid #eeeae5; border-radius: var(--radius); box-shadow: var(--shadow); }
+    .panel-head { padding: 19px 20px 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .panel-title { margin: 0; font-size: 17px; font-weight: 900; }
+    .panel-subtitle { margin: 5px 0 0; color: var(--muted); font-size: 12px; }
+    .filter-bar { padding: 0 20px 17px; display: flex; gap: 9px; flex-wrap: wrap; border-bottom: 1px solid #f0eeea; }
+    .search-box { flex: 1 1 220px; min-width: 190px; position: relative; }
+    .search-box span { position: absolute; left: 12px; top: 10px; color: #9aa5af; }
+    .search-box input, .select {
+      width: 100%; height: 38px; border: 1px solid #e5e2dd; border-radius: 9px; background: #fff;
+      color: var(--ink); padding: 0 12px 0 34px; outline: none;
+    }
+    .select { width: auto; min-width: 115px; padding: 0 28px 0 11px; }
+    .search-box input:focus, .select:focus { border-color: #7fa5bf; box-shadow: 0 0 0 3px rgba(73,128,163,.12); }
+    .table-wrap { overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; min-width: 680px; }
+    th { color: #8a9299; font-weight: 700; font-size: 11px; text-align: left; padding: 13px 20px 11px; white-space: nowrap; }
+    td { padding: 14px 20px; border-top: 1px solid #f0eeea; font-size: 13px; vertical-align: middle; }
+    tbody tr { transition: .15s ease; }
+    tbody tr:hover { background: #fffcf6; }
+    .case-no { border:0; background:transparent; padding:0; color:var(--navy-2); font-weight:900; letter-spacing:.01em; text-align:left; }
+    .case-no:hover { text-decoration:underline; }
+    .client { font-weight: 800; }
+    .client small { display: block; color: var(--muted); font-weight: 500; margin-top: 3px; font-size: 11px; }
+    .tag { display: inline-flex; align-items: center; gap: 4px; border-radius: 999px; padding: 5px 9px; font-size: 11px; font-weight: 800; white-space: nowrap; }
+    .tag::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+    .tag.processing { color: #2563a8; background: var(--blue-soft); }
+    .tag.waiting { color: #a16207; background: var(--orange-soft); }
+    .tag.pending { color: #0f766e; background: var(--teal-soft); }
+    .tag.new { color: #6b7280; background: #eef0f2; }
+    .row-person { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+    .row-avatar { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: #dfe8ee; color: #496579; font-size: 10px; font-weight: 800; }
+    .table-footer { padding: 13px 20px; display:flex; align-items:center; justify-content:space-between; color: var(--muted); font-size: 12px; border-top: 1px solid #f0eeea; }
+    .pager { display:flex; gap:5px; }
+    .pager button { border: 1px solid #e7e3dd; background: #fff; color: var(--muted); width: 28px; height: 28px; border-radius: 7px; }
+    .pager button.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+
+    .right-stack { display: grid; gap: 18px; }
+    .side-panel { padding: 19px; }
+    .side-panel h2 { margin: 0; font-size: 16px; }
+    .side-panel p { margin: 5px 0 0; color: var(--muted); font-size: 12px; line-height: 1.7; }
+    .quick-list { margin-top: 15px; display: grid; gap: 9px; }
+    .quick-item { border: 1px solid #edeae5; border-radius: 11px; padding: 11px 12px; display:flex; align-items:center; justify-content:space-between; gap: 10px; background: #fff; }
+    .quick-item strong { display:block; font-size: 13px; }
+    .quick-item small { display:block; color: var(--muted); margin-top: 3px; font-size: 11px; }
+    .quick-number { font-weight: 900; font-size: 18px; color: var(--navy-2); }
+    .progress-row { margin-top: 18px; }
+    .progress-head { display:flex; justify-content:space-between; color:var(--muted); font-size:12px; }
+    .progress-track { height: 8px; background: #edf0ef; border-radius: 99px; margin-top: 9px; overflow:hidden; }
+    .progress-fill { height:100%; width: 72%; background: var(--teal); border-radius: inherit; }
+    .notice { background: #f8f0df; border: 1px solid #f0dfba; border-radius: 12px; padding: 12px 13px; margin-top: 16px; color: #765624; font-size: 12px; line-height: 1.7; }
+    .notice strong { display:block; color:#644718; margin-bottom: 2px; }
+
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(14,28,42,.38); display:none; align-items:center; justify-content:center; padding:20px; z-index:20; }
+    .modal-backdrop.open { display:flex; }
+    .modal { width: min(720px, 100%); max-height: 90vh; overflow:auto; background: var(--paper); border-radius: 20px; box-shadow: 0 25px 80px rgba(11,25,38,.25); }
+    .modal-head { padding: 21px 23px; display:flex; justify-content:space-between; border-bottom:1px solid var(--line); }
+    .modal-head h2 { margin:0; font-size:20px; }
+    .close { border:0; background:transparent; font-size:22px; color:var(--muted); }
+    .form-grid { padding: 21px 23px; display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px; }
+    .field.full { grid-column:1/-1; }
+    .field label { display:block; color: #5f6872; font-weight:800; font-size:12px; margin-bottom:7px; }
+    .field input, .field textarea, .field select { width:100%; border:1px solid #dedbd6; border-radius:9px; padding:10px 11px; outline:none; background:#fff; color:var(--ink); }
+    .field textarea { min-height: 92px; resize: vertical; line-height:1.6; }
+    .form-actions { padding: 15px 23px; display:flex; justify-content:flex-end; gap:9px; border-top:1px solid var(--line); }
+    .form-section { grid-column:1/-1; padding-top:3px; }
+    .form-section-title { margin:0 0 10px; color:var(--navy); font-size:13px; font-weight:900; }
+    .field-hint { color:var(--muted-2); font-size:11px; margin-top:5px; }
+    .category-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
+    .category-option { display:flex; align-items:center; gap:8px; padding:9px 10px; background:#fff; border:1px solid #e8e4de; border-radius:9px; font-size:12px; cursor:pointer; }
+    .category-option:has(input:checked) { border-color:#8bb5aa; background:#f0faf6; color:#135e55; }
+    .category-option input { accent-color:var(--teal); margin:0; }
+    .other-category { display:flex; gap:8px; margin-top:9px; }
+    .other-category input { flex:1; min-width:0; border:1px solid #dedbd6; border-radius:9px; padding:9px 10px; }
+    .part-list { display:grid; gap:9px; }
+    .part-row { display:grid; grid-template-columns:1.3fr 1fr 1fr .6fr auto; gap:7px; align-items:center; }
+    .part-row input,.part-row select { min-width:0; height:37px; border:1px solid #dedbd6; border-radius:8px; padding:0 9px; background:#fff; color:var(--ink); }
+    .remove-part { width:34px; height:34px; border:0; border-radius:8px; background:#f7e8e5; color:#a54c3f; font-size:17px; }
+    .add-part { margin-top:9px; }
+    .detail-content { padding:20px 23px; display:grid; gap:16px; }
+    .detail-meta { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+    .detail-meta div,.detail-block { background:#fff; border:1px solid #ece8e2; border-radius:11px; padding:12px; }
+    .detail-meta small,.detail-block small { display:block; color:var(--muted); font-size:11px; margin-bottom:5px; }
+    .detail-meta strong { font-size:13px; }
+    .detail-block p { margin:5px 0 0; line-height:1.7; font-size:13px; white-space:pre-wrap; }
+    .detail-parts { width:100%; min-width:0; margin-top:7px; }
+    .detail-parts th,.detail-parts td { padding:8px 10px; }
+    .detail-status { max-width:210px; }
+    .empty-row { padding:30px!important; text-align:center; color:var(--muted); }
+
+    @media (max-width: 1050px) {
+      .sidebar { width: 218px; flex-basis: 218px; }
+      .main { padding-left: 22px; padding-right: 22px; }
+      .workspace { grid-template-columns: 1fr; }
+      .right-stack { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 760px) {
+      .sidebar { width: 68px; flex-basis: 68px; padding: 20px 10px; }
+      .brand { padding:0; justify-content:center; }
+      .brand > div:last-child, .nav-label, .nav-item span:not(.nav-icon), .nav-count, .help-card, .user-mini > div:last-child { display:none; }
+      .nav-item { justify-content:center; padding:12px 0; }
+      .user-mini { justify-content:center; padding:0; }
+      .main { padding: 18px 13px 26px; }
+      .topbar { align-items:flex-start; }
+      .top-actions .outline-btn { display:none; }
+      .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .right-stack { grid-template-columns: 1fr; }
+      .form-grid { grid-template-columns: 1fr; }
+      .field.full { grid-column:auto; }
+      h1 { font-size:24px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">售</div>
+        <div><strong>售服作業台</strong><small>AFTER SERVICE DESK</small></div>
+      </div>
+
+      <nav class="nav-section" aria-label="主要導覽">
+        <div class="nav-label">工作區</div>
+        <button class="nav-item active"><span class="nav-icon">▦</span><span>案件總覽</span><span class="nav-count">24</span></button>
+        <button class="nav-item"><span class="nav-icon">＋</span><span>新增案件</span></button>
+        <button class="nav-item"><span class="nav-icon">⌕</span><span>同類型問題</span></button>
+      </nav>
+      <nav class="nav-section" aria-label="管理功能">
+        <div class="nav-label">管理</div>
+        <button class="nav-item"><span class="nav-icon">◫</span><span>客戶與機型</span></button>
+        <button class="nav-item"><span class="nav-icon">◈</span><span>問題類別</span><span class="nav-count">3</span></button>
+        <button class="nav-item"><span class="nav-icon">◇</span><span>零件清單</span></button>
+      </nav>
+
+      <div class="sidebar-spacer"></div>
+      <div class="help-card"><strong>分類待整理</strong><p>有 3 個現場新增的問題類別等待主管確認。</p></div>
+      <div class="user-mini"><div class="avatar">林</div><div><strong>林怡君</strong><small>售服主管</small></div></div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div><div class="eyebrow">SERVICE DESK · 2026.10.20</div><h1>案件總覽</h1></div>
+        <div class="top-actions"><button class="icon-btn" title="通知">♧</button><button class="outline-btn">本週報表　⌄</button><button class="primary-btn" id="openModal"><span class="plus">＋</span>新增案件</button></div>
+      </header>
+
+      <section class="metrics" aria-label="案件統計">
+        <div class="metric"><div class="metric-label">案件總數</div><div class="metric-value" id="metricTotal">0</div><div class="metric-note">目前瀏覽器保存的案件</div></div>
+        <div class="metric"><div class="metric-label">處理中與待處理</div><div class="metric-value" id="metricActive">0</div><div class="metric-note">包含等待客戶或零件</div></div>
+        <div class="metric"><div class="metric-label">待確認</div><div class="metric-value" id="metricPending">0</div><div class="metric-note">等待客戶或主管確認</div></div>
+        <div class="metric"><div class="metric-label">已結案</div><div class="metric-value" id="metricClosed">0</div><div class="metric-note">已完成服務紀錄</div></div>
+      </section>
+
+      <div class="workspace">
+        <section class="panel">
+          <div class="panel-head"><div><h2 class="panel-title">最近案件</h2><p class="panel-subtitle">依最近更新時間排列，共 128 筆案件</p></div><button class="icon-btn" title="更多設定">⋯</button></div>
+          <div class="filter-bar">
+            <div class="search-box"><span>⌕</span><input id="searchInput" type="search" placeholder="搜尋案號、客戶、機型或關鍵字" /></div>
+            <select class="select" id="statusFilter"><option value="all">全部狀態</option><option value="new">新建</option><option value="processing">處理中</option><option value="waitingCustomer">等待客戶</option><option value="waiting">等待零件</option><option value="pending">待確認</option><option value="closed">已結案</option><option value="void">作廢</option></select>
+            <select class="select"><option>所有售服人員</option><option>林怡君</option><option>陳柏翰</option></select>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>服務案號</th><th>客戶與設備</th><th>問題類別</th><th>狀態</th><th>負責人</th><th>更新日期</th></tr></thead>
+              <tbody id="caseRows"></tbody>
+            </table>
+          </div>
+          <div class="table-footer"><span id="resultCount">顯示 5 筆案件</span><div class="pager"><button>‹</button><button class="active">1</button><button>2</button><button>3</button><button>›</button></div></div>
+        </section>
+
+        <aside class="right-stack">
+          <section class="panel side-panel"><h2>待處理提醒</h2><p>需要你今天優先查看的案件。</p><div class="quick-list"><div class="quick-item"><div><strong>等待客戶回覆</strong><small>最久等待 2 天</small></div><span class="quick-number">4</span></div><div class="quick-item"><div><strong>待主管確認</strong><small>完成處理但尚未結案</small></div><span class="quick-number">9</span></div><div class="quick-item"><div><strong>待整理分類</strong><small>現場新增的類別</small></div><span class="quick-number">3</span></div></div></section>
+          <section class="panel side-panel"><h2>本月案件進度</h2><p>完成 86 件，距離月目標還有 14 件。</p><div class="progress-row"><div class="progress-head"><span>結案進度</span><strong>86 / 100</strong></div><div class="progress-track"><div class="progress-fill"></div></div></div><div class="notice"><strong>小提醒</strong>同類型問題可以從案件清單直接搜尋，快速找到過往處理方式。</div></section>
+        </aside>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal">
+      <div class="modal-head"><div><h2 id="modalTitle">新增售服案件</h2><div class="field-hint" id="caseNumberHint">儲存後自動產生服務案號</div></div><button class="close" id="closeModal" aria-label="關閉">×</button></div>
+      <form id="caseForm">
+        <div class="form-grid">
+          <div class="form-section"><h3 class="form-section-title">案件與客戶資料</h3></div>
+          <div class="field"><label for="customer">客戶名稱 *</label><input id="customer" required placeholder="請輸入客戶名稱" /></div>
+          <div class="field"><label for="machine">機台型號 *</label><input id="machine" required placeholder="例如：MX-420" /></div>
+          <div class="field"><label for="contact">聯絡人</label><input id="contact" placeholder="客戶聯絡人" /></div>
+          <div class="field"><label for="phone">聯絡電話</label><input id="phone" type="tel" placeholder="電話或分機" /></div>
+          <div class="field"><label for="address">維修地址</label><input id="address" placeholder="服務地點" /></div>
+          <div class="field"><label for="warranty">保修卡號</label><input id="warranty" placeholder="選填" /></div>
+          <div class="field"><label for="reportDate">報修日期 *</label><input id="reportDate" type="date" required /></div>
+          <div class="field"><label for="serviceDate">服務日期</label><input id="serviceDate" type="date" /></div>
+          <div class="field"><label for="owner">售服人員 *</label><select id="owner" required><option>林怡君</option><option>陳柏翰</option></select></div>
+          <div class="field"><label for="caseStatus">案件狀態</label><select id="caseStatus"><option value="new">新建</option><option value="processing">處理中</option><option value="waitingCustomer">等待客戶</option><option value="waiting">等待零件</option><option value="pending">待確認</option><option value="closed">已結案</option><option value="void">作廢</option></select></div>
+          <div class="form-section"><h3 class="form-section-title">問題內容</h3></div>
+          <div class="field full"><label>問題類別（可複選）</label><div class="category-grid" id="categoryGrid"></div><div class="other-category"><input id="newCategory" placeholder="找不到類別？輸入新類別名稱" /><button class="outline-btn" type="button" id="addCategory">＋ 加入待確認</button></div><div class="field-hint" id="categoryHint">新分類會標記為待確認，之後由主管整理。</div></div>
+          <div class="field full"><label for="description">故障描述 *</label><textarea id="description" required placeholder="描述現場狀況、發生時間、錯誤訊息或初步判斷"></textarea></div>
+          <div class="field full"><label for="handling">處理情況</label><textarea id="handling" placeholder="記錄檢查方式、處理結果與後續安排"></textarea></div>
+          <div class="form-section"><h3 class="form-section-title">零件修售清單</h3></div>
+          <div class="field full"><div class="part-list" id="partList"></div><button class="outline-btn add-part" type="button" id="addPart">＋ 新增一筆零件</button><div class="field-hint">可留空；每筆零件可記錄處理方式、數量與狀態。</div></div>
+        </div>
+        <div class="form-actions"><button type="button" class="outline-btn" id="cancelModal">取消</button><button type="submit" class="primary-btn" id="saveCase">建立案件</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="detailBackdrop" role="dialog" aria-modal="true" aria-labelledby="detailTitle"><div class="modal"><div class="modal-head"><div><h2 id="detailTitle">案件詳細資料</h2><div class="field-hint" id="detailCaseNo"></div></div><button class="close" id="closeDetail" aria-label="關閉">×</button></div><div class="detail-content" id="detailContent"></div><div class="form-actions"><select class="detail-status" id="detailStatus" aria-label="更新案件狀態"><option value="new">新建</option><option value="processing">處理中</option><option value="waitingCustomer">等待客戶</option><option value="waiting">等待零件</option><option value="pending">待確認</option><option value="closed">已結案</option><option value="void">作廢</option></select><button class="outline-btn" id="editCase" type="button">編輯案件</button><button class="primary-btn" id="doneDetail" type="button">完成</button></div></div></div>
+
+  <script>
+    const storageKey = 'service-desk-cases-v1';
+    const categoryStorageKey = 'service-desk-categories-v1';
+    const initialCases = [
+      {id:'SV-20261018-021', customer:'台灣精工', machine:'MX-420', address:'台中廠', contact:'王先生', phone:'04-2380-1200', warranty:'', reportDate:'2026-10-18', serviceDate:'2026-10-20', owner:'陳柏翰', status:'processing', categories:['主軸','異音'], description:'加工時主軸出現間歇性異音，轉速提高後聲音變明顯。', handling:'已完成初步聽音與振動檢查，安排進一步確認軸承狀況。', parts:[], updated:'2026-10-20T09:42:00'},
+      {id:'SV-20261017-019', customer:'富利機械', machine:'VM-800', address:'新竹廠', contact:'林小姐', phone:'03-577-8200', warranty:'', reportDate:'2026-10-17', serviceDate:'2026-10-19', owner:'林怡君', status:'waiting', categories:['電磁閥'], description:'工作台夾持油壓不穩，檢查發現電磁閥反應異常。', handling:'已確認需更換電磁閥，等待零件到貨後安排回訪。', parts:[{name:'電磁閥',sku:'SV-24A',method:'更換',quantity:1,state:'待處理'}], updated:'2026-10-20T08:16:00'},
+      {id:'SV-20261016-017', customer:'銓盛科技', machine:'AX-300', address:'桃園廠', contact:'張先生', phone:'03-451-6020', warranty:'', reportDate:'2026-10-16', serviceDate:'2026-10-19', owner:'陳柏翰', status:'pending', categories:['精度','背隙'], description:'客戶反映加工尺寸偏差，需確認軸向背隙。', handling:'已完成精度檢查與調整，等待客戶試切確認。', parts:[], updated:'2026-10-19T17:38:00'},
+      {id:'SV-20261020-024', customer:'宏偉自動化', machine:'QL-550', address:'台南廠', contact:'陳小姐', phone:'06-384-1100', warranty:'', reportDate:'2026-10-20', serviceDate:'', owner:'林怡君', status:'new', categories:['機電'], description:'設備啟動時偶發無法完成回原點。', handling:'', parts:[], updated:'2026-10-20T11:06:00'},
+      {id:'SV-20261015-014', customer:'奕達工業', machine:'TX-210', address:'台中廠', contact:'劉先生', phone:'04-2358-9900', warranty:'', reportDate:'2026-10-15', serviceDate:'2026-10-18', owner:'林怡君', status:'processing', categories:['編碼器','馬達'], description:'機台運轉中出現位置回授不穩定。', handling:'已檢查編碼器接頭與訊號線，目前持續觀察。', parts:[], updated:'2026-10-18T14:22:00'}
+    ];
+    const initialCategories = [
+      {name:'電磁閥',group:'液壓／氣壓'}, {name:'機電',group:'電氣／控制'}, {name:'主軸',group:'機械'},
+      {name:'背隙',group:'精度'}, {name:'馬達',group:'電氣／控制'}, {name:'編碼器',group:'電氣／控制'},
+      {name:'剎車',group:'機械'}, {name:'異音',group:'機械'}, {name:'漏油',group:'液壓／氣壓'}
+    ];
+    const statusLabels = {new:'新建',processing:'處理中',waitingCustomer:'等待客戶',waiting:'等待零件',pending:'待確認',closed:'已結案',void:'作廢'};
+    const statusClasses = {new:'new',processing:'processing',waitingCustomer:'waiting',waiting:'waiting',pending:'pending',closed:'pending',void:'new'};
+    const loadData = (key, fallback) => { try { const value = JSON.parse(localStorage.getItem(key)); return Array.isArray(value) ? value : fallback; } catch { return fallback; } };
+    let cases = loadData(storageKey, initialCases);
+    let categories = loadData(categoryStorageKey, initialCategories);
+    let editingId = null;
+    let activeDetailId = null;
+    const modal = document.getElementById('modalBackdrop');
+    const detailBackdrop = document.getElementById('detailBackdrop');
+    const form = document.getElementById('caseForm');
+    const searchInput = document.getElementById('searchInput');
+    const statusFilter = document.getElementById('statusFilter');
+    const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+    const formatDate = value => {
+      if (!value) return '—';
+      const date = new Date(value.includes('T') ? value : `${value}T00:00:00`);
+      return `${String(date.getMonth()+1).padStart(2,'0')}/${String(date.getDate()).padStart(2,'0')}`;
+    };
+    const formatUpdated = value => {
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return '—';
+      return `${formatDate(value)} ${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}`;
+    };
+    const persist = () => {
+      try { localStorage.setItem(storageKey, JSON.stringify(cases)); localStorage.setItem(categoryStorageKey, JSON.stringify(categories)); }
+      catch { alert('瀏覽器無法儲存資料，請確認目前瀏覽器允許本機儲存。'); }
+    };
+    function renderCases() {
+      const keyword = searchInput.value.trim().toLocaleLowerCase();
+      const selected = statusFilter.value;
+      const visibleCases = [...cases].sort((a,b) => new Date(b.updated)-new Date(a.updated)).filter(item => {
+        const searchText = [item.id,item.customer,item.machine,item.address,item.contact,item.description,item.handling,(item.categories||[]).join(' '),(item.parts||[]).map(part => `${part.sku} ${part.name}`).join(' ')].join(' ').toLocaleLowerCase();
+        return (!keyword || searchText.includes(keyword)) && (selected === 'all' || item.status === selected);
+      });
+      document.getElementById('caseRows').innerHTML = visibleCases.length ? visibleCases.map(item => `<tr data-case-id="${escapeHtml(item.id)}"><td><button class="case-no case-open" data-open-case="${escapeHtml(item.id)}">${escapeHtml(item.id)}</button></td><td><span class="client">${escapeHtml(item.customer)}</span><small>${escapeHtml(item.machine)} · ${escapeHtml(item.address||'未填地址')}</small></td><td>${(item.categories||[]).map(escapeHtml).join('　')||'—'}</td><td><span class="tag ${statusClasses[item.status]||'new'}">${statusLabels[item.status]||'新建'}</span></td><td><span class="row-person"><span class="row-avatar">${escapeHtml(item.owner.slice(0,1))}</span>${escapeHtml(item.owner)}</span></td><td>${formatUpdated(item.updated)}</td></tr>`).join('') : '<tr><td class="empty-row" colspan="6">沒有符合條件的案件，試試其他關鍵字或狀態。</td></tr>';
+      document.getElementById('resultCount').textContent = `顯示 ${visibleCases.length} 筆案件`;
+      document.querySelector('.panel-subtitle').textContent = `依最近更新時間排列，共 ${cases.length} 筆案件`;
+      document.querySelector('.nav-count').textContent = cases.length;
+      document.getElementById('metricTotal').textContent = cases.length;
+      document.getElementById('metricActive').textContent = cases.filter(item=>['processing','waitingCustomer','waiting'].includes(item.status)).length;
+      document.getElementById('metricPending').textContent = cases.filter(item=>item.status==='pending').length;
+      document.getElementById('metricClosed').textContent = cases.filter(item=>item.status==='closed').length;
+    }
+    function renderCategories(selected = []) {
+      document.getElementById('categoryGrid').innerHTML = categories.map((category,index) => `<label class="category-option"><input type="checkbox" name="categories" value="${escapeHtml(category.name)}" ${selected.includes(category.name)?'checked':''}><span>${escapeHtml(category.group||'待確認')}｜${escapeHtml(category.name)}</span></label>`).join('');
+    }
+    function addPartRow(part = {}) {
+      const row = document.createElement('div');
+      row.className = 'part-row';
+      row.innerHTML = `<input data-part="sku" aria-label="零件料號" placeholder="零件料號" value="${escapeHtml(part.sku||'')}"><input data-part="name" aria-label="零件名稱" placeholder="零件名稱" value="${escapeHtml(part.name||'')}"><select data-part="method" aria-label="處理方式"><option ${part.method==='維修'?'selected':''}>維修</option><option ${part.method==='銷售'?'selected':''}>銷售</option><option ${part.method==='更換'?'selected':''}>更換</option><option ${part.method==='借用'?'selected':''}>借用</option><option ${part.method==='退回'?'selected':''}>退回</option><option ${part.method==='待確認'?'selected':''}>待確認</option></select><input data-part="quantity" aria-label="數量" type="number" min="1" value="${escapeHtml(part.quantity||1)}"><button class="remove-part" type="button" aria-label="移除此零件">×</button>`;
+      row.querySelector('.remove-part').addEventListener('click', () => row.remove());
+      document.getElementById('partList').appendChild(row);
+    }
+    function resetForm() {
+      form.reset(); editingId = null; form.dataset.caseId = ''; document.getElementById('partList').replaceChildren();
+      document.getElementById('modalTitle').textContent = '新增售服案件';
+      document.getElementById('caseNumberHint').textContent = '儲存後自動產生服務案號';
+      document.getElementById('saveCase').textContent = '建立案件';
+      document.getElementById('reportDate').value = new Date().toISOString().slice(0,10);
+      renderCategories();
+    }
+    function openForm(caseId = null) {
+      resetForm();
+      if (caseId) {
+        const item = cases.find(entry => entry.id === caseId);
+        if (!item) return;
+        editingId = caseId; form.dataset.caseId = caseId;
+        document.getElementById('modalTitle').textContent = '編輯售服案件';
+        document.getElementById('caseNumberHint').textContent = item.id;
+        document.getElementById('saveCase').textContent = '儲存修改';
+        for (const [key,id] of Object.entries({customer:'customer',machine:'machine',contact:'contact',phone:'phone',address:'address',warranty:'warranty',reportDate:'reportDate',serviceDate:'serviceDate',owner:'owner',status:'caseStatus',description:'description',handling:'handling'})) document.getElementById(id).value = item[key] || (key==='status'?'new':'');
+        renderCategories(item.categories||[]);
+        (item.parts||[]).forEach(addPartRow);
+      } else addPartRow();
+      modal.classList.add('open');
+      document.querySelector('.modal',modal).scrollTop = 0;
+    }
+    function openDetail(caseId) {
+      const item = cases.find(entry => entry.id === caseId);
+      if (!item) return;
+      activeDetailId = caseId;
+      document.getElementById('detailTitle').textContent = `${item.customer} · ${item.machine}`;
+      document.getElementById('detailCaseNo').textContent = item.id;
+      document.getElementById('detailStatus').value = item.status;
+      const parts = (item.parts||[]).length ? `<div class="detail-block"><small>零件修售清單</small><div class="table-wrap"><table class="detail-parts"><thead><tr><th>料號</th><th>零件</th><th>方式</th><th>數量</th></tr></thead><tbody>${item.parts.map(part=>`<tr><td>${escapeHtml(part.sku||'—')}</td><td>${escapeHtml(part.name||'—')}</td><td>${escapeHtml(part.method)}</td><td>${escapeHtml(part.quantity)}</td></tr>`).join('')}</tbody></table></div></div>` : '';
+      document.getElementById('detailContent').innerHTML = `<div class="detail-meta"><div><small>客戶聯絡人</small><strong>${escapeHtml(item.contact||'—')}</strong></div><div><small>聯絡電話</small><strong>${escapeHtml(item.phone||'—')}</strong></div><div><small>維修地址</small><strong>${escapeHtml(item.address||'—')}</strong></div><div><small>報修日期</small><strong>${escapeHtml(item.reportDate||'—')}</strong></div><div><small>服務日期</small><strong>${escapeHtml(item.serviceDate||'—')}</strong></div><div><small>售服人員</small><strong>${escapeHtml(item.owner)}</strong></div></div><div class="detail-block"><small>問題類別</small><p>${(item.categories||[]).map(escapeHtml).join('、')||'尚未選擇'}</p></div><div class="detail-block"><small>故障描述</small><p>${escapeHtml(item.description||'—')}</p></div><div class="detail-block"><small>處理情況</small><p>${escapeHtml(item.handling||'尚未填寫')}</p></div>${parts}`;
+      detailBackdrop.classList.add('open');
+    }
+    document.getElementById('openModal').addEventListener('click', () => openForm());
+    document.querySelectorAll('.nav-item')[1].addEventListener('click', () => openForm());
+    document.getElementById('closeModal').addEventListener('click', () => modal.classList.remove('open'));
+    document.getElementById('cancelModal').addEventListener('click', () => modal.classList.remove('open'));
+    modal.addEventListener('click', event => { if (event.target === modal) modal.classList.remove('open'); });
+    document.getElementById('addPart').addEventListener('click', () => addPartRow());
+    document.getElementById('addCategory').addEventListener('click', () => {
+      const input = document.getElementById('newCategory');
+      const name = input.value.trim();
+      if (!name) { input.focus(); return; }
+      if (categories.some(category => category.name.toLocaleLowerCase() === name.toLocaleLowerCase())) { const selected=[...form.querySelectorAll('input[name="categories"]:checked')].map(box=>box.value); selected.push(name); document.getElementById('categoryHint').textContent = '這個類別已存在，已在上方清單中。'; renderCategories([...new Set(selected)]); input.value=''; return; }
+      categories.push({name,group:'待確認',pending:true}); persist(); renderCategories([...new Set([...form.querySelectorAll('input[name="categories"]:checked')].map(box=>box.value)),name]);
+      document.getElementById('categoryHint').textContent = `「${name}」已加入待確認分類。`; input.value='';
+    });
+    document.getElementById('caseForm').addEventListener('submit', event => {
+      event.preventDefault();
+      const parts = [...document.querySelectorAll('.part-row')].map(row=>({sku:row.querySelector('[data-part="sku"]').value.trim(),name:row.querySelector('[data-part="name"]').value.trim(),method:row.querySelector('[data-part="method"]').value,quantity:Math.max(1,Number(row.querySelector('[data-part="quantity"]').value)||1)})).filter(part=>part.sku||part.name);
+      const now = new Date();
+      const reportDate = document.getElementById('reportDate').value;
+      const dateCode = (reportDate||now.toISOString().slice(0,10)).replaceAll('-','');
+      const nextId = editingId || `SV-${dateCode}-${String(cases.filter(item=>item.id.startsWith(`SV-${dateCode}-`)).length+1).padStart(3,'0')}`;
+      const item = {id:nextId,customer:document.getElementById('customer').value.trim(),machine:document.getElementById('machine').value.trim(),contact:document.getElementById('contact').value.trim(),phone:document.getElementById('phone').value.trim(),address:document.getElementById('address').value.trim(),warranty:document.getElementById('warranty').value.trim(),reportDate,serviceDate:document.getElementById('serviceDate').value,owner:document.getElementById('owner').value,status:document.getElementById('caseStatus').value,categories:[...form.querySelectorAll('input[name="categories"]:checked')].map(box=>box.value),description:document.getElementById('description').value.trim(),handling:document.getElementById('handling').value.trim(),parts,updated:now.toISOString()};
+      if (editingId) cases = cases.map(entry=>entry.id===editingId?item:entry); else cases.unshift(item);
+      persist(); renderCases(); modal.classList.remove('open'); form.reset();
+    });
+    document.getElementById('caseRows').addEventListener('click', event => { const button=event.target.closest('[data-open-case]'); if(button) openDetail(button.dataset.openCase); });
+    document.getElementById('closeDetail').addEventListener('click',()=>detailBackdrop.classList.remove('open'));
+    document.getElementById('doneDetail').addEventListener('click',()=>detailBackdrop.classList.remove('open'));
+    detailBackdrop.addEventListener('click',event=>{if(event.target===detailBackdrop) detailBackdrop.classList.remove('open');});
+    document.getElementById('editCase').addEventListener('click',()=>{const id=activeDetailId;detailBackdrop.classList.remove('open');openForm(id);});
+    document.getElementById('detailStatus').addEventListener('change',event=>{const item=cases.find(entry=>entry.id===activeDetailId);if(!item)return;item.status=event.target.value;item.updated=new Date().toISOString();persist();renderCases();openDetail(item.id);});
+    document.addEventListener('keydown', event => { if(event.key==='Escape'){modal.classList.remove('open');detailBackdrop.classList.remove('open');} });
+    searchInput.addEventListener('input',renderCases);
+    statusFilter.addEventListener('change',renderCases);
+    renderCases();
+  </script>
+</body>
+</html>
