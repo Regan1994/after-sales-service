@@ -149,12 +149,9 @@
     .quick-item strong { display:block; font-size: 13px; }
     .quick-item small { display:block; color: var(--muted); margin-top: 3px; font-size: 11px; }
     .quick-number { font-weight: 900; font-size: 18px; color: var(--navy-2); }
-    .progress-row { margin-top: 18px; }
-    .progress-head { display:flex; justify-content:space-between; color:var(--muted); font-size:12px; }
-    .progress-track { height: 8px; background: #edf0ef; border-radius: 99px; margin-top: 9px; overflow:hidden; }
-    .progress-fill { height:100%; width: 72%; background: var(--teal); border-radius: inherit; }
-    .notice { background: #f8f0df; border: 1px solid #f0dfba; border-radius: 12px; padding: 12px 13px; margin-top: 16px; color: #765624; font-size: 12px; line-height: 1.7; }
-    .notice strong { display:block; color:#644718; margin-bottom: 2px; }
+    button.quick-item { width:100%; color:var(--ink); text-align:left; cursor:pointer; transition:.15s ease; }
+    button.quick-item:hover { border-color:#b9cbd6; background:#f8fbfc; transform:translateY(-1px); }
+    button.quick-item:focus-visible { outline:3px solid rgba(73,128,163,.18); border-color:#7fa5bf; }
 
     .modal-backdrop { position: fixed; inset: 0; background: rgba(14,28,42,.38); display:none; align-items:center; justify-content:center; padding:20px; z-index:20; }
     .modal-backdrop.open { display:flex; }
@@ -191,6 +188,7 @@
     .detail-parts { width:100%; min-width:0; margin-top:7px; }
     .detail-parts th,.detail-parts td { padding:8px 10px; }
     .detail-status { max-width:210px; }
+    .detail-delete { margin-right:auto; }
     .empty-row { padding:30px!important; text-align:center; color:var(--muted); }
     .view[hidden] { display: none; }
     .data-modal { width: min(540px, 100%); }
@@ -265,8 +263,8 @@
     .category-group { color:var(--muted); font-size:12px; }
     .category-actions { display:flex; gap:7px; white-space:nowrap; }
     .category-actions .outline-btn { min-height:32px; padding:0 10px; font-size:12px; }
-    .category-actions .danger-btn { color:#a54c3f; border-color:#e8cbc6; }
-    .category-actions .danger-btn:hover { color:#8f382d; border-color:#d9aaa2; background:#fff7f5; }
+    .danger-btn { color:#a54c3f; border-color:#e8cbc6; }
+    .danger-btn:hover { color:#8f382d; border-color:#d9aaa2; background:#fff7f5; }
     .category-empty { padding:30px!important; text-align:center; color:var(--muted); }
     .category-modal .form-grid { padding-bottom:20px; }
     .part-table { min-width:700px; }
@@ -378,8 +376,7 @@
         </section>
 
         <aside class="right-stack">
-          <section class="panel side-panel"><h2>待處理提醒</h2><p>需要你今天優先查看的案件。</p><div class="quick-list"><div class="quick-item"><div><strong>等待客戶回覆</strong><small>最久等待 2 天</small></div><span class="quick-number">4</span></div><div class="quick-item"><div><strong>待主管確認</strong><small>完成處理但尚未結案</small></div><span class="quick-number">9</span></div><div class="quick-item"><div><strong>待整理分類</strong><small>現場新增的類別</small></div><span class="quick-number">3</span></div></div></section>
-          <section class="panel side-panel"><h2>本月案件進度</h2><p>完成 86 件，距離月目標還有 14 件。</p><div class="progress-row"><div class="progress-head"><span>結案進度</span><strong>86 / 100</strong></div><div class="progress-track"><div class="progress-fill"></div></div></div><div class="notice"><strong>小提醒</strong>同類型問題可以從案件清單直接搜尋，快速找到過往處理方式。</div></section>
+          <section class="panel side-panel"><h2>待處理提醒</h2><p>點選狀態即可查看對應案件。</p><div class="quick-list" id="pendingReminderList"></div></section>
         </aside>
       </div>
       </div>
@@ -475,7 +472,7 @@
     </div>
   </div>
 
-  <div class="modal-backdrop" id="detailBackdrop" role="dialog" aria-modal="true" aria-labelledby="detailTitle"><div class="modal"><div class="modal-head"><div><h2 id="detailTitle">案件詳細資料</h2><div class="field-hint" id="detailCaseNo"></div></div><button class="close" id="closeDetail" aria-label="關閉">×</button></div><div class="detail-content" id="detailContent"></div><div class="form-actions"><select class="detail-status" id="detailStatus" aria-label="更新案件狀態"><option value="new">新建</option><option value="processing">處理中</option><option value="waitingCustomer">等待客戶</option><option value="waiting">等待零件</option><option value="pending">待確認</option><option value="closed">已結案</option><option value="void">作廢</option></select><button class="outline-btn" id="printCase" type="button">列印案件</button><button class="outline-btn" id="editCase" type="button">編輯案件</button><button class="primary-btn" id="doneDetail" type="button">完成</button></div></div></div>
+  <div class="modal-backdrop" id="detailBackdrop" role="dialog" aria-modal="true" aria-labelledby="detailTitle"><div class="modal"><div class="modal-head"><div><h2 id="detailTitle">案件詳細資料</h2><div class="field-hint" id="detailCaseNo"></div></div><button class="close" id="closeDetail" aria-label="關閉">×</button></div><div class="detail-content" id="detailContent"></div><div class="form-actions"><select class="detail-status" id="detailStatus" aria-label="更新案件狀態"><option value="new">新建</option><option value="processing">處理中</option><option value="waitingCustomer">等待客戶</option><option value="waiting">等待零件</option><option value="pending">待確認</option><option value="closed">已結案</option><option value="void">作廢</option></select><button class="outline-btn danger-btn detail-delete" id="deleteCase" type="button">刪除案件</button><button class="outline-btn" id="printCase" type="button">列印案件</button><button class="outline-btn" id="editCase" type="button">編輯案件</button><button class="primary-btn" id="doneDetail" type="button">完成</button></div></div></div>
 
   <div class="modal-backdrop" id="printBackdrop" role="dialog" aria-modal="true" aria-labelledby="printTitle"><div class="print-modal"><div class="print-header"><div><div class="print-brand">AFTER SERVICE DESK</div><h2 id="printTitle">售服案件服務紀錄</h2></div><div class="print-header-meta" id="printHeaderMeta"></div></div><div class="print-content" id="printContent"></div><div class="form-actions print-actions"><button class="outline-btn" id="closePrint" type="button">返回案件</button><button class="primary-btn" id="confirmPrint" type="button">列印</button></div></div></div>
 
@@ -530,6 +527,7 @@
     const searchInput = document.getElementById('searchInput');
     const statusFilter = document.getElementById('statusFilter');
     const casePager = document.getElementById('casePager');
+    const pendingReminderList = document.getElementById('pendingReminderList');
     const overviewView = document.getElementById('overviewView');
     const similarIssuesView = document.getElementById('similarIssuesView');
     const pageEyebrow = document.getElementById('pageEyebrow');
@@ -622,6 +620,19 @@
         restoreFile.value = '';
       }
     }
+    function renderPendingReminders() {
+      const reminders = [
+        {status:'new',label:'新建',hint:'尚未開始處理'},
+        {status:'processing',label:'處理中',hint:'正在處理中的案件'},
+        {status:'waitingCustomer',label:'等待客戶',hint:'等待客戶提供資訊'},
+        {status:'waiting',label:'等待零件',hint:'等待零件到貨'},
+        {status:'pending',label:'待確認',hint:'等待確認後結案'}
+      ];
+      pendingReminderList.innerHTML = reminders.map(reminder=>{
+        const count = cases.filter(item=>item.status===reminder.status).length;
+        return `<button class="quick-item" type="button" data-reminder-status="${reminder.status}"><span><strong>${reminder.label}</strong><small>${reminder.hint}</small></span><span class="quick-number">${count}</span></button>`;
+      }).join('');
+    }
     function renderCases() {
       const keyword = searchInput.value.trim().toLocaleLowerCase();
       const selected = statusFilter.value;
@@ -643,6 +654,7 @@
       document.getElementById('metricActive').textContent = cases.filter(item=>['processing','waitingCustomer','waiting'].includes(item.status)).length;
       document.getElementById('metricPending').textContent = cases.filter(item=>item.status==='pending').length;
       document.getElementById('metricClosed').textContent = cases.filter(item=>item.status==='closed').length;
+      renderPendingReminders();
       renderSimilarIssues();
       renderSimilarCategoryPills();
       renderCategoryManager();
@@ -934,6 +946,16 @@
     similarRows.addEventListener('click', event => { const button=event.target.closest('[data-open-case]'); if(button) openDetail(button.dataset.openCase); });
     document.getElementById('closeDetail').addEventListener('click',()=>detailBackdrop.classList.remove('open'));
     document.getElementById('doneDetail').addEventListener('click',()=>detailBackdrop.classList.remove('open'));
+    document.getElementById('deleteCase').addEventListener('click',()=>{
+      const item = cases.find(entry=>entry.id===activeDetailId);
+      if (!item) return;
+      if (!confirm(`確定要永久刪除案件「${item.id}」嗎？\n\n客戶：${item.customer}\n機型：${item.machine}\n\n刪除後只能透過先前的備份檔還原。`)) return;
+      cases = cases.filter(entry=>entry.id!==item.id);
+      activeDetailId = null;
+      persist();
+      detailBackdrop.classList.remove('open');
+      renderCases();
+    });
     detailBackdrop.addEventListener('click',event=>{if(event.target===detailBackdrop) detailBackdrop.classList.remove('open');});
     document.getElementById('printCase').addEventListener('click',()=>openPrintPreview());
     document.getElementById('closePrint').addEventListener('click',()=>printBackdrop.classList.remove('open'));
@@ -1102,6 +1124,16 @@
     document.getElementById('editCase').addEventListener('click',()=>{const id=activeDetailId;detailBackdrop.classList.remove('open');openForm(id);});
     document.getElementById('detailStatus').addEventListener('change',event=>{const item=cases.find(entry=>entry.id===activeDetailId);if(!item)return;item.status=event.target.value;item.updated=new Date().toISOString();persist();renderCases();openDetail(item.id);});
     document.addEventListener('keydown', event => { if(event.key==='Escape'){modal.classList.remove('open');detailBackdrop.classList.remove('open');printBackdrop.classList.remove('open');categoryModal.classList.remove('open');partModal.classList.remove('open');customerModal.classList.remove('open');machineModal.classList.remove('open');dataModal.classList.remove('open');} });
+    pendingReminderList.addEventListener('click',event=>{
+      const button = event.target.closest('[data-reminder-status]');
+      if (!button) return;
+      searchInput.value = '';
+      statusFilter.value = button.dataset.reminderStatus;
+      casePage = 1;
+      switchView('overview');
+      renderCases();
+      window.scrollTo({top:0,behavior:'smooth'});
+    });
     casePager.addEventListener('click',event=>{const button=event.target.closest('[data-case-page]');if(!button || button.disabled)return;casePage=Number(button.dataset.casePage);renderCases();});
     searchInput.addEventListener('input',()=>{casePage=1;renderCases();});
     statusFilter.addEventListener('change',()=>{casePage=1;renderCases();});
