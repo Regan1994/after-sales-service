@@ -21,7 +21,7 @@
 
 這是 buildless 的靜態 HTML／CSS／JavaScript 原型，沒有框架、伺服器或資料庫。可直接以瀏覽器開啟 `dist/index.html` 操作。新增案件後，資料會保存在同一瀏覽器的本機儲存空間。
 
-GitHub repository：`https://github.com/Regan1994/after-sales-service`。目前原型基準已推送至遠端 `main`，本機 `main` 追蹤 `origin/main`。`gh` 命令列工具目前不可用，但 Git remote push 已可使用。
+GitHub repository：`https://github.com/Regan1994/after-sales-service`。原型基準已推送至遠端 `main`。目前工作分支為 `codex/development`，追蹤 `origin/codex/development`，由 `main` 基準建立，尚無功能差異。`gh` 命令列工具目前不可用，但 Git remote push 已可使用。
 
 ## 需求邊界
 
