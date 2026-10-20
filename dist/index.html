@@ -199,6 +199,12 @@
     .data-action strong { font-size: 13px; }
     .data-action small { color: var(--muted); font-size: 11px; }
     .data-status { min-height: 18px; }
+    .server-status { display:flex; align-items:center; gap:7px; color:var(--muted); font-size:11px; }
+    .server-status::before { content:""; width:7px; height:7px; border-radius:50%; background:var(--teal); }
+    .server-status.offline::before { background:#b45309; }
+    .guest-note { margin:0 0 18px; padding:11px 14px; border:1px solid #cfe4e0; border-radius:11px; background:#f0faf6; color:#17665d; font-size:12px; }
+    .login-modal { width:min(430px,100%); }
+    .login-help { padding:0 23px 18px; color:var(--muted); font-size:12px; line-height:1.7; }
     .similar-intro { padding: 22px 23px; margin-bottom: 18px; display:flex; align-items:flex-start; justify-content:space-between; gap:20px; }
     .similar-intro h2 { margin:0; font-size:19px; }
     .similar-intro p { margin:6px 0 0; color:var(--muted); font-size:13px; line-height:1.7; }
@@ -330,7 +336,7 @@
       <nav class="nav-section" aria-label="主要導覽">
         <div class="nav-label">工作區</div>
         <button class="nav-item active" data-view="overview"><span class="nav-icon">▦</span><span>案件總覽</span><span class="nav-count">24</span></button>
-        <button class="nav-item" data-action="new-case"><span class="nav-icon">＋</span><span>新增案件</span></button>
+        <button class="nav-item admin-only" data-action="new-case"><span class="nav-icon">＋</span><span>新增案件</span></button>
         <button class="nav-item" data-view="similar"><span class="nav-icon">⌕</span><span>同類型問題</span></button>
       </nav>
       <nav class="nav-section" aria-label="管理功能">
@@ -348,12 +354,14 @@
     <main class="main">
       <header class="topbar">
         <div><div class="eyebrow" id="pageEyebrow">SERVICE DESK · 2026.10.20</div><h1 id="pageTitle">案件總覽</h1></div>
-        <div class="top-actions"><button class="icon-btn" title="通知">♧</button><button class="outline-btn" id="openDataModal" type="button">資料備份</button><button class="primary-btn" id="openModal"><span class="plus">＋</span>新增案件</button></div>
+        <div class="top-actions"><span class="server-status" id="serverStatus">連線中</span><span class="field-hint" id="identityLabel">訪客瀏覽</span><button class="outline-btn" id="loginButton" type="button">管理者登入</button><button class="outline-btn" id="logoutButton" type="button" hidden>登出</button><button class="outline-btn admin-only" id="openDataModal" type="button">資料備份</button><button class="primary-btn admin-only" id="openModal"><span class="plus">＋</span>新增案件</button></div>
       </header>
+
+      <div class="guest-note" id="guestNote">目前為訪客唯讀模式。可查看、搜尋、篩選與列印案件；需要修改資料時請由管理者登入。</div>
 
       <div id="overviewView">
       <section class="metrics" aria-label="案件統計">
-        <div class="metric"><div class="metric-label">案件總數</div><div class="metric-value" id="metricTotal">0</div><div class="metric-note">目前瀏覽器保存的案件</div></div>
+        <div class="metric"><div class="metric-label">案件總數</div><div class="metric-value" id="metricTotal">0</div><div class="metric-note">目前共用資料庫的案件</div></div>
         <div class="metric"><div class="metric-label">處理中與待處理</div><div class="metric-value" id="metricActive">0</div><div class="metric-note">包含等待客戶或零件</div></div>
         <div class="metric"><div class="metric-label">待確認</div><div class="metric-value" id="metricPending">0</div><div class="metric-note">等待客戶或主管確認</div></div>
         <div class="metric"><div class="metric-label">已結案</div><div class="metric-value" id="metricClosed">0</div><div class="metric-note">已完成服務紀錄</div></div>
@@ -384,7 +392,7 @@
       <div id="similarIssuesView" class="view" hidden>
         <section class="panel similar-intro">
           <div><h2>從歷史案件找到可複用的處理經驗</h2><p>用問題類別、機台型號、關鍵字或零件縮小範圍，快速查看過往故障描述與處理方式。</p></div>
-          <div class="similar-intro-badge">資料來源：目前瀏覽器案件</div>
+          <div class="similar-intro-badge">資料來源：共用資料庫</div>
         </section>
         <div class="similar-layout">
           <section class="panel similar-main">
@@ -413,7 +421,7 @@
       <div id="categoryView" class="view" hidden>
         <div class="workspace">
           <section class="panel">
-            <div class="category-toolbar"><div><h2>問題類別</h2><p>整理案件分類，讓新增案件與歷史搜尋使用同一份清單。</p></div><button class="primary-btn" id="openCategoryModal" type="button"><span class="plus">＋</span>新增類別</button></div>
+            <div class="category-toolbar"><div><h2>問題類別</h2><p>整理案件分類，讓新增案件與歷史搜尋使用同一份清單。</p></div><button class="primary-btn admin-only" id="openCategoryModal" type="button"><span class="plus">＋</span>新增類別</button></div>
             <div class="category-filters"><div class="search-box"><span>⌕</span><input id="categorySearch" type="search" placeholder="搜尋類別名稱或分類群組" /></div><select class="select" id="categoryStatusFilter"><option value="all">全部狀態</option><option value="pending">待確認</option><option value="active">已確認</option></select></div>
             <div class="table-wrap"><table class="category-table"><thead><tr><th>類別名稱</th><th>分類群組</th><th>使用案件</th><th>狀態</th><th>操作</th></tr></thead><tbody id="categoryRows"></tbody></table></div>
             <div class="table-footer"><span id="categoryResultCount">顯示 0 個類別</span><span>資料會同步套用到新增案件與同類型問題。</span></div>
@@ -425,7 +433,7 @@
       <div id="partsView" class="view" hidden>
         <div class="workspace">
           <section class="panel">
-            <div class="category-toolbar"><div><h2>零件清單</h2><p>維護常用零件主檔，讓案件記錄與歷史搜尋使用一致的料號和名稱。</p></div><button class="primary-btn" id="openPartModal" type="button"><span class="plus">＋</span>新增零件</button></div>
+            <div class="category-toolbar"><div><h2>零件清單</h2><p>維護常用零件主檔，讓案件記錄與歷史搜尋使用一致的料號和名稱。</p></div><button class="primary-btn admin-only" id="openPartModal" type="button"><span class="plus">＋</span>新增零件</button></div>
             <div class="category-filters"><div class="search-box"><span>⌕</span><input id="partSearch" type="search" placeholder="搜尋料號、零件名稱或備註" /></div><select class="select" id="partStatusFilter"><option value="all">全部狀態</option><option value="active">啟用</option><option value="inactive">停用</option></select></div>
             <div class="table-wrap"><table class="part-table"><thead><tr><th>料號</th><th>零件名稱</th><th>常用處理方式</th><th>使用案件</th><th>狀態</th><th>操作</th></tr></thead><tbody id="partRows"></tbody></table></div>
             <div class="table-footer"><span id="partResultCount">顯示 0 筆零件</span><span>啟用中的零件會出現在案件表單輸入提示。</span></div>
@@ -437,8 +445,8 @@
       <div id="mastersView" class="view" hidden>
         <div class="panel master-intro">維護常用客戶聯絡資料與機台型號。案件會保存建立當時的資料，日後修改主檔不會改動既有案件。</div>
         <div class="master-grid">
-          <section class="panel"><div class="category-toolbar"><div><h2>客戶清單</h2><p>選取客戶時帶入常用聯絡資料。</p></div><button class="primary-btn" id="newCustomer" type="button">＋ 新增客戶</button></div><div class="category-filters"><div class="search-box"><span>⌕</span><input id="customerSearch" type="search" aria-label="搜尋客戶" placeholder="搜尋客戶名稱或聯絡人" /></div></div><div class="table-wrap"><table class="master-table"><thead><tr><th>客戶</th><th>常用聯絡資料</th><th>案件</th><th>操作</th></tr></thead><tbody id="customerRows"></tbody></table></div><div class="table-footer" id="customerCount"></div></section>
-          <section class="panel"><div class="category-toolbar"><div><h2>機型清單</h2><p>統一機台型號的寫法。</p></div><button class="primary-btn" id="newMachine" type="button">＋ 新增機型</button></div><div class="category-filters"><div class="search-box"><span>⌕</span><input id="machineSearch" type="search" aria-label="搜尋機型" placeholder="搜尋機型或備註" /></div></div><div class="table-wrap"><table class="master-table"><thead><tr><th>機台型號</th><th>備註</th><th>案件</th><th>操作</th></tr></thead><tbody id="machineRows"></tbody></table></div><div class="table-footer" id="machineCount"></div></section>
+          <section class="panel"><div class="category-toolbar"><div><h2>客戶清單</h2><p>選取客戶時帶入常用聯絡資料。</p></div><button class="primary-btn admin-only" id="newCustomer" type="button">＋ 新增客戶</button></div><div class="category-filters"><div class="search-box"><span>⌕</span><input id="customerSearch" type="search" aria-label="搜尋客戶" placeholder="搜尋客戶名稱或聯絡人" /></div></div><div class="table-wrap"><table class="master-table"><thead><tr><th>客戶</th><th>常用聯絡資料</th><th>案件</th><th>操作</th></tr></thead><tbody id="customerRows"></tbody></table></div><div class="table-footer" id="customerCount"></div></section>
+          <section class="panel"><div class="category-toolbar"><div><h2>機型清單</h2><p>統一機台型號的寫法。</p></div><button class="primary-btn admin-only" id="newMachine" type="button">＋ 新增機型</button></div><div class="category-filters"><div class="search-box"><span>⌕</span><input id="machineSearch" type="search" aria-label="搜尋機型" placeholder="搜尋機型或備註" /></div></div><div class="table-wrap"><table class="master-table"><thead><tr><th>機台型號</th><th>備註</th><th>案件</th><th>操作</th></tr></thead><tbody id="machineRows"></tbody></table></div><div class="table-footer" id="machineCount"></div></section>
         </div>
       </div>
     </main>
@@ -472,7 +480,7 @@
     </div>
   </div>
 
-  <div class="modal-backdrop" id="detailBackdrop" role="dialog" aria-modal="true" aria-labelledby="detailTitle"><div class="modal"><div class="modal-head"><div><h2 id="detailTitle">案件詳細資料</h2><div class="field-hint" id="detailCaseNo"></div></div><button class="close" id="closeDetail" aria-label="關閉">×</button></div><div class="detail-content" id="detailContent"></div><div class="form-actions"><select class="detail-status" id="detailStatus" aria-label="更新案件狀態"><option value="new">新建</option><option value="processing">處理中</option><option value="waitingCustomer">等待客戶</option><option value="waiting">等待零件</option><option value="pending">待確認</option><option value="closed">已結案</option><option value="void">作廢</option></select><button class="outline-btn danger-btn detail-delete" id="deleteCase" type="button">刪除案件</button><button class="outline-btn" id="printCase" type="button">列印案件</button><button class="outline-btn" id="editCase" type="button">編輯案件</button><button class="primary-btn" id="doneDetail" type="button">完成</button></div></div></div>
+  <div class="modal-backdrop" id="detailBackdrop" role="dialog" aria-modal="true" aria-labelledby="detailTitle"><div class="modal"><div class="modal-head"><div><h2 id="detailTitle">案件詳細資料</h2><div class="field-hint" id="detailCaseNo"></div></div><button class="close" id="closeDetail" aria-label="關閉">×</button></div><div class="detail-content" id="detailContent"></div><div class="form-actions"><select class="detail-status admin-only detail-status" id="detailStatus" aria-label="更新案件狀態"><option value="new">新建</option><option value="processing">處理中</option><option value="waitingCustomer">等待客戶</option><option value="waiting">等待零件</option><option value="pending">待確認</option><option value="closed">已結案</option><option value="void">作廢</option></select><button class="outline-btn danger-btn detail-delete admin-only" id="deleteCase" type="button">刪除案件</button><button class="outline-btn" id="printCase" type="button">列印案件</button><button class="outline-btn admin-only" id="editCase" type="button">編輯案件</button><button class="primary-btn" id="doneDetail" type="button">完成</button></div></div></div>
 
   <div class="modal-backdrop" id="printBackdrop" role="dialog" aria-modal="true" aria-labelledby="printTitle"><div class="print-modal"><div class="print-header"><div><div class="print-brand">AFTER SERVICE DESK</div><h2 id="printTitle">售服案件服務紀錄</h2></div><div class="print-header-meta" id="printHeaderMeta"></div></div><div class="print-content" id="printContent"></div><div class="form-actions print-actions"><button class="outline-btn" id="closePrint" type="button">返回案件</button><button class="primary-btn" id="confirmPrint" type="button">列印</button></div></div></div>
 
@@ -483,38 +491,19 @@
   <div class="modal-backdrop" id="customerModal" role="dialog" aria-modal="true" aria-labelledby="customerModalTitle"><div class="modal"><div class="modal-head"><h2 id="customerModalTitle">新增客戶</h2><button class="close" id="closeCustomerModal" aria-label="關閉">×</button></div><form id="customerForm"><div class="form-grid"><div class="field full"><label for="masterCustomerName">客戶名稱 *</label><input id="masterCustomerName" required /></div><div class="field"><label for="masterContact">常用聯絡人</label><input id="masterContact" /></div><div class="field"><label for="masterPhone">電話</label><input id="masterPhone" type="tel" /></div><div class="field full"><label for="masterAddress">服務地址</label><input id="masterAddress" /></div></div><div class="form-actions"><button class="outline-btn" type="button" id="cancelCustomerModal">取消</button><button class="primary-btn" type="submit" id="saveCustomer">新增客戶</button></div></form></div></div>
   <div class="modal-backdrop" id="machineModal" role="dialog" aria-modal="true" aria-labelledby="machineModalTitle"><div class="modal"><div class="modal-head"><h2 id="machineModalTitle">新增機型</h2><button class="close" id="closeMachineModal" aria-label="關閉">×</button></div><form id="machineForm"><div class="form-grid"><div class="field full"><label for="masterMachineName">機台型號 *</label><input id="masterMachineName" required /></div><div class="field full"><label for="masterMachineNote">備註</label><input id="masterMachineNote" placeholder="例如：適用系列" /></div></div><div class="form-actions"><button class="outline-btn" type="button" id="cancelMachineModal">取消</button><button class="primary-btn" type="submit" id="saveMachine">新增機型</button></div></form></div></div>
 
-  <div class="modal-backdrop" id="dataModal" role="dialog" aria-modal="true" aria-labelledby="dataModalTitle"><div class="modal data-modal"><div class="modal-head"><div><h2 id="dataModalTitle">資料備份與還原</h2><div class="field-hint">管理目前瀏覽器保存的售服資料</div></div><button class="close" id="closeDataModal" aria-label="關閉">×</button></div><div class="data-modal-content"><p>備份檔會包含案件、問題類別、零件、客戶與機型資料。還原會覆蓋目前瀏覽器中的資料，請先確認已備份最新資料。</p><div class="data-actions"><button class="outline-btn data-action" id="downloadBackup" type="button"><strong>下載備份檔</strong><small>保存目前全部資料</small></button><button class="outline-btn data-action" id="selectRestore" type="button"><strong>從備份還原</strong><small>選擇 JSON 備份檔</small></button></div><input id="restoreFile" type="file" accept=".json,application/json" hidden /><div class="field-hint data-status" id="dataStatus" role="status"></div></div></div></div>
+  <div class="modal-backdrop" id="dataModal" role="dialog" aria-modal="true" aria-labelledby="dataModalTitle"><div class="modal data-modal"><div class="modal-head"><div><h2 id="dataModalTitle">資料備份與還原</h2><div class="field-hint">管理共用資料庫的售服資料</div></div><button class="close" id="closeDataModal" aria-label="關閉">×</button></div><div class="data-modal-content"><p>備份檔會包含案件、問題類別、零件、客戶與機型資料。還原會先建立伺服器資料庫備份，再以交易方式覆蓋共用資料。</p><div class="data-actions"><button class="outline-btn data-action" id="downloadBackup" type="button"><strong>下載備份檔</strong><small>保存目前全部資料</small></button><button class="outline-btn data-action" id="selectRestore" type="button"><strong>從備份還原</strong><small>選擇 JSON 備份檔</small></button></div><input id="restoreFile" type="file" accept=".json,application/json" hidden /><div class="field-hint data-status" id="dataStatus" role="status"></div></div></div></div>
+
+  <div class="modal-backdrop" id="loginBackdrop" role="dialog" aria-modal="true" aria-labelledby="loginTitle"><div class="modal login-modal"><div class="modal-head"><div><h2 id="loginTitle">管理者登入</h2><div class="field-hint">登入後才能新增、修改、刪除或還原資料</div></div><button class="close" id="closeLogin" aria-label="關閉">×</button></div><form id="loginForm"><div class="form-grid"><div class="field full"><label for="adminPassword">管理者密碼</label><input id="adminPassword" type="password" autocomplete="current-password" required /></div></div><div class="login-help" id="loginStatus" role="status"></div><div class="form-actions"><button type="button" class="outline-btn" id="cancelLogin">取消</button><button type="submit" class="primary-btn">登入</button></div></form></div></div>
 
   <script>
-    const storageKey = 'service-desk-cases-v1';
-    const categoryStorageKey = 'service-desk-categories-v1';
-    const partStorageKey = 'service-desk-parts-v1';
-    const customerStorageKey = 'service-desk-customers-v1';
-    const machineStorageKey = 'service-desk-machines-v1';
-    const initialCases = [
-      {id:'SV-20261018-021', customer:'台灣精工', machine:'MX-420', address:'台中廠', contact:'王先生', phone:'04-2380-1200', warranty:'', reportDate:'2026-10-18', serviceDate:'2026-10-20', owner:'陳柏翰', status:'processing', categories:['主軸','異音'], description:'加工時主軸出現間歇性異音，轉速提高後聲音變明顯。', handling:'已完成初步聽音與振動檢查，安排進一步確認軸承狀況。', parts:[], updated:'2026-10-20T09:42:00'},
-      {id:'SV-20261017-019', customer:'富利機械', machine:'VM-800', address:'新竹廠', contact:'林小姐', phone:'03-577-8200', warranty:'', reportDate:'2026-10-17', serviceDate:'2026-10-19', owner:'林怡君', status:'waiting', categories:['電磁閥'], description:'工作台夾持油壓不穩，檢查發現電磁閥反應異常。', handling:'已確認需更換電磁閥，等待零件到貨後安排回訪。', parts:[{name:'電磁閥',sku:'SV-24A',method:'更換',quantity:1,state:'待處理'}], updated:'2026-10-20T08:16:00'},
-      {id:'SV-20261016-017', customer:'銓盛科技', machine:'AX-300', address:'桃園廠', contact:'張先生', phone:'03-451-6020', warranty:'', reportDate:'2026-10-16', serviceDate:'2026-10-19', owner:'陳柏翰', status:'pending', categories:['精度','背隙'], description:'客戶反映加工尺寸偏差，需確認軸向背隙。', handling:'已完成精度檢查與調整，等待客戶試切確認。', parts:[], updated:'2026-10-19T17:38:00'},
-      {id:'SV-20261020-024', customer:'宏偉自動化', machine:'QL-550', address:'台南廠', contact:'陳小姐', phone:'06-384-1100', warranty:'', reportDate:'2026-10-20', serviceDate:'', owner:'林怡君', status:'new', categories:['機電'], description:'設備啟動時偶發無法完成回原點。', handling:'', parts:[], updated:'2026-10-20T11:06:00'},
-      {id:'SV-20261015-014', customer:'奕達工業', machine:'TX-210', address:'台中廠', contact:'劉先生', phone:'04-2358-9900', warranty:'', reportDate:'2026-10-15', serviceDate:'2026-10-18', owner:'林怡君', status:'processing', categories:['編碼器','馬達'], description:'機台運轉中出現位置回授不穩定。', handling:'已檢查編碼器接頭與訊號線，目前持續觀察。', parts:[], updated:'2026-10-18T14:22:00'}
-    ];
-    const initialCategories = [
-      {name:'電磁閥',group:'液壓／氣壓'}, {name:'機電',group:'電氣／控制'}, {name:'主軸',group:'機械'},
-      {name:'背隙',group:'精度'}, {name:'馬達',group:'電氣／控制'}, {name:'編碼器',group:'電氣／控制'},
-      {name:'剎車',group:'機械'}, {name:'異音',group:'機械'}, {name:'漏油',group:'液壓／氣壓'}
-    ];
-    const initialParts = [
-      {sku:'SV-24A',name:'電磁閥',method:'更換',note:'夾持油壓系統常用',active:true}
-    ];
     const statusLabels = {new:'新建',processing:'處理中',waitingCustomer:'等待客戶',waiting:'等待零件',pending:'待確認',closed:'已結案',void:'作廢'};
     const statusClasses = {new:'new',processing:'processing',waitingCustomer:'waiting',waiting:'waiting',pending:'pending',closed:'pending',void:'new'};
-    const loadData = (key, fallback) => { try { const value = JSON.parse(localStorage.getItem(key)); return Array.isArray(value) ? value : fallback; } catch { return fallback; } };
-    let cases = loadData(storageKey, initialCases);
-    let categories = loadData(categoryStorageKey, initialCategories);
-    let parts = loadData(partStorageKey, initialParts);
-    const uniqueByName = (items, key) => items.filter((item,index) => item[key] && items.findIndex(other => other[key]?.toLocaleLowerCase() === item[key].toLocaleLowerCase()) === index);
-    let customers = loadData(customerStorageKey, uniqueByName(cases.map(item=>({name:item.customer,contact:item.contact||'',phone:item.phone||'',address:item.address||''})), 'name'));
-    let machines = loadData(machineStorageKey, uniqueByName(cases.map(item=>({name:item.machine,note:''})), 'name'));
+    let isAdmin = false;
+    let cases = [];
+    let categories = [];
+    let parts = [];
+    let customers = [];
+    let machines = [];
     let editingId = null;
     let selectedCustomer = null;
     let activeDetailId = null;
@@ -561,6 +550,12 @@
     const dataModal = document.getElementById('dataModal');
     const restoreFile = document.getElementById('restoreFile');
     const dataStatus = document.getElementById('dataStatus');
+    const serverStatus = document.getElementById('serverStatus');
+    const identityLabel = document.getElementById('identityLabel');
+    const guestNote = document.getElementById('guestNote');
+    const loginBackdrop = document.getElementById('loginBackdrop');
+    const loginForm = document.getElementById('loginForm');
+    const loginStatus = document.getElementById('loginStatus');
     let editingCustomerName = null;
     let editingMachineName = null;
     const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
@@ -574,23 +569,54 @@
       if (Number.isNaN(date.getTime())) return '—';
       return `${formatDate(value)} ${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}`;
     };
-    const persist = () => {
-      try { localStorage.setItem(storageKey, JSON.stringify(cases)); localStorage.setItem(categoryStorageKey, JSON.stringify(categories)); localStorage.setItem(partStorageKey, JSON.stringify(parts)); localStorage.setItem(customerStorageKey, JSON.stringify(customers)); localStorage.setItem(machineStorageKey, JSON.stringify(machines)); }
-      catch { alert('瀏覽器無法儲存資料，請確認目前瀏覽器允許本機儲存。'); }
+    const apiRequest = async (url, options = {}) => {
+      const response = await fetch(url, {credentials:'same-origin', headers:{'Content-Type':'application/json', ...(options.headers||{})}, ...options});
+      const payload = await response.json().catch(()=>({}));
+      if (!response.ok) throw new Error(payload.error || `伺服器錯誤（${response.status}）`);
+      return payload;
     };
-    const createBackup = () => ({format:'service-desk-backup',version:1,exportedAt:new Date().toISOString(),data:{cases,categories,parts,customers,machines}});
+    const applyState = state => { cases=state.cases||[]; categories=state.categories||[]; parts=state.parts||[]; customers=state.customers||[]; machines=state.machines||[]; };
+    async function loadState() {
+      try {
+        const session = await apiRequest('/api/session', {method:'GET', headers:{}});
+        isAdmin = session.role === 'admin';
+        const result = await apiRequest('/api/state', {method:'GET', headers:{}});
+        applyState(result.data);
+        serverStatus.textContent = '伺服器已連線';
+        serverStatus.classList.remove('offline');
+        updatePermissions();
+        renderSimilarFilterOptions(); renderPartOptions(); renderCases();
+      } catch (error) {
+        serverStatus.textContent = '無法連線'; serverStatus.classList.add('offline');
+        document.getElementById('caseRows').innerHTML = `<tr><td class="empty-row" colspan="6">無法載入共用資料，請確認伺服器正在執行。</td></tr>`;
+        guestNote.textContent = error.message || '無法連線到售服伺服器。';
+      }
+    }
+    const persist = async () => {
+      if (!isAdmin) { alert('目前為訪客唯讀模式，請先登入管理者帳號。'); return false; }
+      try { await apiRequest('/api/state', {method:'PUT', body:JSON.stringify({cases,categories,parts,customers,machines})}); return true; }
+      catch (error) { alert(error.message || '資料儲存失敗。'); await loadState(); return false; }
+    };
     const setDataStatus = message => { dataStatus.textContent = message; };
+    function updatePermissions() {
+      document.querySelectorAll('.admin-only').forEach(element => { element.hidden = !isAdmin; });
+      identityLabel.textContent = isAdmin ? '管理者' : '訪客瀏覽';
+      document.getElementById('loginButton').hidden = isAdmin;
+      document.getElementById('logoutButton').hidden = !isAdmin;
+      guestNote.hidden = isAdmin;
+    }
+    async function loginAdmin(password) {
+      const result = await apiRequest('/api/login', {method:'POST', body:JSON.stringify({password})});
+      isAdmin = result.role === 'admin';
+      updatePermissions();
+      await loadState();
+    }
+    async function logoutAdmin() {
+      await apiRequest('/api/logout', {method:'POST', body:'{}'});
+      isAdmin = false; updatePermissions(); await loadState();
+    }
     function downloadBackup() {
-      const blob = new Blob([JSON.stringify(createBackup(), null, 2)], {type:'application/json'});
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `售服系統備份-${new Date().toISOString().slice(0,10)}.json`;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      URL.revokeObjectURL(url);
-      setDataStatus('備份檔已下載，請妥善保存。');
+      const link = document.createElement('a'); link.href = '/api/backup'; link.download = `售服系統備份-${new Date().toISOString().slice(0,10)}.json`; document.body.appendChild(link); link.click(); link.remove(); setDataStatus('備份檔已下載，伺服器也已建立資料庫快照。');
     }
     function validateBackup(payload) {
       const data = payload?.data;
@@ -603,12 +629,8 @@
         const data = validateBackup(JSON.parse(await file.text()));
         const summary = `案件 ${data.cases.length} 筆、類別 ${data.categories.length} 個、零件 ${data.parts.length} 筆、客戶 ${data.customers.length} 位、機型 ${data.machines.length} 種`;
         if (!confirm(`確定要還原這份備份嗎？\n\n${summary}\n\n還原後會覆蓋目前資料。`)) return;
-        cases = data.cases;
-        categories = data.categories;
-        parts = data.parts;
-        customers = data.customers;
-        machines = data.machines;
-        persist();
+        await apiRequest('/api/restore', {method:'POST', body:JSON.stringify({format:'service-desk-backup',version:1,data})});
+        applyState(data);
         renderSimilarFilterOptions();
         renderPartOptions();
         renderCases();
@@ -708,8 +730,8 @@
       });
       categoryRows.innerHTML = visibleCategories.length ? visibleCategories.map(category => {
         const usage = cases.filter(item=>(item.categories||[]).includes(category.name)).length;
-        const confirmButton = category.pending ? `<button class="outline-btn" type="button" data-confirm-category="${escapeHtml(category.name)}">確認</button>` : '';
-        return `<tr><td><span class="category-name">${escapeHtml(category.name)}</span></td><td><span class="category-group">${escapeHtml(category.group||'待確認')}</span></td><td>${usage} 件</td><td><span class="tag ${category.pending?'waiting':'processing'}">${category.pending?'待確認':'已確認'}</span></td><td><div class="category-actions"><button class="outline-btn" type="button" data-edit-category="${escapeHtml(category.name)}">編輯</button>${confirmButton}<button class="outline-btn danger-btn" type="button" data-delete-category="${escapeHtml(category.name)}">刪除</button></div></td></tr>`;
+        const actions = isAdmin ? `<button class="outline-btn" type="button" data-edit-category="${escapeHtml(category.name)}">編輯</button>${category.pending ? `<button class="outline-btn" type="button" data-confirm-category="${escapeHtml(category.name)}">確認</button>` : ''}<button class="outline-btn danger-btn" type="button" data-delete-category="${escapeHtml(category.name)}">刪除</button>` : '<span class="field-hint">唯讀</span>';
+        return `<tr><td><span class="category-name">${escapeHtml(category.name)}</span></td><td><span class="category-group">${escapeHtml(category.group||'待確認')}</span></td><td>${usage} 件</td><td><span class="tag ${category.pending?'waiting':'processing'}">${category.pending?'待確認':'已確認'}</span></td><td><div class="category-actions">${actions}</div></td></tr>`;
       }).join('') : '<tr><td class="category-empty" colspan="5">沒有符合條件的問題類別。</td></tr>';
       const pendingCount = categories.filter(category=>category.pending).length;
       document.getElementById('categoryResultCount').textContent = `顯示 ${visibleCategories.length} / ${categories.length} 個類別`;
@@ -733,7 +755,8 @@
       });
       partRows.innerHTML = visibleParts.length ? visibleParts.map(part => {
         const usage = cases.filter(item=>(item.parts||[]).some(entry=>entry.sku===part.sku || entry.name===part.name)).length;
-        return `<tr><td><span class="part-sku">${escapeHtml(part.sku)}</span></td><td><span class="part-name">${escapeHtml(part.name)}</span>${part.note?`<span class="part-note">${escapeHtml(part.note)}</span>`:''}</td><td>${escapeHtml(part.method||'待確認')}</td><td>${usage} 件</td><td><span class="tag ${part.active===false?'new':'processing'}">${part.active===false?'停用':'啟用'}</span></td><td><div class="category-actions"><button class="outline-btn" type="button" data-edit-part="${escapeHtml(part.sku)}">編輯</button><button class="outline-btn" type="button" data-toggle-part="${escapeHtml(part.sku)}">${part.active===false?'啟用':'停用'}</button><button class="outline-btn danger-btn" type="button" data-delete-part="${escapeHtml(part.sku)}">刪除</button></div></td></tr>`;
+        const actions = isAdmin ? `<button class="outline-btn" type="button" data-edit-part="${escapeHtml(part.sku)}">編輯</button><button class="outline-btn" type="button" data-toggle-part="${escapeHtml(part.sku)}">${part.active===false?'啟用':'停用'}</button><button class="outline-btn danger-btn" type="button" data-delete-part="${escapeHtml(part.sku)}">刪除</button>` : '<span class="field-hint">唯讀</span>';
+        return `<tr><td><span class="part-sku">${escapeHtml(part.sku)}</span></td><td><span class="part-name">${escapeHtml(part.name)}</span>${part.note?`<span class="part-note">${escapeHtml(part.note)}</span>`:''}</td><td>${escapeHtml(part.method||'待確認')}</td><td>${usage} 件</td><td><span class="tag ${part.active===false?'new':'processing'}">${part.active===false?'停用':'啟用'}</span></td><td><div class="category-actions">${actions}</div></td></tr>`;
       }).join('') : '<tr><td class="category-empty" colspan="6">沒有符合條件的零件。</td></tr>';
       const activeCount = parts.filter(part=>part.active !== false).length;
       document.getElementById('partResultCount').textContent = `顯示 ${visibleParts.length} / ${parts.length} 筆零件`;
@@ -747,11 +770,13 @@
       const shownMachines = machines.filter(item=>`${item.name} ${item.note||''}`.toLocaleLowerCase().includes(machineTerm));
       customerRows.innerHTML = shownCustomers.length ? shownCustomers.map(item=>{
         const count = cases.filter(entry=>entry.customer?.toLocaleLowerCase()===item.name.toLocaleLowerCase()).length;
-        return `<tr><td><span class="client">${escapeHtml(item.name)}</span><small>${escapeHtml(item.address||'未填地址')}</small></td><td>${escapeHtml(item.contact||'—')}<small>${escapeHtml(item.phone||'—')}</small></td><td>${count} 件</td><td><div class="category-actions"><button class="outline-btn" type="button" data-edit-customer="${escapeHtml(item.name)}">編輯</button><button class="outline-btn danger-btn" type="button" data-delete-customer="${escapeHtml(item.name)}">刪除</button></div></td></tr>`;
+        const actions = isAdmin ? `<button class="outline-btn" type="button" data-edit-customer="${escapeHtml(item.name)}">編輯</button><button class="outline-btn danger-btn" type="button" data-delete-customer="${escapeHtml(item.name)}">刪除</button>` : '<span class="field-hint">唯讀</span>';
+        return `<tr><td><span class="client">${escapeHtml(item.name)}</span><small>${escapeHtml(item.address||'未填地址')}</small></td><td>${escapeHtml(item.contact||'—')}<small>${escapeHtml(item.phone||'—')}</small></td><td>${count} 件</td><td><div class="category-actions">${actions}</div></td></tr>`;
       }).join('') : '<tr><td class="empty-row" colspan="4">沒有符合條件的客戶。</td></tr>';
       machineRows.innerHTML = shownMachines.length ? shownMachines.map(item=>{
         const count = cases.filter(entry=>entry.machine?.toLocaleLowerCase()===item.name.toLocaleLowerCase()).length;
-        return `<tr><td><span class="client">${escapeHtml(item.name)}</span></td><td>${escapeHtml(item.note||'—')}</td><td>${count} 件</td><td><div class="category-actions"><button class="outline-btn" type="button" data-edit-machine="${escapeHtml(item.name)}">編輯</button><button class="outline-btn danger-btn" type="button" data-delete-machine="${escapeHtml(item.name)}">刪除</button></div></td></tr>`;
+        const actions = isAdmin ? `<button class="outline-btn" type="button" data-edit-machine="${escapeHtml(item.name)}">編輯</button><button class="outline-btn danger-btn" type="button" data-delete-machine="${escapeHtml(item.name)}">刪除</button>` : '<span class="field-hint">唯讀</span>';
+        return `<tr><td><span class="client">${escapeHtml(item.name)}</span></td><td>${escapeHtml(item.note||'—')}</td><td>${count} 件</td><td><div class="category-actions">${actions}</div></td></tr>`;
       }).join('') : '<tr><td class="empty-row" colspan="4">沒有符合條件的機型。</td></tr>';
       document.getElementById('customerCount').textContent = `顯示 ${shownCustomers.length} / ${customers.length} 位客戶`;
       document.getElementById('machineCount').textContent = `顯示 ${shownMachines.length} / ${machines.length} 種機型`;
@@ -892,6 +917,12 @@
     }
     document.getElementById('openModal').addEventListener('click', () => openForm());
     document.querySelector('[data-action="new-case"]').addEventListener('click', () => openForm());
+    document.getElementById('loginButton').addEventListener('click',()=>{loginStatus.textContent='';loginForm.reset();loginBackdrop.classList.add('open');document.getElementById('adminPassword').focus();});
+    document.getElementById('logoutButton').addEventListener('click',()=>logoutAdmin().catch(error=>alert(error.message)));
+    document.getElementById('closeLogin').addEventListener('click',()=>loginBackdrop.classList.remove('open'));
+    document.getElementById('cancelLogin').addEventListener('click',()=>loginBackdrop.classList.remove('open'));
+    loginBackdrop.addEventListener('click',event=>{if(event.target===loginBackdrop) loginBackdrop.classList.remove('open');});
+    loginForm.addEventListener('submit',async event=>{event.preventDefault();loginStatus.textContent='登入中…';try{await loginAdmin(document.getElementById('adminPassword').value);loginBackdrop.classList.remove('open');}catch(error){loginStatus.textContent=error.message||'登入失敗。';}});
     document.querySelectorAll('.nav-item[data-view]').forEach(button=>button.addEventListener('click',()=>switchView(button.dataset.view)));
     document.getElementById('openDataModal').addEventListener('click',()=>{setDataStatus('');dataModal.classList.add('open');});
     document.getElementById('closeDataModal').addEventListener('click',()=>dataModal.classList.remove('open'));
@@ -1123,7 +1154,7 @@
     });
     document.getElementById('editCase').addEventListener('click',()=>{const id=activeDetailId;detailBackdrop.classList.remove('open');openForm(id);});
     document.getElementById('detailStatus').addEventListener('change',event=>{const item=cases.find(entry=>entry.id===activeDetailId);if(!item)return;item.status=event.target.value;item.updated=new Date().toISOString();persist();renderCases();openDetail(item.id);});
-    document.addEventListener('keydown', event => { if(event.key==='Escape'){modal.classList.remove('open');detailBackdrop.classList.remove('open');printBackdrop.classList.remove('open');categoryModal.classList.remove('open');partModal.classList.remove('open');customerModal.classList.remove('open');machineModal.classList.remove('open');dataModal.classList.remove('open');} });
+    document.addEventListener('keydown', event => { if(event.key==='Escape'){modal.classList.remove('open');detailBackdrop.classList.remove('open');printBackdrop.classList.remove('open');categoryModal.classList.remove('open');partModal.classList.remove('open');customerModal.classList.remove('open');machineModal.classList.remove('open');dataModal.classList.remove('open');loginBackdrop.classList.remove('open');} });
     pendingReminderList.addEventListener('click',event=>{
       const button = event.target.closest('[data-reminder-status]');
       if (!button) return;
@@ -1150,6 +1181,8 @@
     renderSimilarFilterOptions();
     renderPartOptions();
     renderCases();
+    updatePermissions();
+    loadState();
   </script>
 </body>
 </html>
