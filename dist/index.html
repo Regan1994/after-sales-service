@@ -192,6 +192,14 @@
     .detail-status { max-width:210px; }
     .empty-row { padding:30px!important; text-align:center; color:var(--muted); }
     .view[hidden] { display: none; }
+    .data-modal { width: min(540px, 100%); }
+    .data-modal-content { padding: 22px 23px; display: grid; gap: 16px; }
+    .data-modal-content p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.7; }
+    .data-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .data-action { min-height: 76px; display: grid; place-items: center; gap: 4px; text-align: center; }
+    .data-action strong { font-size: 13px; }
+    .data-action small { color: var(--muted); font-size: 11px; }
+    .data-status { min-height: 18px; }
     .similar-intro { padding: 22px 23px; margin-bottom: 18px; display:flex; align-items:flex-start; justify-content:space-between; gap:20px; }
     .similar-intro h2 { margin:0; font-size:19px; }
     .similar-intro p { margin:6px 0 0; color:var(--muted); font-size:13px; line-height:1.7; }
@@ -339,7 +347,7 @@
     <main class="main">
       <header class="topbar">
         <div><div class="eyebrow" id="pageEyebrow">SERVICE DESK · 2026.10.20</div><h1 id="pageTitle">案件總覽</h1></div>
-        <div class="top-actions"><button class="icon-btn" title="通知">♧</button><button class="outline-btn">本週報表　⌄</button><button class="primary-btn" id="openModal"><span class="plus">＋</span>新增案件</button></div>
+        <div class="top-actions"><button class="icon-btn" title="通知">♧</button><button class="outline-btn" id="openDataModal" type="button">資料備份</button><button class="primary-btn" id="openModal"><span class="plus">＋</span>新增案件</button></div>
       </header>
 
       <div id="overviewView">
@@ -475,6 +483,8 @@
   <div class="modal-backdrop" id="customerModal" role="dialog" aria-modal="true" aria-labelledby="customerModalTitle"><div class="modal"><div class="modal-head"><h2 id="customerModalTitle">新增客戶</h2><button class="close" id="closeCustomerModal" aria-label="關閉">×</button></div><form id="customerForm"><div class="form-grid"><div class="field full"><label for="masterCustomerName">客戶名稱 *</label><input id="masterCustomerName" required /></div><div class="field"><label for="masterContact">常用聯絡人</label><input id="masterContact" /></div><div class="field"><label for="masterPhone">電話</label><input id="masterPhone" type="tel" /></div><div class="field full"><label for="masterAddress">服務地址</label><input id="masterAddress" /></div></div><div class="form-actions"><button class="outline-btn" type="button" id="cancelCustomerModal">取消</button><button class="primary-btn" type="submit" id="saveCustomer">新增客戶</button></div></form></div></div>
   <div class="modal-backdrop" id="machineModal" role="dialog" aria-modal="true" aria-labelledby="machineModalTitle"><div class="modal"><div class="modal-head"><h2 id="machineModalTitle">新增機型</h2><button class="close" id="closeMachineModal" aria-label="關閉">×</button></div><form id="machineForm"><div class="form-grid"><div class="field full"><label for="masterMachineName">機台型號 *</label><input id="masterMachineName" required /></div><div class="field full"><label for="masterMachineNote">備註</label><input id="masterMachineNote" placeholder="例如：適用系列" /></div></div><div class="form-actions"><button class="outline-btn" type="button" id="cancelMachineModal">取消</button><button class="primary-btn" type="submit" id="saveMachine">新增機型</button></div></form></div></div>
 
+  <div class="modal-backdrop" id="dataModal" role="dialog" aria-modal="true" aria-labelledby="dataModalTitle"><div class="modal data-modal"><div class="modal-head"><div><h2 id="dataModalTitle">資料備份與還原</h2><div class="field-hint">管理目前瀏覽器保存的售服資料</div></div><button class="close" id="closeDataModal" aria-label="關閉">×</button></div><div class="data-modal-content"><p>備份檔會包含案件、問題類別、零件、客戶與機型資料。還原會覆蓋目前瀏覽器中的資料，請先確認已備份最新資料。</p><div class="data-actions"><button class="outline-btn data-action" id="downloadBackup" type="button"><strong>下載備份檔</strong><small>保存目前全部資料</small></button><button class="outline-btn data-action" id="selectRestore" type="button"><strong>從備份還原</strong><small>選擇 JSON 備份檔</small></button></div><input id="restoreFile" type="file" accept=".json,application/json" hidden /><div class="field-hint data-status" id="dataStatus" role="status"></div></div></div></div>
+
   <script>
     const storageKey = 'service-desk-cases-v1';
     const categoryStorageKey = 'service-desk-categories-v1';
@@ -544,6 +554,9 @@
     const machineRows = document.getElementById('machineRows');
     const customerModal = document.getElementById('customerModal');
     const machineModal = document.getElementById('machineModal');
+    const dataModal = document.getElementById('dataModal');
+    const restoreFile = document.getElementById('restoreFile');
+    const dataStatus = document.getElementById('dataStatus');
     let editingCustomerName = null;
     let editingMachineName = null;
     const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
@@ -561,6 +574,48 @@
       try { localStorage.setItem(storageKey, JSON.stringify(cases)); localStorage.setItem(categoryStorageKey, JSON.stringify(categories)); localStorage.setItem(partStorageKey, JSON.stringify(parts)); localStorage.setItem(customerStorageKey, JSON.stringify(customers)); localStorage.setItem(machineStorageKey, JSON.stringify(machines)); }
       catch { alert('瀏覽器無法儲存資料，請確認目前瀏覽器允許本機儲存。'); }
     };
+    const createBackup = () => ({format:'service-desk-backup',version:1,exportedAt:new Date().toISOString(),data:{cases,categories,parts,customers,machines}});
+    const setDataStatus = message => { dataStatus.textContent = message; };
+    function downloadBackup() {
+      const blob = new Blob([JSON.stringify(createBackup(), null, 2)], {type:'application/json'});
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `售服系統備份-${new Date().toISOString().slice(0,10)}.json`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      setDataStatus('備份檔已下載，請妥善保存。');
+    }
+    function validateBackup(payload) {
+      const data = payload?.data;
+      const keys = ['cases','categories','parts','customers','machines'];
+      if (payload?.format !== 'service-desk-backup' || payload?.version !== 1 || !data || !keys.every(key=>Array.isArray(data[key]))) throw new Error('這不是有效的售服系統備份檔。');
+      return data;
+    }
+    async function restoreBackup(file) {
+      try {
+        const data = validateBackup(JSON.parse(await file.text()));
+        const summary = `案件 ${data.cases.length} 筆、類別 ${data.categories.length} 個、零件 ${data.parts.length} 筆、客戶 ${data.customers.length} 位、機型 ${data.machines.length} 種`;
+        if (!confirm(`確定要還原這份備份嗎？\n\n${summary}\n\n還原後會覆蓋目前資料。`)) return;
+        cases = data.cases;
+        categories = data.categories;
+        parts = data.parts;
+        customers = data.customers;
+        machines = data.machines;
+        persist();
+        renderSimilarFilterOptions();
+        renderPartOptions();
+        renderCases();
+        dataModal.classList.remove('open');
+        alert(`資料還原完成：${summary}`);
+      } catch (error) {
+        setDataStatus(error.message || '備份檔讀取失敗。');
+      } finally {
+        restoreFile.value = '';
+      }
+    }
     function renderCases() {
       const keyword = searchInput.value.trim().toLocaleLowerCase();
       const selected = statusFilter.value;
@@ -814,6 +869,12 @@
     document.getElementById('openModal').addEventListener('click', () => openForm());
     document.querySelector('[data-action="new-case"]').addEventListener('click', () => openForm());
     document.querySelectorAll('.nav-item[data-view]').forEach(button=>button.addEventListener('click',()=>switchView(button.dataset.view)));
+    document.getElementById('openDataModal').addEventListener('click',()=>{setDataStatus('');dataModal.classList.add('open');});
+    document.getElementById('closeDataModal').addEventListener('click',()=>dataModal.classList.remove('open'));
+    dataModal.addEventListener('click',event=>{if(event.target===dataModal) dataModal.classList.remove('open');});
+    document.getElementById('downloadBackup').addEventListener('click',downloadBackup);
+    document.getElementById('selectRestore').addEventListener('click',()=>restoreFile.click());
+    restoreFile.addEventListener('change',event=>{const [file]=event.target.files;if(file) restoreBackup(file);});
     document.getElementById('closeModal').addEventListener('click', () => modal.classList.remove('open'));
     document.getElementById('cancelModal').addEventListener('click', () => modal.classList.remove('open'));
     modal.addEventListener('click', event => { if (event.target === modal) modal.classList.remove('open'); });
@@ -982,7 +1043,7 @@
     });
     document.getElementById('editCase').addEventListener('click',()=>{const id=activeDetailId;detailBackdrop.classList.remove('open');openForm(id);});
     document.getElementById('detailStatus').addEventListener('change',event=>{const item=cases.find(entry=>entry.id===activeDetailId);if(!item)return;item.status=event.target.value;item.updated=new Date().toISOString();persist();renderCases();openDetail(item.id);});
-    document.addEventListener('keydown', event => { if(event.key==='Escape'){modal.classList.remove('open');detailBackdrop.classList.remove('open');printBackdrop.classList.remove('open');categoryModal.classList.remove('open');partModal.classList.remove('open');customerModal.classList.remove('open');machineModal.classList.remove('open');} });
+    document.addEventListener('keydown', event => { if(event.key==='Escape'){modal.classList.remove('open');detailBackdrop.classList.remove('open');printBackdrop.classList.remove('open');categoryModal.classList.remove('open');partModal.classList.remove('open');customerModal.classList.remove('open');machineModal.classList.remove('open');dataModal.classList.remove('open');} });
     searchInput.addEventListener('input',renderCases);
     statusFilter.addEventListener('change',renderCases);
     categorySearch.addEventListener('input',renderCategoryManager);
