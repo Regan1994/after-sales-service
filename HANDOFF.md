@@ -21,7 +21,7 @@
 
 這是 buildless 的靜態 HTML／CSS／JavaScript 原型，沒有框架、伺服器或資料庫。可直接以瀏覽器開啟 `dist/index.html` 操作。新增案件後，資料會保存在同一瀏覽器的本機儲存空間。
 
-目前已建立本機 `main` 基準提交 `aaecfa1`（`chore: baseline service desk prototype`）。工作區尚未設定 GitHub remote；`gh` 命令列工具目前不可用。推送前需取得目標 GitHub repository URL，並確認該 remote 可由目前 Git 環境存取。
+GitHub repository：`https://github.com/Regan1994/after-sales-service`。目前原型基準已推送至遠端 `main`，本機 `main` 追蹤 `origin/main`。`gh` 命令列工具目前不可用，但 Git remote push 已可使用。
 
 ## 需求邊界
 
@@ -29,8 +29,8 @@
 
 ## 接續開發建議
 
-1. 先把目前狀態提交到 GitHub `main`，作為原型基準。
-2. 後續功能各自從 `main` 開新分支，完成後再合併回 `main`。
+1. GitHub `main` 保存目前原型基準。
+2. 後續功能各自從 `main` 開 `codex/<feature-name>` 分支，完成後再合併回 `main`。
 3. 下一個產品功能建議是「同類型問題」專頁，讓使用者依類別、機型、關鍵字及零件查找歷史案件。
 4. 再補案件列印版面及基本資料管理；確認操作流程後，再決定正式後端與部署方式。
 
