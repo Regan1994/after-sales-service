@@ -138,6 +138,7 @@
     .pager { display:flex; gap:5px; }
     .pager button { border: 1px solid #e7e3dd; background: #fff; color: var(--muted); width: 28px; height: 28px; border-radius: 7px; }
     .pager button.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+    .pager button:disabled { opacity: .45; cursor: default; }
 
     .right-stack { display: grid; gap: 18px; }
     .side-panel { padding: 19px; }
@@ -371,7 +372,7 @@
               <tbody id="caseRows"></tbody>
             </table>
           </div>
-          <div class="table-footer"><span id="resultCount">顯示 5 筆案件</span><div class="pager"><button>‹</button><button class="active">1</button><button>2</button><button>3</button><button>›</button></div></div>
+          <div class="table-footer"><span id="resultCount">顯示 0 筆案件</span><div class="pager" id="casePager" aria-label="案件分頁"></div></div>
         </section>
 
         <aside class="right-stack">
@@ -518,12 +519,15 @@
     let editingId = null;
     let selectedCustomer = null;
     let activeDetailId = null;
+    let casePage = 1;
+    const casePageSize = 10;
     const modal = document.getElementById('modalBackdrop');
     const detailBackdrop = document.getElementById('detailBackdrop');
     const printBackdrop = document.getElementById('printBackdrop');
     const form = document.getElementById('caseForm');
     const searchInput = document.getElementById('searchInput');
     const statusFilter = document.getElementById('statusFilter');
+    const casePager = document.getElementById('casePager');
     const overviewView = document.getElementById('overviewView');
     const similarIssuesView = document.getElementById('similarIssuesView');
     const pageEyebrow = document.getElementById('pageEyebrow');
@@ -619,12 +623,18 @@
     function renderCases() {
       const keyword = searchInput.value.trim().toLocaleLowerCase();
       const selected = statusFilter.value;
-      const visibleCases = [...cases].sort((a,b) => new Date(b.updated)-new Date(a.updated)).filter(item => {
+      const filteredCases = [...cases].sort((a,b) => new Date(b.updated)-new Date(a.updated)).filter(item => {
         const searchText = [item.id,item.customer,item.machine,item.address,item.contact,item.description,item.handling,(item.categories||[]).join(' '),(item.parts||[]).map(part => `${part.sku} ${part.name}`).join(' ')].join(' ').toLocaleLowerCase();
         return (!keyword || searchText.includes(keyword)) && (selected === 'all' || item.status === selected);
       });
+      const totalPages = Math.max(1, Math.ceil(filteredCases.length / casePageSize));
+      casePage = Math.min(casePage, totalPages);
+      const start = (casePage - 1) * casePageSize;
+      const visibleCases = filteredCases.slice(start, start + casePageSize);
       document.getElementById('caseRows').innerHTML = visibleCases.length ? visibleCases.map(item => `<tr data-case-id="${escapeHtml(item.id)}"><td><button class="case-no case-open" data-open-case="${escapeHtml(item.id)}">${escapeHtml(item.id)}</button></td><td><span class="client">${escapeHtml(item.customer)}</span><small>${escapeHtml(item.machine)} · ${escapeHtml(item.address||'未填地址')}</small></td><td>${(item.categories||[]).map(escapeHtml).join('　')||'—'}</td><td><span class="tag ${statusClasses[item.status]||'new'}">${statusLabels[item.status]||'新建'}</span></td><td><span class="row-person"><span class="row-avatar">${escapeHtml(item.owner.slice(0,1))}</span>${escapeHtml(item.owner)}</span></td><td>${formatUpdated(item.updated)}</td></tr>`).join('') : '<tr><td class="empty-row" colspan="6">沒有符合條件的案件，試試其他關鍵字或狀態。</td></tr>';
-      document.getElementById('resultCount').textContent = `顯示 ${visibleCases.length} 筆案件`;
+      const rangeLabel = filteredCases.length ? `顯示 ${start + 1}–${Math.min(start + visibleCases.length, filteredCases.length)} / ${filteredCases.length} 筆案件` : '顯示 0 筆案件';
+      document.getElementById('resultCount').textContent = rangeLabel;
+      casePager.innerHTML = totalPages > 1 ? [`<button type="button" data-case-page="${casePage - 1}" ${casePage===1?'disabled':''}>‹</button>`, ...Array.from({length:totalPages}, (_,index)=>`<button type="button" data-case-page="${index + 1}" class="${index + 1===casePage?'active':''}">${index + 1}</button>`), `<button type="button" data-case-page="${casePage + 1}" ${casePage===totalPages?'disabled':''}>›</button>`].join('') : '';
       document.querySelector('.panel-subtitle').textContent = `依最近更新時間排列，共 ${cases.length} 筆案件`;
       document.querySelector('.nav-count').textContent = cases.length;
       document.getElementById('metricTotal').textContent = cases.length;
@@ -1044,8 +1054,9 @@
     document.getElementById('editCase').addEventListener('click',()=>{const id=activeDetailId;detailBackdrop.classList.remove('open');openForm(id);});
     document.getElementById('detailStatus').addEventListener('change',event=>{const item=cases.find(entry=>entry.id===activeDetailId);if(!item)return;item.status=event.target.value;item.updated=new Date().toISOString();persist();renderCases();openDetail(item.id);});
     document.addEventListener('keydown', event => { if(event.key==='Escape'){modal.classList.remove('open');detailBackdrop.classList.remove('open');printBackdrop.classList.remove('open');categoryModal.classList.remove('open');partModal.classList.remove('open');customerModal.classList.remove('open');machineModal.classList.remove('open');dataModal.classList.remove('open');} });
-    searchInput.addEventListener('input',renderCases);
-    statusFilter.addEventListener('change',renderCases);
+    casePager.addEventListener('click',event=>{const button=event.target.closest('[data-case-page]');if(!button || button.disabled)return;casePage=Number(button.dataset.casePage);renderCases();});
+    searchInput.addEventListener('input',()=>{casePage=1;renderCases();});
+    statusFilter.addEventListener('change',()=>{casePage=1;renderCases();});
     categorySearch.addEventListener('input',renderCategoryManager);
     categoryStatusFilter.addEventListener('change',renderCategoryManager);
     partSearch.addEventListener('input',renderPartsManager);
