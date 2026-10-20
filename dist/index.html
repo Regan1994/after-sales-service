@@ -226,6 +226,35 @@
     .search-guide { display:grid; gap:10px; margin-top:15px; }
     .search-guide div { display:flex; align-items:flex-start; gap:9px; color:#5f6872; font-size:12px; line-height:1.6; }
     .guide-icon { width:23px; height:23px; flex:0 0 23px; display:grid; place-items:center; border-radius:7px; background:#edf4f7; color:var(--navy-2); font-weight:900; }
+    .print-modal { width:min(820px,100%); max-height:90vh; overflow:auto; background:#fff; border-radius:20px; box-shadow:0 25px 80px rgba(11,25,38,.25); }
+    .print-header { padding:24px 28px 18px; display:flex; justify-content:space-between; align-items:flex-start; border-bottom:2px solid var(--navy); }
+    .print-brand { color:var(--navy); font-size:12px; font-weight:900; letter-spacing:.16em; }
+    .print-header h2 { margin:8px 0 0; font-size:23px; }
+    .print-header-meta { color:var(--muted); font-size:12px; text-align:right; line-height:1.8; }
+    .print-content { padding:22px 28px 28px; display:grid; gap:18px; }
+    .print-meta-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }
+    .print-meta-item { padding:10px 11px; border:1px solid #e7e3dd; border-radius:8px; }
+    .print-meta-item small { display:block; color:var(--muted); font-size:10px; margin-bottom:4px; }
+    .print-meta-item strong { display:block; font-size:12px; line-height:1.5; word-break:break-word; }
+    .print-section { border-top:1px solid #dedbd6; padding-top:13px; }
+    .print-section h3 { margin:0 0 8px; color:var(--navy); font-size:13px; }
+    .print-section p { margin:0; min-height:22px; white-space:pre-wrap; font-size:13px; line-height:1.8; }
+    .print-category-list { display:flex; flex-wrap:wrap; gap:6px; }
+    .print-category { padding:4px 9px; border-radius:999px; background:#eef5f4; color:#16665d; font-size:11px; font-weight:800; }
+    .print-parts { width:100%; min-width:0; }
+    .print-parts th, .print-parts td { padding:9px 10px; border:1px solid #e2dfda; font-size:12px; }
+    .print-parts th { background:#f7f4ef; color:#5f6872; }
+    .print-actions { background:#fff; }
+    @media print {
+      @page { size:A4; margin:14mm; }
+      body { background:#fff; }
+      .app-shell, #modalBackdrop, #detailBackdrop { display:none!important; }
+      #printBackdrop.open { display:block; position:static; padding:0; background:#fff; }
+      .print-modal { width:100%; max-height:none; overflow:visible; border-radius:0; box-shadow:none; }
+      .print-header { padding:0 0 12px; }
+      .print-content { padding:16px 0 0; }
+      .print-actions { display:none!important; }
+    }
 
     @media (max-width: 1050px) {
       .sidebar { width: 218px; flex-basis: 218px; }
@@ -376,7 +405,9 @@
     </div>
   </div>
 
-  <div class="modal-backdrop" id="detailBackdrop" role="dialog" aria-modal="true" aria-labelledby="detailTitle"><div class="modal"><div class="modal-head"><div><h2 id="detailTitle">案件詳細資料</h2><div class="field-hint" id="detailCaseNo"></div></div><button class="close" id="closeDetail" aria-label="關閉">×</button></div><div class="detail-content" id="detailContent"></div><div class="form-actions"><select class="detail-status" id="detailStatus" aria-label="更新案件狀態"><option value="new">新建</option><option value="processing">處理中</option><option value="waitingCustomer">等待客戶</option><option value="waiting">等待零件</option><option value="pending">待確認</option><option value="closed">已結案</option><option value="void">作廢</option></select><button class="outline-btn" id="editCase" type="button">編輯案件</button><button class="primary-btn" id="doneDetail" type="button">完成</button></div></div></div>
+  <div class="modal-backdrop" id="detailBackdrop" role="dialog" aria-modal="true" aria-labelledby="detailTitle"><div class="modal"><div class="modal-head"><div><h2 id="detailTitle">案件詳細資料</h2><div class="field-hint" id="detailCaseNo"></div></div><button class="close" id="closeDetail" aria-label="關閉">×</button></div><div class="detail-content" id="detailContent"></div><div class="form-actions"><select class="detail-status" id="detailStatus" aria-label="更新案件狀態"><option value="new">新建</option><option value="processing">處理中</option><option value="waitingCustomer">等待客戶</option><option value="waiting">等待零件</option><option value="pending">待確認</option><option value="closed">已結案</option><option value="void">作廢</option></select><button class="outline-btn" id="printCase" type="button">列印案件</button><button class="outline-btn" id="editCase" type="button">編輯案件</button><button class="primary-btn" id="doneDetail" type="button">完成</button></div></div></div>
+
+  <div class="modal-backdrop" id="printBackdrop" role="dialog" aria-modal="true" aria-labelledby="printTitle"><div class="print-modal"><div class="print-header"><div><div class="print-brand">AFTER SERVICE DESK</div><h2 id="printTitle">售服案件服務紀錄</h2></div><div class="print-header-meta" id="printHeaderMeta"></div></div><div class="print-content" id="printContent"></div><div class="form-actions print-actions"><button class="outline-btn" id="closePrint" type="button">返回案件</button><button class="primary-btn" id="confirmPrint" type="button">列印</button></div></div></div>
 
   <script>
     const storageKey = 'service-desk-cases-v1';
@@ -402,6 +433,7 @@
     let activeDetailId = null;
     const modal = document.getElementById('modalBackdrop');
     const detailBackdrop = document.getElementById('detailBackdrop');
+    const printBackdrop = document.getElementById('printBackdrop');
     const form = document.getElementById('caseForm');
     const searchInput = document.getElementById('searchInput');
     const statusFilter = document.getElementById('statusFilter');
@@ -539,6 +571,15 @@
       document.getElementById('detailContent').innerHTML = `<div class="detail-meta"><div><small>客戶聯絡人</small><strong>${escapeHtml(item.contact||'—')}</strong></div><div><small>聯絡電話</small><strong>${escapeHtml(item.phone||'—')}</strong></div><div><small>維修地址</small><strong>${escapeHtml(item.address||'—')}</strong></div><div><small>報修日期</small><strong>${escapeHtml(item.reportDate||'—')}</strong></div><div><small>服務日期</small><strong>${escapeHtml(item.serviceDate||'—')}</strong></div><div><small>售服人員</small><strong>${escapeHtml(item.owner)}</strong></div></div><div class="detail-block"><small>問題類別</small><p>${(item.categories||[]).map(escapeHtml).join('、')||'尚未選擇'}</p></div><div class="detail-block"><small>故障描述</small><p>${escapeHtml(item.description||'—')}</p></div><div class="detail-block"><small>處理情況</small><p>${escapeHtml(item.handling||'尚未填寫')}</p></div>${parts}`;
       detailBackdrop.classList.add('open');
     }
+    function openPrintPreview(caseId = activeDetailId) {
+      const item = cases.find(entry => entry.id === caseId);
+      if (!item) return;
+      const parts = (item.parts||[]).length ? `<table class="print-parts"><thead><tr><th>料號</th><th>零件名稱</th><th>處理方式</th><th>數量</th></tr></thead><tbody>${item.parts.map(part=>`<tr><td>${escapeHtml(part.sku||'—')}</td><td>${escapeHtml(part.name||'—')}</td><td>${escapeHtml(part.method||'—')}</td><td>${escapeHtml(part.quantity||'—')}</td></tr>`).join('')}</tbody></table>` : '<p>未記錄零件。</p>';
+      document.getElementById('printTitle').textContent = `${item.customer} · ${item.machine}`;
+      document.getElementById('printHeaderMeta').innerHTML = `${escapeHtml(item.id)}<br>列印時間 ${escapeHtml(formatUpdated(new Date().toISOString()))}`;
+      document.getElementById('printContent').innerHTML = `<div class="print-meta-grid"><div class="print-meta-item"><small>客戶名稱</small><strong>${escapeHtml(item.customer||'—')}</strong></div><div class="print-meta-item"><small>機台型號</small><strong>${escapeHtml(item.machine||'—')}</strong></div><div class="print-meta-item"><small>案件狀態</small><strong>${escapeHtml(statusLabels[item.status]||'新建')}</strong></div><div class="print-meta-item"><small>售服人員</small><strong>${escapeHtml(item.owner||'—')}</strong></div><div class="print-meta-item"><small>聯絡人</small><strong>${escapeHtml(item.contact||'—')}</strong></div><div class="print-meta-item"><small>聯絡電話</small><strong>${escapeHtml(item.phone||'—')}</strong></div><div class="print-meta-item"><small>維修地址</small><strong>${escapeHtml(item.address||'—')}</strong></div><div class="print-meta-item"><small>保修卡號</small><strong>${escapeHtml(item.warranty||'—')}</strong></div><div class="print-meta-item"><small>報修日期</small><strong>${escapeHtml(item.reportDate||'—')}</strong></div><div class="print-meta-item"><small>服務日期</small><strong>${escapeHtml(item.serviceDate||'—')}</strong></div></div><section class="print-section"><h3>問題類別</h3><div class="print-category-list">${(item.categories||[]).map(category=>`<span class="print-category">${escapeHtml(category)}</span>`).join('')||'<span>尚未分類</span>'}</div></section><section class="print-section"><h3>故障描述</h3><p>${escapeHtml(item.description||'—')}</p></section><section class="print-section"><h3>處理情況</h3><p>${escapeHtml(item.handling||'尚未填寫')}</p></section><section class="print-section"><h3>零件修售清單</h3>${parts}</section>`;
+      printBackdrop.classList.add('open');
+    }
     document.getElementById('openModal').addEventListener('click', () => openForm());
     document.querySelector('[data-action="new-case"]').addEventListener('click', () => openForm());
     document.querySelectorAll('.nav-item[data-view]').forEach(button=>button.addEventListener('click',()=>switchView(button.dataset.view)));
@@ -572,9 +613,13 @@
     document.getElementById('closeDetail').addEventListener('click',()=>detailBackdrop.classList.remove('open'));
     document.getElementById('doneDetail').addEventListener('click',()=>detailBackdrop.classList.remove('open'));
     detailBackdrop.addEventListener('click',event=>{if(event.target===detailBackdrop) detailBackdrop.classList.remove('open');});
+    document.getElementById('printCase').addEventListener('click',()=>openPrintPreview());
+    document.getElementById('closePrint').addEventListener('click',()=>printBackdrop.classList.remove('open'));
+    printBackdrop.addEventListener('click',event=>{if(event.target===printBackdrop) printBackdrop.classList.remove('open');});
+    document.getElementById('confirmPrint').addEventListener('click',()=>window.print());
     document.getElementById('editCase').addEventListener('click',()=>{const id=activeDetailId;detailBackdrop.classList.remove('open');openForm(id);});
     document.getElementById('detailStatus').addEventListener('change',event=>{const item=cases.find(entry=>entry.id===activeDetailId);if(!item)return;item.status=event.target.value;item.updated=new Date().toISOString();persist();renderCases();openDetail(item.id);});
-    document.addEventListener('keydown', event => { if(event.key==='Escape'){modal.classList.remove('open');detailBackdrop.classList.remove('open');} });
+    document.addEventListener('keydown', event => { if(event.key==='Escape'){modal.classList.remove('open');detailBackdrop.classList.remove('open');printBackdrop.classList.remove('open');} });
     searchInput.addEventListener('input',renderCases);
     statusFilter.addEventListener('change',renderCases);
     [similarKeyword,similarMachineFilter,similarPartFilter].forEach(input=>input.addEventListener('input',renderSimilarIssues));
