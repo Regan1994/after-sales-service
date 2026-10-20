@@ -191,11 +191,47 @@
     .detail-parts th,.detail-parts td { padding:8px 10px; }
     .detail-status { max-width:210px; }
     .empty-row { padding:30px!important; text-align:center; color:var(--muted); }
+    .view[hidden] { display: none; }
+    .similar-intro { padding: 22px 23px; margin-bottom: 18px; display:flex; align-items:flex-start; justify-content:space-between; gap:20px; }
+    .similar-intro h2 { margin:0; font-size:19px; }
+    .similar-intro p { margin:6px 0 0; color:var(--muted); font-size:13px; line-height:1.7; }
+    .similar-intro-badge { flex:0 0 auto; padding:8px 11px; border-radius:10px; background:var(--teal-soft); color:#12665d; font-size:12px; font-weight:800; }
+    .similar-layout { display:grid; grid-template-columns:minmax(0,1fr) 290px; gap:18px; align-items:start; }
+    .similar-main { min-width:0; }
+    .similar-filter-grid { padding:19px 20px; display:grid; grid-template-columns:1.3fr .9fr .9fr .9fr; gap:10px; border-bottom:1px solid #f0eeea; }
+    .filter-field { min-width:0; }
+    .filter-field label { display:block; color:#69727b; font-size:11px; font-weight:800; margin:0 0 6px; }
+    .filter-field input, .filter-field select { width:100%; height:38px; border:1px solid #e5e2dd; border-radius:9px; background:#fff; color:var(--ink); padding:0 11px; outline:none; }
+    .filter-field input:focus, .filter-field select:focus { border-color:#7fa5bf; box-shadow:0 0 0 3px rgba(73,128,163,.12); }
+    .similar-filter-actions { grid-column:1/-1; display:flex; justify-content:space-between; align-items:center; gap:10px; padding-top:2px; }
+    .similar-filter-hint { color:var(--muted-2); font-size:11px; }
+    .similar-summary { padding:13px 20px; display:flex; justify-content:space-between; gap:12px; color:var(--muted); font-size:12px; border-bottom:1px solid #f0eeea; }
+    .similar-summary strong { color:var(--navy-2); }
+    .similar-table { min-width:830px; }
+    .similar-table th, .similar-table td { padding-left:16px; padding-right:16px; }
+    .similar-table td { vertical-align:top; }
+    .similar-table .case-no { display:block; }
+    .similar-date { display:block; margin-top:5px; color:var(--muted-2); font-size:11px; }
+    .issue-summary { max-width:300px; line-height:1.6; }
+    .issue-chips { display:flex; flex-wrap:wrap; gap:5px; margin-top:7px; }
+    .issue-chip { display:inline-flex; padding:3px 7px; border-radius:999px; background:#f2f5f6; color:#567080; font-size:10px; font-weight:800; }
+    .part-summary { max-width:150px; color:#5f6872; line-height:1.6; font-size:12px; }
+    .part-summary.empty { color:var(--muted-2); }
+    .table-action { min-height:32px; padding:0 10px; font-size:12px; white-space:nowrap; }
+    .similar-side { display:grid; gap:18px; }
+    .category-pills { display:flex; flex-wrap:wrap; gap:7px; margin-top:14px; }
+    .category-pill { border:1px solid #e7e3dd; background:#fff; color:#56616a; border-radius:999px; padding:7px 10px; font-size:11px; cursor:pointer; }
+    .category-pill:hover, .category-pill.active { border-color:#8bb5aa; background:#f0faf6; color:#135e55; }
+    .category-pill small { color:var(--muted-2); margin-left:3px; }
+    .search-guide { display:grid; gap:10px; margin-top:15px; }
+    .search-guide div { display:flex; align-items:flex-start; gap:9px; color:#5f6872; font-size:12px; line-height:1.6; }
+    .guide-icon { width:23px; height:23px; flex:0 0 23px; display:grid; place-items:center; border-radius:7px; background:#edf4f7; color:var(--navy-2); font-weight:900; }
 
     @media (max-width: 1050px) {
       .sidebar { width: 218px; flex-basis: 218px; }
       .main { padding-left: 22px; padding-right: 22px; }
       .workspace { grid-template-columns: 1fr; }
+      .similar-layout { grid-template-columns: 1fr; }
       .right-stack { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
     @media (max-width: 760px) {
@@ -209,6 +245,8 @@
       .top-actions .outline-btn { display:none; }
       .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .right-stack { grid-template-columns: 1fr; }
+      .similar-filter-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .similar-intro { flex-direction:column; }
       .form-grid { grid-template-columns: 1fr; }
       .field.full { grid-column:auto; }
       h1 { font-size:24px; }
@@ -225,9 +263,9 @@
 
       <nav class="nav-section" aria-label="主要導覽">
         <div class="nav-label">工作區</div>
-        <button class="nav-item active"><span class="nav-icon">▦</span><span>案件總覽</span><span class="nav-count">24</span></button>
-        <button class="nav-item"><span class="nav-icon">＋</span><span>新增案件</span></button>
-        <button class="nav-item"><span class="nav-icon">⌕</span><span>同類型問題</span></button>
+        <button class="nav-item active" data-view="overview"><span class="nav-icon">▦</span><span>案件總覽</span><span class="nav-count">24</span></button>
+        <button class="nav-item" data-action="new-case"><span class="nav-icon">＋</span><span>新增案件</span></button>
+        <button class="nav-item" data-view="similar"><span class="nav-icon">⌕</span><span>同類型問題</span></button>
       </nav>
       <nav class="nav-section" aria-label="管理功能">
         <div class="nav-label">管理</div>
@@ -243,10 +281,11 @@
 
     <main class="main">
       <header class="topbar">
-        <div><div class="eyebrow">SERVICE DESK · 2026.10.20</div><h1>案件總覽</h1></div>
+        <div><div class="eyebrow" id="pageEyebrow">SERVICE DESK · 2026.10.20</div><h1 id="pageTitle">案件總覽</h1></div>
         <div class="top-actions"><button class="icon-btn" title="通知">♧</button><button class="outline-btn">本週報表　⌄</button><button class="primary-btn" id="openModal"><span class="plus">＋</span>新增案件</button></div>
       </header>
 
+      <div id="overviewView">
       <section class="metrics" aria-label="案件統計">
         <div class="metric"><div class="metric-label">案件總數</div><div class="metric-value" id="metricTotal">0</div><div class="metric-note">目前瀏覽器保存的案件</div></div>
         <div class="metric"><div class="metric-label">處理中與待處理</div><div class="metric-value" id="metricActive">0</div><div class="metric-note">包含等待客戶或零件</div></div>
@@ -275,6 +314,36 @@
           <section class="panel side-panel"><h2>待處理提醒</h2><p>需要你今天優先查看的案件。</p><div class="quick-list"><div class="quick-item"><div><strong>等待客戶回覆</strong><small>最久等待 2 天</small></div><span class="quick-number">4</span></div><div class="quick-item"><div><strong>待主管確認</strong><small>完成處理但尚未結案</small></div><span class="quick-number">9</span></div><div class="quick-item"><div><strong>待整理分類</strong><small>現場新增的類別</small></div><span class="quick-number">3</span></div></div></section>
           <section class="panel side-panel"><h2>本月案件進度</h2><p>完成 86 件，距離月目標還有 14 件。</p><div class="progress-row"><div class="progress-head"><span>結案進度</span><strong>86 / 100</strong></div><div class="progress-track"><div class="progress-fill"></div></div></div><div class="notice"><strong>小提醒</strong>同類型問題可以從案件清單直接搜尋，快速找到過往處理方式。</div></section>
         </aside>
+      </div>
+      </div>
+
+      <div id="similarIssuesView" class="view" hidden>
+        <section class="panel similar-intro">
+          <div><h2>從歷史案件找到可複用的處理經驗</h2><p>用問題類別、機台型號、關鍵字或零件縮小範圍，快速查看過往故障描述與處理方式。</p></div>
+          <div class="similar-intro-badge">資料來源：目前瀏覽器案件</div>
+        </section>
+        <div class="similar-layout">
+          <section class="panel similar-main">
+            <div class="similar-filter-grid">
+              <div class="filter-field"><label for="similarKeyword">關鍵字</label><input id="similarKeyword" type="search" placeholder="搜尋故障描述、客戶、案號或處理情況" /></div>
+              <div class="filter-field"><label for="similarCategoryFilter">問題類別</label><select id="similarCategoryFilter"><option value="all">全部問題類別</option></select></div>
+              <div class="filter-field"><label for="similarMachineFilter">機台型號</label><input id="similarMachineFilter" placeholder="例如：MX-420" /></div>
+              <div class="filter-field"><label for="similarPartFilter">零件／料號</label><input id="similarPartFilter" placeholder="例如：軸承或 SV-24A" /></div>
+              <div class="similar-filter-actions"><span class="similar-filter-hint">可同時套用多個條件；結果會依案件最近更新時間排列。</span><button class="outline-btn" id="clearSimilarFilters" type="button">清除條件</button></div>
+            </div>
+            <div class="similar-summary"><span id="similarResultCount">找到 0 筆相關案件</span><span id="similarActiveFilters">目前未套用條件</span></div>
+            <div class="table-wrap">
+              <table class="similar-table">
+                <thead><tr><th>服務案號</th><th>客戶與設備</th><th>問題描述</th><th>相關零件</th><th>狀態</th><th>操作</th></tr></thead>
+                <tbody id="similarRows"></tbody>
+              </table>
+            </div>
+          </section>
+          <aside class="similar-side">
+            <section class="panel side-panel"><h2>常見問題類別</h2><p>點選類別即可快速套用篩選。</p><div class="category-pills" id="similarCategoryPills"></div></section>
+            <section class="panel side-panel"><h2>搜尋小提示</h2><div class="search-guide"><div><span class="guide-icon">1</span><span>用「異音」、「漏油」等現象描述搜尋，能找到跨機型的相似案例。</span></div><div><span class="guide-icon">2</span><span>用零件名稱或料號搜尋，可直接比對過去的更換與維修方式。</span></div><div><span class="guide-icon">3</span><span>打開案件可查看完整處理情況，必要時再編輯或更新狀態。</span></div></div></section>
+          </aside>
+        </div>
       </div>
     </main>
   </div>
@@ -336,6 +405,17 @@
     const form = document.getElementById('caseForm');
     const searchInput = document.getElementById('searchInput');
     const statusFilter = document.getElementById('statusFilter');
+    const overviewView = document.getElementById('overviewView');
+    const similarIssuesView = document.getElementById('similarIssuesView');
+    const pageEyebrow = document.getElementById('pageEyebrow');
+    const pageTitle = document.getElementById('pageTitle');
+    const similarKeyword = document.getElementById('similarKeyword');
+    const similarCategoryFilter = document.getElementById('similarCategoryFilter');
+    const similarMachineFilter = document.getElementById('similarMachineFilter');
+    const similarPartFilter = document.getElementById('similarPartFilter');
+    const similarRows = document.getElementById('similarRows');
+    const similarResultCount = document.getElementById('similarResultCount');
+    const similarActiveFilters = document.getElementById('similarActiveFilters');
     const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
     const formatDate = value => {
       if (!value) return '—';
@@ -366,6 +446,53 @@
       document.getElementById('metricActive').textContent = cases.filter(item=>['processing','waitingCustomer','waiting'].includes(item.status)).length;
       document.getElementById('metricPending').textContent = cases.filter(item=>item.status==='pending').length;
       document.getElementById('metricClosed').textContent = cases.filter(item=>item.status==='closed').length;
+      renderSimilarIssues();
+      renderSimilarCategoryPills();
+    }
+    function renderSimilarFilterOptions() {
+      const selected = similarCategoryFilter.value || 'all';
+      const options = categories.map(category => `<option value="${escapeHtml(category.name)}">${escapeHtml(category.group||'待確認')}｜${escapeHtml(category.name)}</option>`).join('');
+      similarCategoryFilter.innerHTML = `<option value="all">全部問題類別</option>${options}`;
+      similarCategoryFilter.value = categories.some(category => category.name === selected) ? selected : 'all';
+    }
+    function renderSimilarCategoryPills() {
+      const counts = categories.map(category => ({...category, count:cases.filter(item=>(item.categories||[]).includes(category.name)).length})).filter(category=>category.count>0).sort((a,b)=>b.count-a.count || a.name.localeCompare(b.name,'zh-Hant')).slice(0,8);
+      document.getElementById('similarCategoryPills').innerHTML = counts.length ? counts.map(category=>`<button class="category-pill${similarCategoryFilter.value===category.name?' active':''}" type="button" data-category="${escapeHtml(category.name)}">${escapeHtml(category.name)}<small>${category.count}</small></button>`).join('') : '<span class="field-hint">目前還沒有可統計的問題類別。</span>';
+    }
+    function renderSimilarIssues() {
+      if (!similarRows) return;
+      const keyword = similarKeyword.value.trim().toLocaleLowerCase();
+      const category = similarCategoryFilter.value;
+      const machine = similarMachineFilter.value.trim().toLocaleLowerCase();
+      const part = similarPartFilter.value.trim().toLocaleLowerCase();
+      const visibleCases = [...cases].sort((a,b)=>new Date(b.updated)-new Date(a.updated)).filter(item => {
+        const parts = item.parts||[];
+        const searchText = [item.id,item.customer,item.machine,item.address,item.contact,item.description,item.handling,(item.categories||[]).join(' '),parts.map(entry=>`${entry.sku||''} ${entry.name||''} ${entry.method||''}`).join(' ')].join(' ').toLocaleLowerCase();
+        const partText = parts.map(entry=>`${entry.sku||''} ${entry.name||''}`).join(' ').toLocaleLowerCase();
+        return (!keyword || searchText.includes(keyword)) && (!category || category==='all' || (item.categories||[]).includes(category)) && (!machine || (item.machine||'').toLocaleLowerCase().includes(machine)) && (!part || partText.includes(part));
+      });
+      similarRows.innerHTML = visibleCases.length ? visibleCases.map(item => {
+        const parts = (item.parts||[]).map(entry=>entry.name||entry.sku).filter(Boolean).join('、');
+        const chips = (item.categories||[]).map(name=>`<span class="issue-chip">${escapeHtml(name)}</span>`).join('');
+        return `<tr><td><button class="case-no" data-open-case="${escapeHtml(item.id)}">${escapeHtml(item.id)}</button><span class="similar-date">報修 ${formatDate(item.reportDate)}</span></td><td><span class="client">${escapeHtml(item.customer)}</span><small>${escapeHtml(item.machine)} · ${escapeHtml(item.address||'未填地址')}</small></td><td><div class="issue-summary">${escapeHtml(item.description||'未填寫故障描述')}</div><div class="issue-chips">${chips||'<span class="issue-chip">未分類</span>'}</div></td><td><div class="part-summary${parts?'':' empty'}">${escapeHtml(parts||'未記錄零件')}</div></td><td><span class="tag ${statusClasses[item.status]||'new'}">${statusLabels[item.status]||'新建'}</span></td><td><button class="outline-btn table-action" type="button" data-open-case="${escapeHtml(item.id)}">查看案件</button></td></tr>`;
+      }).join('') : '<tr><td class="empty-row" colspan="6">沒有符合條件的歷史案件，試試放寬搜尋條件。</td></tr>';
+      similarResultCount.textContent = `找到 ${visibleCases.length} 筆相關案件`;
+      const active = [];
+      if (keyword) active.push(`關鍵字「${keyword}」`);
+      if (category && category !== 'all') active.push(`類別「${category}」`);
+      if (machine) active.push(`機型「${machine}」`);
+      if (part) active.push(`零件「${part}」`);
+      similarActiveFilters.textContent = active.length ? `已套用：${active.join('、')}` : '目前未套用條件';
+      renderSimilarCategoryPills();
+    }
+    function switchView(view) {
+      const showingSimilar = view === 'similar';
+      overviewView.hidden = showingSimilar;
+      similarIssuesView.hidden = !showingSimilar;
+      pageTitle.textContent = showingSimilar ? '同類型問題' : '案件總覽';
+      pageEyebrow.textContent = showingSimilar ? 'SERVICE DESK · CASE KNOWLEDGE' : 'SERVICE DESK · 2026.10.20';
+      document.querySelectorAll('.nav-item[data-view]').forEach(button=>button.classList.toggle('active', button.dataset.view===view));
+      if (showingSimilar) { renderSimilarFilterOptions(); renderSimilarIssues(); }
     }
     function renderCategories(selected = []) {
       document.getElementById('categoryGrid').innerHTML = categories.map((category,index) => `<label class="category-option"><input type="checkbox" name="categories" value="${escapeHtml(category.name)}" ${selected.includes(category.name)?'checked':''}><span>${escapeHtml(category.group||'待確認')}｜${escapeHtml(category.name)}</span></label>`).join('');
@@ -413,7 +540,8 @@
       detailBackdrop.classList.add('open');
     }
     document.getElementById('openModal').addEventListener('click', () => openForm());
-    document.querySelectorAll('.nav-item')[1].addEventListener('click', () => openForm());
+    document.querySelector('[data-action="new-case"]').addEventListener('click', () => openForm());
+    document.querySelectorAll('.nav-item[data-view]').forEach(button=>button.addEventListener('click',()=>switchView(button.dataset.view)));
     document.getElementById('closeModal').addEventListener('click', () => modal.classList.remove('open'));
     document.getElementById('cancelModal').addEventListener('click', () => modal.classList.remove('open'));
     modal.addEventListener('click', event => { if (event.target === modal) modal.classList.remove('open'); });
@@ -425,6 +553,8 @@
       if (categories.some(category => category.name.toLocaleLowerCase() === name.toLocaleLowerCase())) { const selected=[...form.querySelectorAll('input[name="categories"]:checked')].map(box=>box.value); selected.push(name); document.getElementById('categoryHint').textContent = '這個類別已存在，已在上方清單中。'; renderCategories([...new Set(selected)]); input.value=''; return; }
       categories.push({name,group:'待確認',pending:true}); persist(); renderCategories([...new Set([...form.querySelectorAll('input[name="categories"]:checked')].map(box=>box.value)),name]);
       document.getElementById('categoryHint').textContent = `「${name}」已加入待確認分類。`; input.value='';
+      renderSimilarFilterOptions();
+      renderSimilarCategoryPills();
     });
     document.getElementById('caseForm').addEventListener('submit', event => {
       event.preventDefault();
@@ -438,6 +568,7 @@
       persist(); renderCases(); modal.classList.remove('open'); form.reset();
     });
     document.getElementById('caseRows').addEventListener('click', event => { const button=event.target.closest('[data-open-case]'); if(button) openDetail(button.dataset.openCase); });
+    similarRows.addEventListener('click', event => { const button=event.target.closest('[data-open-case]'); if(button) openDetail(button.dataset.openCase); });
     document.getElementById('closeDetail').addEventListener('click',()=>detailBackdrop.classList.remove('open'));
     document.getElementById('doneDetail').addEventListener('click',()=>detailBackdrop.classList.remove('open'));
     detailBackdrop.addEventListener('click',event=>{if(event.target===detailBackdrop) detailBackdrop.classList.remove('open');});
@@ -446,6 +577,11 @@
     document.addEventListener('keydown', event => { if(event.key==='Escape'){modal.classList.remove('open');detailBackdrop.classList.remove('open');} });
     searchInput.addEventListener('input',renderCases);
     statusFilter.addEventListener('change',renderCases);
+    [similarKeyword,similarMachineFilter,similarPartFilter].forEach(input=>input.addEventListener('input',renderSimilarIssues));
+    similarCategoryFilter.addEventListener('change',renderSimilarIssues);
+    document.getElementById('clearSimilarFilters').addEventListener('click',()=>{similarKeyword.value='';similarCategoryFilter.value='all';similarMachineFilter.value='';similarPartFilter.value='';renderSimilarIssues();});
+    document.getElementById('similarCategoryPills').addEventListener('click',event=>{const button=event.target.closest('[data-category]');if(!button)return;similarCategoryFilter.value=button.dataset.category;renderSimilarIssues();});
+    renderSimilarFilterOptions();
     renderCases();
   </script>
 </body>
