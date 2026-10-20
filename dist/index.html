@@ -266,6 +266,12 @@
     .part-modal .form-grid { padding-bottom:20px; }
     .checkbox-field { display:flex; align-items:center; gap:8px; min-height:38px; color:#5f6872; font-size:12px; }
     .checkbox-field input { width:auto; accent-color:var(--teal); }
+    .master-intro { padding:18px 20px; margin-bottom:18px; color:var(--muted); font-size:13px; line-height:1.7; }
+    .master-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; align-items:start; }
+    .master-table { min-width:440px; }
+    .master-table th, .master-table td { padding-left:15px; padding-right:15px; }
+    .master-table td { line-height:1.6; }
+    .master-table small { display:block; color:var(--muted); font-size:11px; }
     @media print {
       @page { size:A4; margin:14mm; }
       body { background:#fff; }
@@ -282,6 +288,7 @@
       .main { padding-left: 22px; padding-right: 22px; }
       .workspace { grid-template-columns: 1fr; }
       .similar-layout { grid-template-columns: 1fr; }
+      .master-grid { grid-template-columns:1fr; }
       .right-stack { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
     @media (max-width: 760px) {
@@ -319,7 +326,7 @@
       </nav>
       <nav class="nav-section" aria-label="管理功能">
         <div class="nav-label">管理</div>
-        <button class="nav-item"><span class="nav-icon">◫</span><span>客戶與機型</span></button>
+        <button class="nav-item" data-view="masters"><span class="nav-icon">◫</span><span>客戶與機型</span></button>
         <button class="nav-item" data-view="categories"><span class="nav-icon">◈</span><span>問題類別</span><span class="nav-count" id="categoryNavCount">3</span></button>
         <button class="nav-item" data-view="parts"><span class="nav-icon">◇</span><span>零件清單</span><span class="nav-count" id="partNavCount">0</span></button>
       </nav>
@@ -418,6 +425,14 @@
           <aside class="right-stack"><section class="panel side-panel"><h2>零件主檔用途</h2><p>這裡管理的是標準名稱與料號，不是庫存數量。</p><div class="search-guide"><div><span class="guide-icon">1</span><span>新增案件時可從料號或名稱提示快速填寫。</span></div><div><span class="guide-icon">2</span><span>歷史案件可用零件料號搜尋過去處理方式。</span></div><div><span class="guide-icon">3</span><span>不再使用的零件可停用，既有案件仍會保留。</span></div></div></section><section class="panel side-panel"><h2>目前零件數</h2><p>啟用中的零件主檔。</p><div class="quick-list"><div class="quick-item"><div><strong>可使用</strong><small>案件表單輸入提示</small></div><span class="quick-number" id="activePartCount">0</span></div></div></section></aside>
         </div>
       </div>
+
+      <div id="mastersView" class="view" hidden>
+        <div class="panel master-intro">維護常用客戶聯絡資料與機台型號。案件會保存建立當時的資料，日後修改主檔不會改動既有案件。</div>
+        <div class="master-grid">
+          <section class="panel"><div class="category-toolbar"><div><h2>客戶清單</h2><p>選取客戶時帶入常用聯絡資料。</p></div><button class="primary-btn" id="newCustomer" type="button">＋ 新增客戶</button></div><div class="category-filters"><div class="search-box"><span>⌕</span><input id="customerSearch" type="search" aria-label="搜尋客戶" placeholder="搜尋客戶名稱或聯絡人" /></div></div><div class="table-wrap"><table class="master-table"><thead><tr><th>客戶</th><th>常用聯絡資料</th><th>案件</th><th>操作</th></tr></thead><tbody id="customerRows"></tbody></table></div><div class="table-footer" id="customerCount"></div></section>
+          <section class="panel"><div class="category-toolbar"><div><h2>機型清單</h2><p>統一機台型號的寫法。</p></div><button class="primary-btn" id="newMachine" type="button">＋ 新增機型</button></div><div class="category-filters"><div class="search-box"><span>⌕</span><input id="machineSearch" type="search" aria-label="搜尋機型" placeholder="搜尋機型或備註" /></div></div><div class="table-wrap"><table class="master-table"><thead><tr><th>機台型號</th><th>備註</th><th>案件</th><th>操作</th></tr></thead><tbody id="machineRows"></tbody></table></div><div class="table-footer" id="machineCount"></div></section>
+        </div>
+      </div>
     </main>
   </div>
 
@@ -427,8 +442,8 @@
       <form id="caseForm">
         <div class="form-grid">
           <div class="form-section"><h3 class="form-section-title">案件與客戶資料</h3></div>
-          <div class="field"><label for="customer">客戶名稱 *</label><input id="customer" required placeholder="請輸入客戶名稱" /></div>
-          <div class="field"><label for="machine">機台型號 *</label><input id="machine" required placeholder="例如：MX-420" /></div>
+          <div class="field"><label for="customer">客戶名稱 *</label><input id="customer" list="customerOptions" required placeholder="選擇或輸入新客戶" /><datalist id="customerOptions"></datalist></div>
+          <div class="field"><label for="machine">機台型號 *</label><input id="machine" list="machineOptions" required placeholder="選擇或輸入新機型" /><datalist id="machineOptions"></datalist></div>
           <div class="field"><label for="contact">聯絡人</label><input id="contact" placeholder="客戶聯絡人" /></div>
           <div class="field"><label for="phone">聯絡電話</label><input id="phone" type="tel" placeholder="電話或分機" /></div>
           <div class="field"><label for="address">維修地址</label><input id="address" placeholder="服務地點" /></div>
@@ -457,10 +472,15 @@
 
   <div class="modal-backdrop" id="partModalBackdrop" role="dialog" aria-modal="true" aria-labelledby="partModalTitle"><div class="modal part-modal"><div class="modal-head"><div><h2 id="partModalTitle">新增零件</h2><div class="field-hint" id="partModalHint">新增後會立即套用到案件表單輸入提示。</div></div><button class="close" id="closePartModal" aria-label="關閉">×</button></div><form id="partForm"><div class="form-grid"><div class="field"><label for="partSku">零件料號 *</label><input id="partSku" required placeholder="例如：SV-24A" /></div><div class="field"><label for="partName">零件名稱 *</label><input id="partName" required placeholder="例如：電磁閥" /></div><div class="field"><label for="partMethod">常用處理方式</label><select id="partMethod"><option>更換</option><option>維修</option><option>銷售</option><option>借用</option><option>退回</option><option>待確認</option></select></div><div class="field"><label>使用狀態</label><label class="checkbox-field"><input id="partActive" type="checkbox" checked />啟用這筆零件</label></div><div class="field full"><label for="partNote">備註</label><input id="partNote" placeholder="規格、適用機型或其他提醒" /></div></div><div class="form-actions"><button type="button" class="outline-btn" id="cancelPartModal">取消</button><button type="submit" class="primary-btn" id="savePart">新增零件</button></div></form></div></div>
 
+  <div class="modal-backdrop" id="customerModal" role="dialog" aria-modal="true" aria-labelledby="customerModalTitle"><div class="modal"><div class="modal-head"><h2 id="customerModalTitle">新增客戶</h2><button class="close" id="closeCustomerModal" aria-label="關閉">×</button></div><form id="customerForm"><div class="form-grid"><div class="field full"><label for="masterCustomerName">客戶名稱 *</label><input id="masterCustomerName" required /></div><div class="field"><label for="masterContact">常用聯絡人</label><input id="masterContact" /></div><div class="field"><label for="masterPhone">電話</label><input id="masterPhone" type="tel" /></div><div class="field full"><label for="masterAddress">服務地址</label><input id="masterAddress" /></div></div><div class="form-actions"><button class="outline-btn" type="button" id="cancelCustomerModal">取消</button><button class="primary-btn" type="submit" id="saveCustomer">新增客戶</button></div></form></div></div>
+  <div class="modal-backdrop" id="machineModal" role="dialog" aria-modal="true" aria-labelledby="machineModalTitle"><div class="modal"><div class="modal-head"><h2 id="machineModalTitle">新增機型</h2><button class="close" id="closeMachineModal" aria-label="關閉">×</button></div><form id="machineForm"><div class="form-grid"><div class="field full"><label for="masterMachineName">機台型號 *</label><input id="masterMachineName" required /></div><div class="field full"><label for="masterMachineNote">備註</label><input id="masterMachineNote" placeholder="例如：適用系列" /></div></div><div class="form-actions"><button class="outline-btn" type="button" id="cancelMachineModal">取消</button><button class="primary-btn" type="submit" id="saveMachine">新增機型</button></div></form></div></div>
+
   <script>
     const storageKey = 'service-desk-cases-v1';
     const categoryStorageKey = 'service-desk-categories-v1';
     const partStorageKey = 'service-desk-parts-v1';
+    const customerStorageKey = 'service-desk-customers-v1';
+    const machineStorageKey = 'service-desk-machines-v1';
     const initialCases = [
       {id:'SV-20261018-021', customer:'台灣精工', machine:'MX-420', address:'台中廠', contact:'王先生', phone:'04-2380-1200', warranty:'', reportDate:'2026-10-18', serviceDate:'2026-10-20', owner:'陳柏翰', status:'processing', categories:['主軸','異音'], description:'加工時主軸出現間歇性異音，轉速提高後聲音變明顯。', handling:'已完成初步聽音與振動檢查，安排進一步確認軸承狀況。', parts:[], updated:'2026-10-20T09:42:00'},
       {id:'SV-20261017-019', customer:'富利機械', machine:'VM-800', address:'新竹廠', contact:'林小姐', phone:'03-577-8200', warranty:'', reportDate:'2026-10-17', serviceDate:'2026-10-19', owner:'林怡君', status:'waiting', categories:['電磁閥'], description:'工作台夾持油壓不穩，檢查發現電磁閥反應異常。', handling:'已確認需更換電磁閥，等待零件到貨後安排回訪。', parts:[{name:'電磁閥',sku:'SV-24A',method:'更換',quantity:1,state:'待處理'}], updated:'2026-10-20T08:16:00'},
@@ -482,7 +502,11 @@
     let cases = loadData(storageKey, initialCases);
     let categories = loadData(categoryStorageKey, initialCategories);
     let parts = loadData(partStorageKey, initialParts);
+    const uniqueByName = (items, key) => items.filter((item,index) => item[key] && items.findIndex(other => other[key]?.toLocaleLowerCase() === item[key].toLocaleLowerCase()) === index);
+    let customers = loadData(customerStorageKey, uniqueByName(cases.map(item=>({name:item.customer,contact:item.contact||'',phone:item.phone||'',address:item.address||''})), 'name'));
+    let machines = loadData(machineStorageKey, uniqueByName(cases.map(item=>({name:item.machine,note:''})), 'name'));
     let editingId = null;
+    let selectedCustomer = null;
     let activeDetailId = null;
     const modal = document.getElementById('modalBackdrop');
     const detailBackdrop = document.getElementById('detailBackdrop');
@@ -515,6 +539,13 @@
     const partModal = document.getElementById('partModalBackdrop');
     const partForm = document.getElementById('partForm');
     let editingPartSku = null;
+    const mastersView = document.getElementById('mastersView');
+    const customerRows = document.getElementById('customerRows');
+    const machineRows = document.getElementById('machineRows');
+    const customerModal = document.getElementById('customerModal');
+    const machineModal = document.getElementById('machineModal');
+    let editingCustomerName = null;
+    let editingMachineName = null;
     const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
     const formatDate = value => {
       if (!value) return '—';
@@ -527,7 +558,7 @@
       return `${formatDate(value)} ${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}`;
     };
     const persist = () => {
-      try { localStorage.setItem(storageKey, JSON.stringify(cases)); localStorage.setItem(categoryStorageKey, JSON.stringify(categories)); localStorage.setItem(partStorageKey, JSON.stringify(parts)); }
+      try { localStorage.setItem(storageKey, JSON.stringify(cases)); localStorage.setItem(categoryStorageKey, JSON.stringify(categories)); localStorage.setItem(partStorageKey, JSON.stringify(parts)); localStorage.setItem(customerStorageKey, JSON.stringify(customers)); localStorage.setItem(machineStorageKey, JSON.stringify(machines)); }
       catch { alert('瀏覽器無法儲存資料，請確認目前瀏覽器允許本機儲存。'); }
     };
     function renderCases() {
@@ -549,6 +580,7 @@
       renderSimilarCategoryPills();
       renderCategoryManager();
       renderPartsManager();
+      renderMasters();
     }
     function renderSimilarFilterOptions() {
       const selected = similarCategoryFilter.value || 'all';
@@ -629,20 +661,41 @@
       document.getElementById('activePartCount').textContent = activeCount;
       document.getElementById('partNavCount').textContent = activeCount;
     }
+    function renderMasters() {
+      const customerTerm = document.getElementById('customerSearch').value.trim().toLocaleLowerCase();
+      const machineTerm = document.getElementById('machineSearch').value.trim().toLocaleLowerCase();
+      const shownCustomers = customers.filter(item=>`${item.name} ${item.contact||''} ${item.phone||''}`.toLocaleLowerCase().includes(customerTerm));
+      const shownMachines = machines.filter(item=>`${item.name} ${item.note||''}`.toLocaleLowerCase().includes(machineTerm));
+      customerRows.innerHTML = shownCustomers.length ? shownCustomers.map(item=>{
+        const count = cases.filter(entry=>entry.customer?.toLocaleLowerCase()===item.name.toLocaleLowerCase()).length;
+        return `<tr><td><span class="client">${escapeHtml(item.name)}</span><small>${escapeHtml(item.address||'未填地址')}</small></td><td>${escapeHtml(item.contact||'—')}<small>${escapeHtml(item.phone||'—')}</small></td><td>${count} 件</td><td><button class="outline-btn table-action" type="button" data-edit-customer="${escapeHtml(item.name)}">編輯</button></td></tr>`;
+      }).join('') : '<tr><td class="empty-row" colspan="4">沒有符合條件的客戶。</td></tr>';
+      machineRows.innerHTML = shownMachines.length ? shownMachines.map(item=>{
+        const count = cases.filter(entry=>entry.machine?.toLocaleLowerCase()===item.name.toLocaleLowerCase()).length;
+        return `<tr><td><span class="client">${escapeHtml(item.name)}</span></td><td>${escapeHtml(item.note||'—')}</td><td>${count} 件</td><td><button class="outline-btn table-action" type="button" data-edit-machine="${escapeHtml(item.name)}">編輯</button></td></tr>`;
+      }).join('') : '<tr><td class="empty-row" colspan="4">沒有符合條件的機型。</td></tr>';
+      document.getElementById('customerCount').textContent = `顯示 ${shownCustomers.length} / ${customers.length} 位客戶`;
+      document.getElementById('machineCount').textContent = `顯示 ${shownMachines.length} / ${machines.length} 種機型`;
+      document.getElementById('customerOptions').innerHTML = customers.map(item=>`<option value="${escapeHtml(item.name)}"></option>`).join('');
+      document.getElementById('machineOptions').innerHTML = machines.map(item=>`<option value="${escapeHtml(item.name)}"></option>`).join('');
+    }
     function switchView(view) {
       const showingSimilar = view === 'similar';
       const showingCategories = view === 'categories';
       const showingParts = view === 'parts';
-      overviewView.hidden = showingSimilar || showingCategories || showingParts;
+      const showingMasters = view === 'masters';
+      overviewView.hidden = showingSimilar || showingCategories || showingParts || showingMasters;
       similarIssuesView.hidden = !showingSimilar;
       categoryView.hidden = !showingCategories;
       partsView.hidden = !showingParts;
-      pageTitle.textContent = showingSimilar ? '同類型問題' : showingCategories ? '問題類別管理' : showingParts ? '零件清單管理' : '案件總覽';
-      pageEyebrow.textContent = showingSimilar ? 'SERVICE DESK · CASE KNOWLEDGE' : showingCategories || showingParts ? 'SERVICE DESK · MASTER DATA' : 'SERVICE DESK · 2026.10.20';
+      mastersView.hidden = !showingMasters;
+      pageTitle.textContent = showingSimilar ? '同類型問題' : showingCategories ? '問題類別管理' : showingParts ? '零件清單管理' : showingMasters ? '客戶與機型管理' : '案件總覽';
+      pageEyebrow.textContent = showingSimilar ? 'SERVICE DESK · CASE KNOWLEDGE' : showingCategories || showingParts || showingMasters ? 'SERVICE DESK · MASTER DATA' : 'SERVICE DESK · 2026.10.20';
       document.querySelectorAll('.nav-item[data-view]').forEach(button=>button.classList.toggle('active', button.dataset.view===view));
       if (showingSimilar) { renderSimilarFilterOptions(); renderSimilarIssues(); }
       if (showingCategories) renderCategoryManager();
       if (showingParts) renderPartsManager();
+      if (showingMasters) renderMasters();
     }
     function renderCategories(selected = []) {
       document.getElementById('categoryGrid').innerHTML = categories.map((category,index) => `<label class="category-option"><input type="checkbox" name="categories" value="${escapeHtml(category.name)}" ${selected.includes(category.name)?'checked':''}><span>${escapeHtml(category.group||'待確認')}｜${escapeHtml(category.name)}</span></label>`).join('');
@@ -655,7 +708,7 @@
       document.getElementById('partList').appendChild(row);
     }
     function resetForm() {
-      form.reset(); editingId = null; form.dataset.caseId = ''; document.getElementById('partList').replaceChildren();
+      form.reset(); editingId = null; selectedCustomer = null; form.dataset.caseId = ''; document.getElementById('partList').replaceChildren();
       document.getElementById('modalTitle').textContent = '新增售服案件';
       document.getElementById('caseNumberHint').textContent = '儲存後自動產生服務案號';
       document.getElementById('saveCase').textContent = '建立案件';
@@ -730,6 +783,34 @@
       }
       partModal.classList.add('open');
     }
+    function openCustomerForm(name = null) {
+      editingCustomerName = name;
+      document.getElementById('customerForm').reset();
+      document.getElementById('customerModalTitle').textContent = name ? '編輯客戶' : '新增客戶';
+      document.getElementById('saveCustomer').textContent = name ? '儲存修改' : '新增客戶';
+      if (name) {
+        const item = customers.find(entry=>entry.name===name);
+        if (!item) return;
+        document.getElementById('masterCustomerName').value = item.name;
+        document.getElementById('masterContact').value = item.contact||'';
+        document.getElementById('masterPhone').value = item.phone||'';
+        document.getElementById('masterAddress').value = item.address||'';
+      }
+      customerModal.classList.add('open');
+    }
+    function openMachineForm(name = null) {
+      editingMachineName = name;
+      document.getElementById('machineForm').reset();
+      document.getElementById('machineModalTitle').textContent = name ? '編輯機型' : '新增機型';
+      document.getElementById('saveMachine').textContent = name ? '儲存修改' : '新增機型';
+      if (name) {
+        const item = machines.find(entry=>entry.name===name);
+        if (!item) return;
+        document.getElementById('masterMachineName').value = item.name;
+        document.getElementById('masterMachineNote').value = item.note||'';
+      }
+      machineModal.classList.add('open');
+    }
     document.getElementById('openModal').addEventListener('click', () => openForm());
     document.querySelector('[data-action="new-case"]').addEventListener('click', () => openForm());
     document.querySelectorAll('.nav-item[data-view]').forEach(button=>button.addEventListener('click',()=>switchView(button.dataset.view)));
@@ -737,6 +818,18 @@
     document.getElementById('cancelModal').addEventListener('click', () => modal.classList.remove('open'));
     modal.addEventListener('click', event => { if (event.target === modal) modal.classList.remove('open'); });
     document.getElementById('addPart').addEventListener('click', () => addPartRow());
+    document.getElementById('customer').addEventListener('input', event => {
+      const item = customers.find(entry=>entry.name.toLocaleLowerCase()===event.target.value.trim().toLocaleLowerCase());
+      if (selectedCustomer && selectedCustomer !== item) {
+        for (const key of ['contact','phone','address']) {
+          const field = document.getElementById(key);
+          if (field.value === (selectedCustomer[key]||'')) field.value = '';
+        }
+      }
+      selectedCustomer = item || null;
+      if (!item) return;
+      for (const key of ['contact','phone','address']) document.getElementById(key).value = item[key]||'';
+    });
     document.getElementById('addCategory').addEventListener('click', () => {
       const input = document.getElementById('newCategory');
       const name = input.value.trim();
@@ -755,6 +848,12 @@
       const dateCode = (reportDate||now.toISOString().slice(0,10)).replaceAll('-','');
       const nextId = editingId || `SV-${dateCode}-${String(cases.filter(item=>item.id.startsWith(`SV-${dateCode}-`)).length+1).padStart(3,'0')}`;
       const item = {id:nextId,customer:document.getElementById('customer').value.trim(),machine:document.getElementById('machine').value.trim(),contact:document.getElementById('contact').value.trim(),phone:document.getElementById('phone').value.trim(),address:document.getElementById('address').value.trim(),warranty:document.getElementById('warranty').value.trim(),reportDate,serviceDate:document.getElementById('serviceDate').value,owner:document.getElementById('owner').value,status:document.getElementById('caseStatus').value,categories:[...form.querySelectorAll('input[name="categories"]:checked')].map(box=>box.value),description:document.getElementById('description').value.trim(),handling:document.getElementById('handling').value.trim(),parts,updated:now.toISOString()};
+      const knownCustomer = customers.find(entry=>entry.name.toLocaleLowerCase()===item.customer.toLocaleLowerCase());
+      const knownMachine = machines.find(entry=>entry.name.toLocaleLowerCase()===item.machine.toLocaleLowerCase());
+      if (knownCustomer) item.customer = knownCustomer.name;
+      else customers.push({name:item.customer,contact:item.contact,phone:item.phone,address:item.address});
+      if (knownMachine) item.machine = knownMachine.name;
+      else machines.push({name:item.machine,note:''});
       if (editingId) cases = cases.map(entry=>entry.id===editingId?item:entry); else cases.unshift(item);
       persist(); renderCases(); modal.classList.remove('open'); form.reset();
     });
@@ -844,15 +943,54 @@
         renderPartsManager();
       }
     });
+    document.getElementById('newCustomer').addEventListener('click',()=>openCustomerForm());
+    document.getElementById('newMachine').addEventListener('click',()=>openMachineForm());
+    for (const [backdrop,closeId,cancelId] of [[customerModal,'closeCustomerModal','cancelCustomerModal'],[machineModal,'closeMachineModal','cancelMachineModal']]) {
+      document.getElementById(closeId).addEventListener('click',()=>backdrop.classList.remove('open'));
+      document.getElementById(cancelId).addEventListener('click',()=>backdrop.classList.remove('open'));
+      backdrop.addEventListener('click',event=>{if(event.target===backdrop) backdrop.classList.remove('open');});
+    }
+    customerRows.addEventListener('click',event=>{
+      const button = event.target.closest('[data-edit-customer]');
+      if (button) openCustomerForm(button.dataset.editCustomer);
+    });
+    machineRows.addEventListener('click',event=>{
+      const button = event.target.closest('[data-edit-machine]');
+      if (button) openMachineForm(button.dataset.editMachine);
+    });
+    document.getElementById('customerForm').addEventListener('submit',event=>{
+      event.preventDefault();
+      const name = document.getElementById('masterCustomerName').value.trim();
+      if (!name) return;
+      if (customers.some(item=>item.name.toLocaleLowerCase()===name.toLocaleLowerCase() && item.name!==editingCustomerName)) { alert('這個客戶名稱已存在。'); return; }
+      const item = {name,contact:document.getElementById('masterContact').value.trim(),phone:document.getElementById('masterPhone').value.trim(),address:document.getElementById('masterAddress').value.trim()};
+      if (editingCustomerName) customers = customers.map(entry=>entry.name===editingCustomerName?item:entry);
+      else customers.push(item);
+      document.getElementById('customerSearch').value = '';
+      persist(); renderMasters(); customerModal.classList.remove('open');
+    });
+    document.getElementById('machineForm').addEventListener('submit',event=>{
+      event.preventDefault();
+      const name = document.getElementById('masterMachineName').value.trim();
+      if (!name) return;
+      if (machines.some(item=>item.name.toLocaleLowerCase()===name.toLocaleLowerCase() && item.name!==editingMachineName)) { alert('這個機型已存在。'); return; }
+      const item = {name,note:document.getElementById('masterMachineNote').value.trim()};
+      if (editingMachineName) machines = machines.map(entry=>entry.name===editingMachineName?item:entry);
+      else machines.push(item);
+      document.getElementById('machineSearch').value = '';
+      persist(); renderMasters(); machineModal.classList.remove('open');
+    });
     document.getElementById('editCase').addEventListener('click',()=>{const id=activeDetailId;detailBackdrop.classList.remove('open');openForm(id);});
     document.getElementById('detailStatus').addEventListener('change',event=>{const item=cases.find(entry=>entry.id===activeDetailId);if(!item)return;item.status=event.target.value;item.updated=new Date().toISOString();persist();renderCases();openDetail(item.id);});
-    document.addEventListener('keydown', event => { if(event.key==='Escape'){modal.classList.remove('open');detailBackdrop.classList.remove('open');printBackdrop.classList.remove('open');categoryModal.classList.remove('open');partModal.classList.remove('open');} });
+    document.addEventListener('keydown', event => { if(event.key==='Escape'){modal.classList.remove('open');detailBackdrop.classList.remove('open');printBackdrop.classList.remove('open');categoryModal.classList.remove('open');partModal.classList.remove('open');customerModal.classList.remove('open');machineModal.classList.remove('open');} });
     searchInput.addEventListener('input',renderCases);
     statusFilter.addEventListener('change',renderCases);
     categorySearch.addEventListener('input',renderCategoryManager);
     categoryStatusFilter.addEventListener('change',renderCategoryManager);
     partSearch.addEventListener('input',renderPartsManager);
     partStatusFilter.addEventListener('change',renderPartsManager);
+    document.getElementById('customerSearch').addEventListener('input',renderMasters);
+    document.getElementById('machineSearch').addEventListener('input',renderMasters);
     [similarKeyword,similarMachineFilter,similarPartFilter].forEach(input=>input.addEventListener('input',renderSimilarIssues));
     similarCategoryFilter.addEventListener('change',renderSimilarIssues);
     document.getElementById('clearSimilarFilters').addEventListener('click',()=>{similarKeyword.value='';similarCategoryFilter.value='all';similarMachineFilter.value='';similarPartFilter.value='';renderSimilarIssues();});
