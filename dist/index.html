@@ -245,6 +245,19 @@
     .print-parts th, .print-parts td { padding:9px 10px; border:1px solid #e2dfda; font-size:12px; }
     .print-parts th { background:#f7f4ef; color:#5f6872; }
     .print-actions { background:#fff; }
+    .category-toolbar { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:19px 20px 16px; border-bottom:1px solid #f0eeea; }
+    .category-toolbar h2 { margin:0; font-size:17px; }
+    .category-toolbar p { margin:5px 0 0; color:var(--muted); font-size:12px; }
+    .category-filters { padding:15px 20px; display:flex; gap:9px; flex-wrap:wrap; border-bottom:1px solid #f0eeea; }
+    .category-filters .search-box { flex:1 1 240px; }
+    .category-table { min-width:620px; }
+    .category-table th, .category-table td { padding-left:20px; padding-right:20px; }
+    .category-name { font-weight:800; }
+    .category-group { color:var(--muted); font-size:12px; }
+    .category-actions { display:flex; gap:7px; white-space:nowrap; }
+    .category-actions .outline-btn { min-height:32px; padding:0 10px; font-size:12px; }
+    .category-empty { padding:30px!important; text-align:center; color:var(--muted); }
+    .category-modal .form-grid { padding-bottom:20px; }
     @media print {
       @page { size:A4; margin:14mm; }
       body { background:#fff; }
@@ -299,7 +312,7 @@
       <nav class="nav-section" aria-label="管理功能">
         <div class="nav-label">管理</div>
         <button class="nav-item"><span class="nav-icon">◫</span><span>客戶與機型</span></button>
-        <button class="nav-item"><span class="nav-icon">◈</span><span>問題類別</span><span class="nav-count">3</span></button>
+        <button class="nav-item" data-view="categories"><span class="nav-icon">◈</span><span>問題類別</span><span class="nav-count" id="categoryNavCount">3</span></button>
         <button class="nav-item"><span class="nav-icon">◇</span><span>零件清單</span></button>
       </nav>
 
@@ -374,6 +387,18 @@
           </aside>
         </div>
       </div>
+
+      <div id="categoryView" class="view" hidden>
+        <div class="workspace">
+          <section class="panel">
+            <div class="category-toolbar"><div><h2>問題類別</h2><p>整理案件分類，讓新增案件與歷史搜尋使用同一份清單。</p></div><button class="primary-btn" id="openCategoryModal" type="button"><span class="plus">＋</span>新增類別</button></div>
+            <div class="category-filters"><div class="search-box"><span>⌕</span><input id="categorySearch" type="search" placeholder="搜尋類別名稱或分類群組" /></div><select class="select" id="categoryStatusFilter"><option value="all">全部狀態</option><option value="pending">待確認</option><option value="active">已確認</option></select></div>
+            <div class="table-wrap"><table class="category-table"><thead><tr><th>類別名稱</th><th>分類群組</th><th>使用案件</th><th>狀態</th><th>操作</th></tr></thead><tbody id="categoryRows"></tbody></table></div>
+            <div class="table-footer"><span id="categoryResultCount">顯示 0 個類別</span><span>資料會同步套用到新增案件與同類型問題。</span></div>
+          </section>
+          <aside class="right-stack"><section class="panel side-panel"><h2>待確認分類</h2><p>現場新增的分類先放在這裡，確認名稱與群組後即可使用。</p><div class="quick-list"><div class="quick-item"><div><strong>等待整理</strong><small>目前待確認的問題類別</small></div><span class="quick-number" id="pendingCategoryCount">0</span></div></div></section><section class="panel side-panel"><h2>分類原則</h2><p>同一個問題可以在案件中複選；分類名稱建議保持簡短，群組用來協助整理與篩選。</p></section></aside>
+        </div>
+      </div>
     </main>
   </div>
 
@@ -408,6 +433,8 @@
   <div class="modal-backdrop" id="detailBackdrop" role="dialog" aria-modal="true" aria-labelledby="detailTitle"><div class="modal"><div class="modal-head"><div><h2 id="detailTitle">案件詳細資料</h2><div class="field-hint" id="detailCaseNo"></div></div><button class="close" id="closeDetail" aria-label="關閉">×</button></div><div class="detail-content" id="detailContent"></div><div class="form-actions"><select class="detail-status" id="detailStatus" aria-label="更新案件狀態"><option value="new">新建</option><option value="processing">處理中</option><option value="waitingCustomer">等待客戶</option><option value="waiting">等待零件</option><option value="pending">待確認</option><option value="closed">已結案</option><option value="void">作廢</option></select><button class="outline-btn" id="printCase" type="button">列印案件</button><button class="outline-btn" id="editCase" type="button">編輯案件</button><button class="primary-btn" id="doneDetail" type="button">完成</button></div></div></div>
 
   <div class="modal-backdrop" id="printBackdrop" role="dialog" aria-modal="true" aria-labelledby="printTitle"><div class="print-modal"><div class="print-header"><div><div class="print-brand">AFTER SERVICE DESK</div><h2 id="printTitle">售服案件服務紀錄</h2></div><div class="print-header-meta" id="printHeaderMeta"></div></div><div class="print-content" id="printContent"></div><div class="form-actions print-actions"><button class="outline-btn" id="closePrint" type="button">返回案件</button><button class="primary-btn" id="confirmPrint" type="button">列印</button></div></div></div>
+
+  <div class="modal-backdrop" id="categoryModalBackdrop" role="dialog" aria-modal="true" aria-labelledby="categoryModalTitle"><div class="modal category-modal"><div class="modal-head"><div><h2 id="categoryModalTitle">新增問題類別</h2><div class="field-hint" id="categoryModalHint">新增後會立即套用到案件表單與搜尋。</div></div><button class="close" id="closeCategoryModal" aria-label="關閉">×</button></div><form id="categoryForm"><div class="form-grid"><div class="field full"><label for="categoryName">類別名稱 *</label><input id="categoryName" required placeholder="例如：冷卻水不足" /></div><div class="field full"><label for="categoryGroup">分類群組</label><select id="categoryGroup"><option>機械</option><option>電氣／控制</option><option>液壓／氣壓</option><option>精度</option><option>其他</option><option>待確認</option></select></div></div><div class="form-actions"><button type="button" class="outline-btn" id="cancelCategoryModal">取消</button><button type="submit" class="primary-btn" id="saveCategory">新增類別</button></div></form></div></div>
 
   <script>
     const storageKey = 'service-desk-cases-v1';
@@ -448,6 +475,13 @@
     const similarRows = document.getElementById('similarRows');
     const similarResultCount = document.getElementById('similarResultCount');
     const similarActiveFilters = document.getElementById('similarActiveFilters');
+    const categoryView = document.getElementById('categoryView');
+    const categorySearch = document.getElementById('categorySearch');
+    const categoryStatusFilter = document.getElementById('categoryStatusFilter');
+    const categoryRows = document.getElementById('categoryRows');
+    const categoryModal = document.getElementById('categoryModalBackdrop');
+    const categoryForm = document.getElementById('categoryForm');
+    let editingCategoryName = null;
     const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
     const formatDate = value => {
       if (!value) return '—';
@@ -480,6 +514,7 @@
       document.getElementById('metricClosed').textContent = cases.filter(item=>item.status==='closed').length;
       renderSimilarIssues();
       renderSimilarCategoryPills();
+      renderCategoryManager();
     }
     function renderSimilarFilterOptions() {
       const selected = similarCategoryFilter.value || 'all';
@@ -517,14 +552,37 @@
       similarActiveFilters.textContent = active.length ? `已套用：${active.join('、')}` : '目前未套用條件';
       renderSimilarCategoryPills();
     }
+    function renderCategoryManager() {
+      if (!categoryRows) return;
+      const keyword = categorySearch.value.trim().toLocaleLowerCase();
+      const selected = categoryStatusFilter.value;
+      const visibleCategories = categories.filter(category => {
+        const text = `${category.name} ${category.group||''}`.toLocaleLowerCase();
+        const statusMatch = selected === 'all' || (selected === 'pending' && category.pending) || (selected === 'active' && !category.pending);
+        return (!keyword || text.includes(keyword)) && statusMatch;
+      });
+      categoryRows.innerHTML = visibleCategories.length ? visibleCategories.map(category => {
+        const usage = cases.filter(item=>(item.categories||[]).includes(category.name)).length;
+        const confirmButton = category.pending ? `<button class="outline-btn" type="button" data-confirm-category="${escapeHtml(category.name)}">確認</button>` : '';
+        return `<tr><td><span class="category-name">${escapeHtml(category.name)}</span></td><td><span class="category-group">${escapeHtml(category.group||'待確認')}</span></td><td>${usage} 件</td><td><span class="tag ${category.pending?'waiting':'processing'}">${category.pending?'待確認':'已確認'}</span></td><td><div class="category-actions"><button class="outline-btn" type="button" data-edit-category="${escapeHtml(category.name)}">編輯</button>${confirmButton}</div></td></tr>`;
+      }).join('') : '<tr><td class="category-empty" colspan="5">沒有符合條件的問題類別。</td></tr>';
+      const pendingCount = categories.filter(category=>category.pending).length;
+      document.getElementById('categoryResultCount').textContent = `顯示 ${visibleCategories.length} / ${categories.length} 個類別`;
+      document.getElementById('pendingCategoryCount').textContent = pendingCount;
+      document.getElementById('categoryNavCount').textContent = pendingCount;
+      document.querySelector('.help-card p').textContent = `有 ${pendingCount} 個現場新增的問題類別等待主管確認。`;
+    }
     function switchView(view) {
       const showingSimilar = view === 'similar';
-      overviewView.hidden = showingSimilar;
+      const showingCategories = view === 'categories';
+      overviewView.hidden = showingSimilar || showingCategories;
       similarIssuesView.hidden = !showingSimilar;
-      pageTitle.textContent = showingSimilar ? '同類型問題' : '案件總覽';
-      pageEyebrow.textContent = showingSimilar ? 'SERVICE DESK · CASE KNOWLEDGE' : 'SERVICE DESK · 2026.10.20';
+      categoryView.hidden = !showingCategories;
+      pageTitle.textContent = showingSimilar ? '同類型問題' : showingCategories ? '問題類別管理' : '案件總覽';
+      pageEyebrow.textContent = showingSimilar ? 'SERVICE DESK · CASE KNOWLEDGE' : showingCategories ? 'SERVICE DESK · MASTER DATA' : 'SERVICE DESK · 2026.10.20';
       document.querySelectorAll('.nav-item[data-view]').forEach(button=>button.classList.toggle('active', button.dataset.view===view));
       if (showingSimilar) { renderSimilarFilterOptions(); renderSimilarIssues(); }
+      if (showingCategories) renderCategoryManager();
     }
     function renderCategories(selected = []) {
       document.getElementById('categoryGrid').innerHTML = categories.map((category,index) => `<label class="category-option"><input type="checkbox" name="categories" value="${escapeHtml(category.name)}" ${selected.includes(category.name)?'checked':''}><span>${escapeHtml(category.group||'待確認')}｜${escapeHtml(category.name)}</span></label>`).join('');
@@ -580,6 +638,20 @@
       document.getElementById('printContent').innerHTML = `<div class="print-meta-grid"><div class="print-meta-item"><small>客戶名稱</small><strong>${escapeHtml(item.customer||'—')}</strong></div><div class="print-meta-item"><small>機台型號</small><strong>${escapeHtml(item.machine||'—')}</strong></div><div class="print-meta-item"><small>案件狀態</small><strong>${escapeHtml(statusLabels[item.status]||'新建')}</strong></div><div class="print-meta-item"><small>售服人員</small><strong>${escapeHtml(item.owner||'—')}</strong></div><div class="print-meta-item"><small>聯絡人</small><strong>${escapeHtml(item.contact||'—')}</strong></div><div class="print-meta-item"><small>聯絡電話</small><strong>${escapeHtml(item.phone||'—')}</strong></div><div class="print-meta-item"><small>維修地址</small><strong>${escapeHtml(item.address||'—')}</strong></div><div class="print-meta-item"><small>保修卡號</small><strong>${escapeHtml(item.warranty||'—')}</strong></div><div class="print-meta-item"><small>報修日期</small><strong>${escapeHtml(item.reportDate||'—')}</strong></div><div class="print-meta-item"><small>服務日期</small><strong>${escapeHtml(item.serviceDate||'—')}</strong></div></div><section class="print-section"><h3>問題類別</h3><div class="print-category-list">${(item.categories||[]).map(category=>`<span class="print-category">${escapeHtml(category)}</span>`).join('')||'<span>尚未分類</span>'}</div></section><section class="print-section"><h3>故障描述</h3><p>${escapeHtml(item.description||'—')}</p></section><section class="print-section"><h3>處理情況</h3><p>${escapeHtml(item.handling||'尚未填寫')}</p></section><section class="print-section"><h3>零件修售清單</h3>${parts}</section>`;
       printBackdrop.classList.add('open');
     }
+    function openCategoryForm(categoryName = null) {
+      editingCategoryName = categoryName;
+      categoryForm.reset();
+      document.getElementById('categoryModalTitle').textContent = categoryName ? '編輯問題類別' : '新增問題類別';
+      document.getElementById('categoryModalHint').textContent = categoryName ? '修改後會同步套用到案件表單與搜尋。' : '新增後會立即套用到案件表單與搜尋。';
+      document.getElementById('saveCategory').textContent = categoryName ? '儲存修改' : '新增類別';
+      if (categoryName) {
+        const category = categories.find(item=>item.name===categoryName);
+        if (!category) return;
+        document.getElementById('categoryName').value = category.name;
+        document.getElementById('categoryGroup').value = category.group || '其他';
+      }
+      categoryModal.classList.add('open');
+    }
     document.getElementById('openModal').addEventListener('click', () => openForm());
     document.querySelector('[data-action="new-case"]').addEventListener('click', () => openForm());
     document.querySelectorAll('.nav-item[data-view]').forEach(button=>button.addEventListener('click',()=>switchView(button.dataset.view)));
@@ -617,11 +689,50 @@
     document.getElementById('closePrint').addEventListener('click',()=>printBackdrop.classList.remove('open'));
     printBackdrop.addEventListener('click',event=>{if(event.target===printBackdrop) printBackdrop.classList.remove('open');});
     document.getElementById('confirmPrint').addEventListener('click',()=>window.print());
+    document.getElementById('openCategoryModal').addEventListener('click',()=>openCategoryForm());
+    document.getElementById('closeCategoryModal').addEventListener('click',()=>categoryModal.classList.remove('open'));
+    document.getElementById('cancelCategoryModal').addEventListener('click',()=>categoryModal.classList.remove('open'));
+    categoryModal.addEventListener('click',event=>{if(event.target===categoryModal) categoryModal.classList.remove('open');});
+    categoryForm.addEventListener('submit',event=>{
+      event.preventDefault();
+      const name = document.getElementById('categoryName').value.trim();
+      const group = document.getElementById('categoryGroup').value;
+      if (!name) return;
+      const duplicate = categories.some(category=>category.name.toLocaleLowerCase()===name.toLocaleLowerCase() && category.name!==editingCategoryName);
+      if (duplicate) { alert('這個問題類別已經存在。'); return; }
+      if (editingCategoryName) {
+        const category = categories.find(item=>item.name===editingCategoryName);
+        if (!category) return;
+        category.name = name;
+        category.group = group;
+        category.pending = false;
+        if (editingCategoryName !== name) cases = cases.map(item=>({...item,categories:(item.categories||[]).map(value=>value===editingCategoryName?name:value)}));
+      } else categories.push({name,group,pending:false});
+      persist();
+      renderSimilarFilterOptions();
+      renderSimilarCategoryPills();
+      renderCases();
+      categoryModal.classList.remove('open');
+    });
+    categoryRows.addEventListener('click',event=>{
+      const editButton = event.target.closest('[data-edit-category]');
+      const confirmButton = event.target.closest('[data-confirm-category]');
+      if (editButton) openCategoryForm(editButton.dataset.editCategory);
+      if (confirmButton) {
+        const category = categories.find(item=>item.name===confirmButton.dataset.confirmCategory);
+        if (!category) return;
+        category.pending = false;
+        persist();
+        renderCases();
+      }
+    });
     document.getElementById('editCase').addEventListener('click',()=>{const id=activeDetailId;detailBackdrop.classList.remove('open');openForm(id);});
     document.getElementById('detailStatus').addEventListener('change',event=>{const item=cases.find(entry=>entry.id===activeDetailId);if(!item)return;item.status=event.target.value;item.updated=new Date().toISOString();persist();renderCases();openDetail(item.id);});
-    document.addEventListener('keydown', event => { if(event.key==='Escape'){modal.classList.remove('open');detailBackdrop.classList.remove('open');printBackdrop.classList.remove('open');} });
+    document.addEventListener('keydown', event => { if(event.key==='Escape'){modal.classList.remove('open');detailBackdrop.classList.remove('open');printBackdrop.classList.remove('open');categoryModal.classList.remove('open');} });
     searchInput.addEventListener('input',renderCases);
     statusFilter.addEventListener('change',renderCases);
+    categorySearch.addEventListener('input',renderCategoryManager);
+    categoryStatusFilter.addEventListener('change',renderCategoryManager);
     [similarKeyword,similarMachineFilter,similarPartFilter].forEach(input=>input.addEventListener('input',renderSimilarIssues));
     similarCategoryFilter.addEventListener('change',renderSimilarIssues);
     document.getElementById('clearSimilarFilters').addEventListener('click',()=>{similarKeyword.value='';similarCategoryFilter.value='all';similarMachineFilter.value='';similarPartFilter.value='';renderSimilarIssues();});
