@@ -265,6 +265,8 @@
     .category-group { color:var(--muted); font-size:12px; }
     .category-actions { display:flex; gap:7px; white-space:nowrap; }
     .category-actions .outline-btn { min-height:32px; padding:0 10px; font-size:12px; }
+    .category-actions .danger-btn { color:#a54c3f; border-color:#e8cbc6; }
+    .category-actions .danger-btn:hover { color:#8f382d; border-color:#d9aaa2; background:#fff7f5; }
     .category-empty { padding:30px!important; text-align:center; color:var(--muted); }
     .category-modal .form-grid { padding-bottom:20px; }
     .part-table { min-width:700px; }
@@ -695,7 +697,7 @@
       categoryRows.innerHTML = visibleCategories.length ? visibleCategories.map(category => {
         const usage = cases.filter(item=>(item.categories||[]).includes(category.name)).length;
         const confirmButton = category.pending ? `<button class="outline-btn" type="button" data-confirm-category="${escapeHtml(category.name)}">確認</button>` : '';
-        return `<tr><td><span class="category-name">${escapeHtml(category.name)}</span></td><td><span class="category-group">${escapeHtml(category.group||'待確認')}</span></td><td>${usage} 件</td><td><span class="tag ${category.pending?'waiting':'processing'}">${category.pending?'待確認':'已確認'}</span></td><td><div class="category-actions"><button class="outline-btn" type="button" data-edit-category="${escapeHtml(category.name)}">編輯</button>${confirmButton}</div></td></tr>`;
+        return `<tr><td><span class="category-name">${escapeHtml(category.name)}</span></td><td><span class="category-group">${escapeHtml(category.group||'待確認')}</span></td><td>${usage} 件</td><td><span class="tag ${category.pending?'waiting':'processing'}">${category.pending?'待確認':'已確認'}</span></td><td><div class="category-actions"><button class="outline-btn" type="button" data-edit-category="${escapeHtml(category.name)}">編輯</button>${confirmButton}<button class="outline-btn danger-btn" type="button" data-delete-category="${escapeHtml(category.name)}">刪除</button></div></td></tr>`;
       }).join('') : '<tr><td class="category-empty" colspan="5">沒有符合條件的問題類別。</td></tr>';
       const pendingCount = categories.filter(category=>category.pending).length;
       document.getElementById('categoryResultCount').textContent = `顯示 ${visibleCategories.length} / ${categories.length} 個類別`;
@@ -719,7 +721,7 @@
       });
       partRows.innerHTML = visibleParts.length ? visibleParts.map(part => {
         const usage = cases.filter(item=>(item.parts||[]).some(entry=>entry.sku===part.sku || entry.name===part.name)).length;
-        return `<tr><td><span class="part-sku">${escapeHtml(part.sku)}</span></td><td><span class="part-name">${escapeHtml(part.name)}</span>${part.note?`<span class="part-note">${escapeHtml(part.note)}</span>`:''}</td><td>${escapeHtml(part.method||'待確認')}</td><td>${usage} 件</td><td><span class="tag ${part.active===false?'new':'processing'}">${part.active===false?'停用':'啟用'}</span></td><td><div class="category-actions"><button class="outline-btn" type="button" data-edit-part="${escapeHtml(part.sku)}">編輯</button><button class="outline-btn" type="button" data-toggle-part="${escapeHtml(part.sku)}">${part.active===false?'啟用':'停用'}</button></div></td></tr>`;
+        return `<tr><td><span class="part-sku">${escapeHtml(part.sku)}</span></td><td><span class="part-name">${escapeHtml(part.name)}</span>${part.note?`<span class="part-note">${escapeHtml(part.note)}</span>`:''}</td><td>${escapeHtml(part.method||'待確認')}</td><td>${usage} 件</td><td><span class="tag ${part.active===false?'new':'processing'}">${part.active===false?'停用':'啟用'}</span></td><td><div class="category-actions"><button class="outline-btn" type="button" data-edit-part="${escapeHtml(part.sku)}">編輯</button><button class="outline-btn" type="button" data-toggle-part="${escapeHtml(part.sku)}">${part.active===false?'啟用':'停用'}</button><button class="outline-btn danger-btn" type="button" data-delete-part="${escapeHtml(part.sku)}">刪除</button></div></td></tr>`;
       }).join('') : '<tr><td class="category-empty" colspan="6">沒有符合條件的零件。</td></tr>';
       const activeCount = parts.filter(part=>part.active !== false).length;
       document.getElementById('partResultCount').textContent = `顯示 ${visibleParts.length} / ${parts.length} 筆零件`;
@@ -733,11 +735,11 @@
       const shownMachines = machines.filter(item=>`${item.name} ${item.note||''}`.toLocaleLowerCase().includes(machineTerm));
       customerRows.innerHTML = shownCustomers.length ? shownCustomers.map(item=>{
         const count = cases.filter(entry=>entry.customer?.toLocaleLowerCase()===item.name.toLocaleLowerCase()).length;
-        return `<tr><td><span class="client">${escapeHtml(item.name)}</span><small>${escapeHtml(item.address||'未填地址')}</small></td><td>${escapeHtml(item.contact||'—')}<small>${escapeHtml(item.phone||'—')}</small></td><td>${count} 件</td><td><button class="outline-btn table-action" type="button" data-edit-customer="${escapeHtml(item.name)}">編輯</button></td></tr>`;
+        return `<tr><td><span class="client">${escapeHtml(item.name)}</span><small>${escapeHtml(item.address||'未填地址')}</small></td><td>${escapeHtml(item.contact||'—')}<small>${escapeHtml(item.phone||'—')}</small></td><td>${count} 件</td><td><div class="category-actions"><button class="outline-btn" type="button" data-edit-customer="${escapeHtml(item.name)}">編輯</button><button class="outline-btn danger-btn" type="button" data-delete-customer="${escapeHtml(item.name)}">刪除</button></div></td></tr>`;
       }).join('') : '<tr><td class="empty-row" colspan="4">沒有符合條件的客戶。</td></tr>';
       machineRows.innerHTML = shownMachines.length ? shownMachines.map(item=>{
         const count = cases.filter(entry=>entry.machine?.toLocaleLowerCase()===item.name.toLocaleLowerCase()).length;
-        return `<tr><td><span class="client">${escapeHtml(item.name)}</span></td><td>${escapeHtml(item.note||'—')}</td><td>${count} 件</td><td><button class="outline-btn table-action" type="button" data-edit-machine="${escapeHtml(item.name)}">編輯</button></td></tr>`;
+        return `<tr><td><span class="client">${escapeHtml(item.name)}</span></td><td>${escapeHtml(item.note||'—')}</td><td>${count} 件</td><td><div class="category-actions"><button class="outline-btn" type="button" data-edit-machine="${escapeHtml(item.name)}">編輯</button><button class="outline-btn danger-btn" type="button" data-delete-machine="${escapeHtml(item.name)}">刪除</button></div></td></tr>`;
       }).join('') : '<tr><td class="empty-row" colspan="4">沒有符合條件的機型。</td></tr>';
       document.getElementById('customerCount').textContent = `顯示 ${shownCustomers.length} / ${customers.length} 位客戶`;
       document.getElementById('machineCount').textContent = `顯示 ${shownMachines.length} / ${machines.length} 種機型`;
@@ -965,12 +967,24 @@
     categoryRows.addEventListener('click',event=>{
       const editButton = event.target.closest('[data-edit-category]');
       const confirmButton = event.target.closest('[data-confirm-category]');
-      if (editButton) openCategoryForm(editButton.dataset.editCategory);
+      const deleteButton = event.target.closest('[data-delete-category]');
+      if (editButton) { openCategoryForm(editButton.dataset.editCategory); return; }
       if (confirmButton) {
         const category = categories.find(item=>item.name===confirmButton.dataset.confirmCategory);
         if (!category) return;
         category.pending = false;
         persist();
+        renderCases();
+        return;
+      }
+      if (deleteButton) {
+        const name = deleteButton.dataset.deleteCategory;
+        const usage = cases.filter(item=>(item.categories||[]).includes(name)).length;
+        if (usage) { alert(`「${name}」正在被 ${usage} 筆案件使用，無法刪除。可改用編輯調整名稱。`); return; }
+        if (!confirm(`確定要刪除問題類別「${name}」嗎？`)) return;
+        categories = categories.filter(item=>item.name!==name);
+        persist();
+        renderSimilarFilterOptions();
         renderCases();
       }
     });
@@ -1004,7 +1018,8 @@
     partRows.addEventListener('click',event=>{
       const editButton = event.target.closest('[data-edit-part]');
       const toggleButton = event.target.closest('[data-toggle-part]');
-      if (editButton) openPartForm(editButton.dataset.editPart);
+      const deleteButton = event.target.closest('[data-delete-part]');
+      if (editButton) { openPartForm(editButton.dataset.editPart); return; }
       if (toggleButton) {
         const part = parts.find(item=>item.sku===toggleButton.dataset.togglePart);
         if (!part) return;
@@ -1012,6 +1027,19 @@
         persist();
         renderPartOptions();
         renderPartsManager();
+        return;
+      }
+      if (deleteButton) {
+        const sku = deleteButton.dataset.deletePart;
+        const part = parts.find(item=>item.sku===sku);
+        if (!part) return;
+        const usage = cases.filter(item=>(item.parts||[]).some(entry=>entry.sku===part.sku || entry.name===part.name)).length;
+        if (usage) { alert(`零件「${part.sku} ${part.name}」正在被 ${usage} 筆案件使用，無法刪除。可先將零件停用。`); return; }
+        if (!confirm(`確定要刪除零件「${part.sku} ${part.name}」嗎？`)) return;
+        parts = parts.filter(item=>item.sku!==sku);
+        persist();
+        renderPartOptions();
+        renderCases();
       }
     });
     document.getElementById('newCustomer').addEventListener('click',()=>openCustomerForm());
@@ -1022,12 +1050,32 @@
       backdrop.addEventListener('click',event=>{if(event.target===backdrop) backdrop.classList.remove('open');});
     }
     customerRows.addEventListener('click',event=>{
-      const button = event.target.closest('[data-edit-customer]');
-      if (button) openCustomerForm(button.dataset.editCustomer);
+      const editButton = event.target.closest('[data-edit-customer]');
+      const deleteButton = event.target.closest('[data-delete-customer]');
+      if (editButton) { openCustomerForm(editButton.dataset.editCustomer); return; }
+      if (deleteButton) {
+        const name = deleteButton.dataset.deleteCustomer;
+        const usage = cases.filter(item=>item.customer?.toLocaleLowerCase()===name.toLocaleLowerCase()).length;
+        const note = usage ? `\n\n已有 ${usage} 筆案件使用這個客戶；既有案件資料會保留。` : '';
+        if (!confirm(`確定要刪除客戶「${name}」嗎？${note}`)) return;
+        customers = customers.filter(item=>item.name!==name);
+        persist();
+        renderMasters();
+      }
     });
     machineRows.addEventListener('click',event=>{
-      const button = event.target.closest('[data-edit-machine]');
-      if (button) openMachineForm(button.dataset.editMachine);
+      const editButton = event.target.closest('[data-edit-machine]');
+      const deleteButton = event.target.closest('[data-delete-machine]');
+      if (editButton) { openMachineForm(editButton.dataset.editMachine); return; }
+      if (deleteButton) {
+        const name = deleteButton.dataset.deleteMachine;
+        const usage = cases.filter(item=>item.machine?.toLocaleLowerCase()===name.toLocaleLowerCase()).length;
+        const note = usage ? `\n\n已有 ${usage} 筆案件使用這個機型；既有案件資料會保留。` : '';
+        if (!confirm(`確定要刪除機型「${name}」嗎？${note}`)) return;
+        machines = machines.filter(item=>item.name!==name);
+        persist();
+        renderMasters();
+      }
     });
     document.getElementById('customerForm').addEventListener('submit',event=>{
       event.preventDefault();
