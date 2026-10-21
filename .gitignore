@@ -1,5 +1,6 @@
 data/
 backups/
+attachments/
 logs/
 .env
 *.sqlite

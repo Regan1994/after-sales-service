@@ -2,6 +2,10 @@
 
 本系統由一台 Windows 伺服器執行 Node.js 服務，瀏覽器只透過 HTTP 存取服務；不要讓其他電腦直接開啟或共同寫入 SQLite 檔案。
 
+案件圖片與影片附件會由伺服器存放在專案下的 `attachments` 目錄，使用者不需要直接共用或修改這個目錄。附件只允許圖片與影片，單檔上限目前為 200 MB；JSON 資料備份不包含附件檔案。
+
+保修卡與機台對應會包含在 JSON 資料備份中。測試資料清理器只會刪除案件表單明確標記為測試的案件及其附件；清理前需輸入確認文字並再次確認，未標記案件不受影響。
+
 ## 首次安裝
 
 1. 在伺服器安裝 Node.js 24 LTS 或更新版本。
@@ -40,13 +44,15 @@
 New-NetFirewallRule -DisplayName '售服系統內網 8080' -Direction Inbound -Action Allow -Protocol TCP -LocalPort 8080 -RemoteAddress 192.168.1.0/24
 ```
 
-不要把連接埠轉發到網際網路，也不要把 `data` 或 `backups` 目錄設為 Windows 共用資料夾供使用者直接存取。
+不要把連接埠轉發到網際網路，也不要把 `data`、`backups` 或 `attachments` 目錄設為 Windows 共用資料夾供使用者直接存取。
 
 ## 開機自動啟動
 
-可用工作排程器建立「開機時執行」工作，執行檔為 `C:\Program Files\nodejs\node.exe`，引數為 `C:\ServiceDesk\server.js`，工作目錄為 `C:\ServiceDesk`。以服務帳號執行，並讓該帳號只需要讀寫專案的 `data` 與 `backups` 目錄。
+可用工作排程器建立「開機時執行」工作，執行檔為 `C:\Program Files\nodejs\node.exe`，引數為 `C:\ServiceDesk\server.js`，工作目錄為 `C:\ServiceDesk`。以服務帳號執行，並讓該帳號只需要讀寫專案的 `data`、`backups` 與 `attachments` 目錄。
 
-更新程式前先停止工作，保留 `data` 和 `backups`；更新後重新啟動並檢查 `/api/health`。不要刪除 SQLite 檔案來「重置」資料，若要清空資料請先由管理者下載備份並另行確認。
+案件詳細資料中的「開啟資料夾」會在伺服器電腦呼叫 Windows Explorer。若工作排程器使用沒有互動桌面的服務帳號，資料夾可能不會顯示；檔案上傳、下載與儲存仍可正常運作。
+
+更新程式前先停止工作，保留 `data`、`backups` 和 `attachments`；更新後重新啟動並檢查 `/api/health`。不要刪除 SQLite 檔案來「重置」資料，若要清空資料請先由管理者下載備份並另行確認。
 
 ## 備份與還原
 
@@ -60,7 +66,7 @@ New-NetFirewallRule -DisplayName '售服系統內網 8080' -Direction Inbound -A
 ```powershell
 npm run check
 Invoke-RestMethod http://127.0.0.1:8080/api/health
-Get-ChildItem .\data, .\backups
+Get-ChildItem .\data, .\backups, .\attachments
 ```
 
 訪客可以查看、搜尋、篩選、開啟詳細資料與列印；新增、編輯、刪除、狀態更新、主檔管理、備份與還原都需要管理者工作階段。即使直接呼叫 API，伺服器仍會拒絕未登入的寫入操作。
