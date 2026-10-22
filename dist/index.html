@@ -178,26 +178,24 @@
     .case-form-grid { gap:16px; }
     .case-section { grid-column:1/-1; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:15px; padding:16px; border:1px solid #dfe5e7; border-radius:14px; background:#fbfcfc; }
     .case-section .form-section { padding-top:0; }
-    .case-collapsible { display:block; padding:0; }
-    .case-collapsible summary { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:16px; color:var(--navy); font-size:13px; font-weight:900; cursor:pointer; list-style:none; }
-    .case-collapsible summary::-webkit-details-marker { display:none; }
-    .case-collapsible summary::after { content:"＋"; color:var(--teal); font-size:18px; line-height:1; }
-    .case-collapsible[open] summary { border-bottom:1px solid #dfe5e7; }
-    .case-collapsible[open] summary::after { content:"－"; }
-    .case-collapsible-hint { color:var(--muted-2); font-size:11px; font-weight:500; margin-left:auto; }
-    .case-collapsible-body { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:15px; padding:0 16px 16px; }
-    .case-collapsible-body .form-section,
-    .case-collapsible-body .field.full { grid-column:1/-1; }
     .case-top-section { grid-template-columns:minmax(220px,.78fr) minmax(330px,1.22fr); align-items:end; gap:20px; padding:14px 16px 15px; background:linear-gradient(105deg,#f4faf8 0%,#f8fcfb 58%,#f3f8fb 100%); border-color:#cfe3dc; }
     .case-top-section .field label { margin-bottom:5px; }
-    .case-time-field .readonly-field { min-height:40px; background:#eef7f7; border-color:#c8e0dc; color:var(--navy); font-weight:700; letter-spacing:.02em; }
+    .case-top-section .field select,
+    .case-time-field .readonly-field { height:46px; }
+    .case-time-field .readonly-field { background:#eef7f7; border-color:#c8e0dc; color:var(--navy); font-weight:700; letter-spacing:.02em; }
     .case-time-field .readonly-field::before { content:"◷"; margin-right:8px; color:var(--teal); font-size:16px; }
     .case-test-section { padding:10px 16px; background:#fffaf2; border-color:#eadfc9; }
     .field-hint { color:var(--muted-2); font-size:11px; margin-top:5px; }
-    .category-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
-    .category-option { display:flex; align-items:center; gap:8px; padding:9px 10px; background:#fff; border:1px solid #e8e4de; border-radius:9px; font-size:12px; cursor:pointer; }
-    .category-option:has(input:checked) { border-color:#8bb5aa; background:#f0faf6; color:#135e55; }
-    .category-option input { accent-color:var(--teal); margin:0; }
+    .category-picker { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto; gap:8px; align-items:end; }
+    .field .category-picker-field { display:grid; gap:5px; margin-bottom:0; }
+    .category-picker-field span { color:var(--muted); font-size:11px; font-weight:700; }
+    .category-picker select { min-width:0; height:40px; border:1px solid #dedbd6; border-radius:9px; padding:0 10px; background:#fff; color:var(--ink); }
+    .category-picker .outline-btn { min-height:40px; }
+    .selected-category-list { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; min-height:36px; padding:9px; border:1px dashed #d8d5cf; border-radius:10px; background:#faf9f7; }
+    .selected-category-option { display:flex; align-items:center; gap:7px; padding:7px 9px; background:#f0faf6; border:1px solid #8bb5aa; border-radius:9px; color:#135e55; font-size:12px; cursor:pointer; }
+    .selected-category-option input { accent-color:var(--teal); margin:0; }
+    .selected-category-option:has(input:not(:checked)) { border-color:#dedbd6; background:#fff; color:var(--muted); }
+    .selected-category-empty { align-self:center; color:var(--muted-2); font-size:11px; }
     .other-category { display:flex; gap:8px; margin-top:9px; }
     .other-category input { flex:1; min-width:0; border:1px solid #dedbd6; border-radius:9px; padding:9px 10px; }
     .part-list { display:grid; gap:9px; }
@@ -215,6 +213,7 @@
     .detail-meta small,.detail-block small { display:block; color:var(--muted); font-size:11px; margin-bottom:5px; }
     .detail-meta strong { font-size:13px; }
     .detail-block p { margin:5px 0 0; line-height:1.7; font-size:13px; white-space:pre-wrap; }
+    .detail-block [data-responsibility-status] { display:inline-block; margin:0 0 0 8px; color:var(--teal); }
     .detail-parts { width:100%; min-width:0; margin-top:7px; }
     .detail-parts th,.detail-parts td { padding:8px 10px; }
     .detail-status { max-width:210px; }
@@ -239,9 +238,10 @@
     .settings-panel { padding:18px 20px; margin-top:16px; }
     .settings-panel h2 { font-size:16px; margin:0 0 7px; }
     .settings-panel p { color:var(--muted); font-size:12px; }
-    .settings-row { margin:12px 0; }
+    .settings-row { margin:12px 0; align-items:flex-end; }
     .settings-row label { display:grid; gap:5px; font-size:12px; }
-    .settings-row input { border:1px solid #dedbd6; border-radius:8px; padding:8px; }
+    .settings-row input { height:40px; border:1px solid #dedbd6; border-radius:8px; padding:8px; }
+    .settings-row button { height:40px; align-self:flex-end; }
     .workflow-actions button { min-height:34px; padding:0 10px; }
     .responsibility-item,.qa-item { border:1px solid #e8e4de; border-radius:9px; padding:10px; margin:7px 0; }
     .responsibility-item label { display:inline-flex; align-items:center; gap:5px; margin:5px 10px 5px 0; }
@@ -423,7 +423,7 @@
       .form-grid { grid-template-columns: 1fr; }
       .field.full { grid-column:auto; }
       .case-section { grid-template-columns:1fr; }
-      .case-collapsible-body { grid-template-columns:1fr; }
+      .category-picker { grid-template-columns:1fr; }
       .case-section .field.full { grid-column:auto; }
       h1 { font-size:24px; }
     }
@@ -611,16 +611,14 @@
           <div class="field"><label for="reportDate">報修日期 *</label><input id="reportDate" type="date" required /></div>
           <div class="field"><label for="serviceDate">維修日期</label><input id="serviceDate" type="date" /></div>
           </div>
-          <details class="case-section case-collapsible">
-          <summary>問題內容<span class="case-collapsible-hint">點擊展開填寫</span></summary>
-          <div class="case-collapsible-body">
-            <div class="field full"><label>問題類別（可複選）</label><div class="category-grid" id="categoryGrid"></div><div class="other-category"><input id="newCategory" placeholder="找不到類別？輸入新類別名稱" /><button class="outline-btn" type="button" id="addCategory">＋ 加入待確認</button></div><div class="field-hint" id="categoryHint">新分類會標記為待確認，之後由主管整理。</div></div>
+          <div class="case-section">
+            <div class="form-section"><h3 class="form-section-title">問題內容</h3></div>
+            <div class="field full"><label>問題類別（可複選）</label><div class="category-picker"><label class="category-picker-field"><span>類別</span><select id="categoryGroupPicker"><option value="">請先選擇類別</option></select></label><label class="category-picker-field"><span>細項</span><select id="categoryItemPicker" disabled><option value="">請先選擇類別</option></select></label><button class="outline-btn" type="button" id="confirmCategory" disabled>確認加入</button></div><div class="selected-category-list" id="selectedCategoryList"></div><div class="other-category"><input id="newCategory" placeholder="找不到細項？輸入新細項名稱" /><button class="outline-btn" type="button" id="addCategory">＋ 加入待確認</button></div><div class="field-hint" id="categoryHint">選擇類別與細項後按確認；可加入多個問題項目。</div></div>
             <div class="field full"><label for="description">故障描述 *</label><textarea id="description" required placeholder="描述現場狀況、發生時間、錯誤訊息或初步判斷"></textarea></div>
             <div class="form-section"><h3 class="form-section-title">詢問紀錄</h3></div>
             <div class="field full"><div class="inquiry-list" id="inquiryList" hidden></div><div class="inquiry-actions"><button class="outline-btn" type="button" id="addInquiry" hidden>＋ 新增詢問紀錄</button><span class="field-hint">問答紀錄請在儲存案件後，從案件詳細資料新增或編輯。</span></div></div>
             <div class="field full"><label for="handling">處理結果</label><textarea id="handling" placeholder="記錄檢查方式、處理結果與後續安排"></textarea></div>
           </div>
-          </details>
           <div class="case-section">
           <div class="form-section"><h3 class="form-section-title">零件修售清單</h3></div>
           <div class="field full"><div class="part-list" id="partList"></div><button class="outline-btn add-part" type="button" id="addPart">＋ 新增一筆零件</button><div class="field-hint">可留空；每筆零件可記錄處理方式、數量與狀態。</div><datalist id="partSkuOptions"></datalist></div>
@@ -1188,8 +1186,34 @@
       if (showingMasters) renderMasters();
       if (showingStaff) renderStaffManager();
     }
+    function selectedCategoryNames() {
+      return [...form.querySelectorAll('input[name="categories"]:checked')].map(box=>box.value);
+    }
+    function renderSelectedCategories(selected = []) {
+      const unique = [...new Set(selected.filter(Boolean))];
+      document.getElementById('selectedCategoryList').innerHTML = unique.length ? unique.map(name => {
+        const category = categories.find(item=>item.name===name);
+        const group = category?.group || '既有類別';
+        return `<label class="selected-category-option"><input type="checkbox" name="categories" value="${escapeHtml(name)}" checked><span>${escapeHtml(group)}｜${escapeHtml(name)}</span></label>`;
+      }).join('') : '<span class="selected-category-empty">尚未選擇問題類別。</span>';
+    }
+    function renderCategoryItemOptions() {
+      const group = document.getElementById('categoryGroupPicker').value;
+      const itemPicker = document.getElementById('categoryItemPicker');
+      const confirmButton = document.getElementById('confirmCategory');
+      const available = categories.filter(category=>(category.group||'待確認')===group);
+      itemPicker.innerHTML = group ? `<option value="">請選擇細項</option>${available.map(category=>`<option value="${escapeHtml(category.name)}">${escapeHtml(category.name)}</option>`).join('')}` : '<option value="">請先選擇類別</option>';
+      itemPicker.disabled = !group || available.length===0;
+      confirmButton.disabled = true;
+    }
     function renderCategories(selected = []) {
-      document.getElementById('categoryGrid').innerHTML = categories.map((category,index) => `<label class="category-option"><input type="checkbox" name="categories" value="${escapeHtml(category.name)}" ${selected.includes(category.name)?'checked':''}><span>${escapeHtml(category.group||'待確認')}｜${escapeHtml(category.name)}</span></label>`).join('');
+      const groupPicker = document.getElementById('categoryGroupPicker');
+      const previousGroup = groupPicker.value;
+      const categoryGroups = [...new Set(categories.map(category=>category.group||'待確認'))];
+      groupPicker.innerHTML = `<option value="">請先選擇類別</option>${categoryGroups.map(group=>`<option value="${escapeHtml(group)}">${escapeHtml(group)}</option>`).join('')}`;
+      groupPicker.value = categoryGroups.includes(previousGroup) ? previousGroup : '';
+      renderCategoryItemOptions();
+      renderSelectedCategories(selected);
     }
     function addPartRow(part = {}) {
       const row = document.createElement('div');
@@ -1229,7 +1253,7 @@
         return {id:Number(row.dataset.id)||null,createdByRole:row.dataset.createdByRole,askedAt: askedAt ? new Date(askedAt).toISOString() : new Date().toISOString(), asker:value('asker'), respondent:value('respondent'), question:value('question'), answer:value('answer')};
       }).filter(item=>item.asker||item.respondent||item.question||item.answer);
     }
-    const customerDataFieldIds = ['customer','machine','contact','phone','email','address','warranty'];
+    const customerDataFieldIds = ['customer','machine','contact','phone','email','address','warranty','orderNumber'];
     function setCustomerDataLocked(locked) {
       customerDataFieldIds.forEach(id => {
         const field = document.getElementById(id);
@@ -1345,7 +1369,7 @@
       if (currentRole === 'guest') return `<div class="detail-block"><small>結案責任歸屬</small><p>${escapeHtml(summary)}</p></div>`;
       const rows = selections.flatMap(entry => entry.reasons?.length ? entry.reasons.map(reason=>({department:entry.department,reason})) : [{department:entry.department,reason:''}]).slice(0,5);
       if (!rows.length) rows.push({});
-      return `<div class="detail-block"><small>結案責任歸屬（最多 5 組）</small><p>${escapeHtml(summary)}</p><div id="responsibilityRows">${rows.map(responsibilityRowMarkup).join('')}</div><button class="outline-btn" id="addResponsibility" type="button" ${rows.length>=5?'hidden':''}>＋ 新增責任歸屬</button><button class="outline-btn" id="saveResponsibility" type="button">儲存責任歸屬</button></div>`;
+      return `<div class="detail-block" data-case-responsibility-editor><small>結案責任歸屬（最多 5 組）</small><p>${escapeHtml(summary)}</p><div data-case-responsibility-rows>${rows.map(responsibilityRowMarkup).join('')}</div><button class="outline-btn" id="addResponsibility" type="button" ${rows.length>=5?'hidden':''}>＋ 新增責任歸屬</button><button class="outline-btn" id="saveResponsibility" type="button">儲存責任歸屬</button><span class="field-hint" data-responsibility-status role="status"></span></div>`;
     }
     function renderWorkflowActions(item) {
       const actions = [];
@@ -1507,6 +1531,17 @@
     modal.addEventListener('click', event => { if (event.target === modal) cancelCaseForm(); });
     document.getElementById('addPart').addEventListener('click', () => addPartRow());
     document.getElementById('addInquiry').addEventListener('click', () => addInquiryRow());
+    document.getElementById('categoryGroupPicker').addEventListener('change',renderCategoryItemOptions);
+    document.getElementById('categoryItemPicker').addEventListener('change',event=>{document.getElementById('confirmCategory').disabled=!event.target.value;});
+    document.getElementById('confirmCategory').addEventListener('click',()=>{
+      const itemPicker = document.getElementById('categoryItemPicker');
+      const name = itemPicker.value;
+      if (!name) return;
+      renderSelectedCategories([...selectedCategoryNames(),name]);
+      itemPicker.value = '';
+      document.getElementById('confirmCategory').disabled = true;
+      document.getElementById('categoryHint').textContent = `已加入「${name}」，可繼續選擇其他問題。`;
+    });
     document.getElementById('customer').addEventListener('input', event => {
       const item = customers.find(entry=>entry.name.toLocaleLowerCase()===event.target.value.trim().toLocaleLowerCase());
       if (selectedCustomer && selectedCustomer !== item) {
@@ -1540,8 +1575,8 @@
       const input = document.getElementById('newCategory');
       const name = input.value.trim();
       if (!name) { input.focus(); return; }
-      if (categories.some(category => category.name.toLocaleLowerCase() === name.toLocaleLowerCase())) { const selected=[...form.querySelectorAll('input[name="categories"]:checked')].map(box=>box.value); selected.push(name); document.getElementById('categoryHint').textContent = '這個類別已存在，已在上方清單中。'; renderCategories([...new Set(selected)]); input.value=''; return; }
-      categories.push({name,group:'待確認',pending:true}); persist(); renderCategories([...new Set([...form.querySelectorAll('input[name="categories"]:checked')].map(box=>box.value)),name]);
+      if (categories.some(category => category.name.toLocaleLowerCase() === name.toLocaleLowerCase())) { const selected=selectedCategoryNames(); selected.push(name); document.getElementById('categoryHint').textContent = '這個細項已存在，已加入下方清單。'; renderCategories([...new Set(selected)]); input.value=''; return; }
+      categories.push({name,group:'待確認',pending:true}); persist(); renderCategories([...new Set([...selectedCategoryNames(),name])]);
       document.getElementById('categoryHint').textContent = `「${name}」已加入待確認分類。`; input.value='';
       renderSimilarFilterOptions();
       renderSimilarCategoryPills();
@@ -1636,7 +1671,8 @@
         return;
       }
       if (event.target.closest('#saveResponsibility')) {
-        const rows = [...document.querySelectorAll('#responsibilityRows [data-responsibility-row]')];
+        const editor = event.target.closest('[data-case-responsibility-editor]');
+        const rows = [...(editor?.querySelectorAll('[data-responsibility-row]') || [])];
         const data = [];
         for (const row of rows) {
           const department = row.querySelector('[data-responsibility-department]').value;
@@ -1645,25 +1681,34 @@
           if (!reason) { alert(`請選擇「${department}」的責任原因。`); return; }
           data.push({ department, reasons:[reason] });
         }
-        try { await apiRequest(`/api/cases/${encodeURIComponent(activeDetailId)}/responsibility`,{method:'PUT',body:JSON.stringify(data)}); await loadState(); openDetail(activeDetailId); }
+        try {
+          await apiRequest(`/api/cases/${encodeURIComponent(activeDetailId)}/responsibility`,{method:'PUT',body:JSON.stringify(data)});
+          await loadState();
+          openDetail(activeDetailId);
+          const status = document.querySelector('#detailContent [data-responsibility-status]');
+          if (status) status.textContent = '責任歸屬已儲存。';
+        }
         catch (error) { alert(error.message||'責任歸屬儲存失敗。'); }
+        return;
       }
       if (event.target.closest('#addResponsibility')) {
-        const rows = document.getElementById('responsibilityRows');
+        const editor = event.target.closest('[data-case-responsibility-editor]');
+        const rows = editor?.querySelector('[data-case-responsibility-rows]');
         if (!rows || rows.querySelectorAll('[data-responsibility-row]').length >= 5) return;
         rows.insertAdjacentHTML('beforeend',responsibilityRowMarkup());
-        const addButton = document.getElementById('addResponsibility');
+        const addButton = editor.querySelector('#addResponsibility');
         if (addButton && rows.querySelectorAll('[data-responsibility-row]').length >= 5) addButton.hidden = true;
         return;
       }
       const removeResponsibilityButton = event.target.closest('[data-remove-responsibility]');
       if (removeResponsibilityButton) {
-        const rows = document.getElementById('responsibilityRows');
+        const editor = event.target.closest('[data-case-responsibility-editor]');
+        const rows = editor?.querySelector('[data-case-responsibility-rows]');
         const row = removeResponsibilityButton.closest('[data-responsibility-row]');
         if (row) row.remove();
         if (rows && !rows.querySelector('[data-responsibility-row]')) rows.insertAdjacentHTML('beforeend',responsibilityRowMarkup());
-        const addButton = document.getElementById('addResponsibility');
-        if (addButton) addButton.hidden = rows.querySelectorAll('[data-responsibility-row]').length >= 5;
+        const addButton = editor?.querySelector('#addResponsibility');
+        if (addButton && rows) addButton.hidden = rows.querySelectorAll('[data-responsibility-row]').length >= 5;
       }
     });
     document.getElementById('detailContent').addEventListener('change',event=>{

@@ -446,12 +446,12 @@ function saveServiceFields(id, input, currentStatus, currentHandler = '') {
   const insert = db.prepare('INSERT INTO case_parts(case_id,sku,name,method,quantity,state) VALUES(?,?,?,?,?,?)');
   for (const part of parts) insert.run(id,part.sku,part.name,part.method,part.quantity,part.state);
 }
-const customerDataFields = ['customer','machine','contact','phone','email','address','warranty'];
+const customerDataFields = ['customer','machine','contact','phone','email','address','warranty','orderNumber'];
 function protectCustomerData(input, current, role) {
   if (role !== 'service') return input;
   for (const field of customerDataFields) {
     if (Object.prototype.hasOwnProperty.call(input, field) && String(input[field] ?? '') !== String(current[field] ?? '')) {
-      const denied = new Error('售服不能修改客戶資料。'); denied.status = 403; throw denied;
+      const denied = new Error('售服不能修改客戶資料或訂單號碼。'); denied.status = 403; throw denied;
     }
   }
   return { ...input, ...Object.fromEntries(customerDataFields.map(field => [field, current[field]])) };
