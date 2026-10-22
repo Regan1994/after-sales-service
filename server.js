@@ -446,6 +446,16 @@ function saveServiceFields(id, input, currentStatus, currentHandler = '') {
   const insert = db.prepare('INSERT INTO case_parts(case_id,sku,name,method,quantity,state) VALUES(?,?,?,?,?,?)');
   for (const part of parts) insert.run(id,part.sku,part.name,part.method,part.quantity,part.state);
 }
+const customerDataFields = ['customer','machine','contact','phone','email','address','warranty'];
+function protectCustomerData(input, current, role) {
+  if (role !== 'service') return input;
+  for (const field of customerDataFields) {
+    if (Object.prototype.hasOwnProperty.call(input, field) && String(input[field] ?? '') !== String(current[field] ?? '')) {
+      const denied = new Error('售服不能修改客戶資料。'); denied.status = 403; throw denied;
+    }
+  }
+  return { ...input, ...Object.fromEntries(customerDataFields.map(field => [field, current[field]])) };
+}
 function createBusinessCase(input) {
   const item = caseDraft({ ...input, status: 'new' });
   if (caseRecord(item.id)) throw new Error('案件編號已存在，請重新建立。');
@@ -457,10 +467,11 @@ function createBusinessCase(input) {
   });
   return caseJson(item.id);
 }
-function updateBusinessCase(id, input) {
+function updateBusinessCase(id, input, role = 'admin') {
   const current = caseRecord(id);
   if (!current) throw new Error('找不到案件。');
-  const item = caseDraft({ ...input, id, status: current.status });
+  const safeInput = protectCustomerData(input, current, role);
+  const item = caseDraft({ ...safeInput, id, status: current.status });
   transaction(() => { syncCaseMasters(item); saveBusinessFields(item); saveServiceFields(id,item,current.status,current.current_handler); });
   return caseJson(id);
 }
@@ -470,15 +481,16 @@ function updateServiceCase(id, input) {
   transaction(() => saveServiceFields(id,input,current.status,current.current_handler));
   return caseJson(id);
 }
-function updateSharedCase(id, input) {
+function updateSharedCase(id, input, role = 'admin') {
   const current = caseRecord(id);
   if (!current) throw new Error('找不到案件。');
   if (input.expectedUpdated && input.expectedUpdated !== current.updated) { const conflict = new Error('案件已由其他人更新，請重新載入後再修改。'); conflict.status = 409; throw conflict; }
-  const item = caseDraft({ ...input, id, status: current.status, currentHandler: input.currentHandler || current.current_handler });
+  const safeInput = protectCustomerData(input, current, role);
+  const item = caseDraft({ ...safeInput, id, status: current.status, currentHandler: safeInput.currentHandler || current.current_handler });
   transaction(() => {
     syncCaseMasters(item);
     saveBusinessFields(item);
-    saveServiceFields(id,input,current.status,current.current_handler);
+    saveServiceFields(id,safeInput,current.status,current.current_handler);
   });
   return caseJson(id);
 }
@@ -582,8 +594,8 @@ function route(req, res) {
     const [,encodedId,action,inquiryId] = caseActionMatch;
     const id = decodeURIComponent(encodedId);
     const role = roleFrom(req);
-    if (action === 'edit' && req.method === 'PUT') { if (!requireRole(req,res,'sales','service','admin')) return; return readBody(req).then(body => send(res,200,{ data: updateSharedCase(id,body.data || body) })).catch(e => error(res,e.status || 400,e.message)); }
-    if (action === 'business' && req.method === 'PUT') { if (!requireRole(req,res,'sales','service','admin')) return; return readBody(req).then(body => send(res,200,{ data: updateBusinessCase(id,body.data || body) })).catch(e => error(res,400,e.message)); }
+    if (action === 'edit' && req.method === 'PUT') { if (!requireRole(req,res,'sales','service','admin')) return; return readBody(req).then(body => send(res,200,{ data: updateSharedCase(id,body.data || body,roleFrom(req)) })).catch(e => error(res,e.status || 400,e.message)); }
+    if (action === 'business' && req.method === 'PUT') { if (!requireRole(req,res,'sales','service','admin')) return; return readBody(req).then(body => send(res,200,{ data: updateBusinessCase(id,body.data || body,roleFrom(req)) })).catch(e => error(res,e.status || 400,e.message)); }
     if (action === 'service' && req.method === 'PUT') { if (!requireRole(req,res,'sales','service','admin')) return; return readBody(req).then(body => send(res,200,{ data: updateServiceCase(id,body.data || body) })).catch(e => error(res,400,e.message)); }
     if (action === 'transition' && req.method === 'POST') { if (!requireRole(req,res,'sales','service','admin')) return; return readBody(req).then(body => { try { return send(res,200,{ data: transitionCase(id,body.action,role,body.reason) }); } catch (e) { return error(res,e.status || 400,e.message); } }).catch(e => error(res,e.status || 400,e.message)); }
     if (action === 'responsibility' && req.method === 'PUT') {

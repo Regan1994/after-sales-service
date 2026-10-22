@@ -2,9 +2,11 @@
 
 更新日期：2026-10-21（Asia/Taipei）
 
+> 歷史交接文件：本文件記錄 2026-10-21 的伺服器搬移與舊 Excel 匯入狀態。若要接手目前功能開發，請改讀 `USABILITY_REFINEMENT_HANDOFF.md`；目前分支已是 `codex/usability-refinement-2`、`HEAD=f1ce5fc`，本輪文件整理尚未提交。部署細節仍以 `WINDOWS_DEPLOYMENT.md` 為準。
+
 ## 給新對話的第一句話
 
-請先完整閱讀本文件、`SHARED_SERVER_PLAN.md`、`HANDOFF.md` 與 `WINDOWS_DEPLOYMENT.md`，再檢查 Git 狀態。聯網完整基準是已推送的 `codex/shared-server`（`e721ddf`），不可直接修改；目前功能開發分支是 `codex/service-desk-enhancements`，後續細節與新功能只在此分支進行。
+若要查閱當時的伺服器搬移與匯入紀錄，請閱讀本文件；若要接手目前功能開發，請改讀 `USABILITY_REFINEMENT_HANDOFF.md`，不要依本文件中的舊分支資訊操作。
 
 ## 目前實際狀態
 

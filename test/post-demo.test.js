@@ -106,6 +106,10 @@ test('shared case permissions, business administration, simplified workflow, exp
   assert.equal((await api('GET',`/api/cases/${item.id}`)).data.data.status,'processing');
   assert.equal((await api('GET',`/api/cases/${item.id}`)).data.data.currentHandler,'service');
   assert.equal((await api('PUT',`/api/cases/${item.id}/edit`,{ ...item,expectedUpdated:'舊版次' },service)).status,409);
+  const serviceView = (await api('GET',`/api/cases/${item.id}`,undefined,service)).data.data;
+  const serviceCustomerEdit = await api('PUT',`/api/cases/${item.id}/edit`,{ ...serviceView, customer:'不應修改的客戶', contact:'不應修改的聯絡人', expectedUpdated:serviceView.updated },service);
+  assert.equal(serviceCustomerEdit.status,403);
+  assert.equal((await api('GET',`/api/cases/${item.id}`,undefined,service)).data.data.customer,serviceView.customer);
 
   const inquiry = await api('POST',`/api/cases/${item.id}/inquiries`,{ asker:'王業務',question:'檢討德川精度檢驗表',answer:'' },sales);
   assert.equal(inquiry.status,201);
