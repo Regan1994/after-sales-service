@@ -37,11 +37,11 @@
 
     .app-shell { min-height: 100vh; display: flex; }
     .sidebar {
-      width: 254px;
-      flex: 0 0 254px;
+      width: 224px;
+      flex: 0 0 224px;
       background: var(--navy);
       color: #d8e3eb;
-      padding: 26px 18px 18px;
+      padding: 24px 14px 18px;
       display: flex;
       flex-direction: column;
       gap: 28px;
@@ -91,8 +91,10 @@
     .primary-btn:hover { background: var(--navy-2); transform: translateY(-1px); }
     .primary-btn .plus { font-size: 18px; vertical-align: -1px; margin-right: 5px; }
 
-    .metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-bottom: 22px; }
+    .metrics { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; margin-bottom: 22px; }
     .metric { background: var(--paper); border: 1px solid #eeeae5; border-radius: 15px; padding: 16px 17px; position: relative; overflow: hidden; }
+    .metric-shortcut { width: 100%; font: inherit; text-align: left; color: inherit; cursor: pointer; transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease; }
+    .metric-shortcut:hover { transform: translateY(-1px); border-color: #c6d1d9; box-shadow: var(--shadow); }
     .metric::after { content: ""; position: absolute; width: 62px; height: 62px; border-radius: 50%; right: -18px; top: -18px; background: var(--blue-soft); }
     .metric:nth-child(2)::after { background: var(--orange-soft); }
     .metric:nth-child(3)::after { background: var(--teal-soft); }
@@ -102,7 +104,7 @@
     .metric-note { position: relative; z-index: 1; margin-top: 4px; color: var(--muted-2); font-size: 11px; }
     .metric-note b { color: var(--teal); }
 
-    .workspace { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 18px; align-items: start; }
+    .workspace { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; align-items: start; }
     .panel { background: var(--paper); border: 1px solid #eeeae5; border-radius: var(--radius); box-shadow: var(--shadow); }
     .panel-head { padding: 19px 20px 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
     .panel-title { margin: 0; font-size: 17px; font-weight: 900; }
@@ -125,13 +127,14 @@
     .case-no { border:0; background:transparent; padding:0; color:var(--navy-2); font-weight:900; letter-spacing:.01em; text-align:left; }
     .case-no:hover { text-decoration:underline; }
     .client { font-weight: 800; }
-    .client small { display: block; color: var(--muted); font-weight: 500; margin-top: 3px; font-size: 11px; }
+    .client small, .client + small { display: block; color: var(--muted); font-weight: 500; margin-top: 3px; font-size: 11px; }
     .tag { display: inline-flex; align-items: center; gap: 4px; border-radius: 999px; padding: 5px 9px; font-size: 11px; font-weight: 800; white-space: nowrap; }
     .tag::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
     .tag.processing { color: #2563a8; background: var(--blue-soft); }
     .tag.waiting { color: #a16207; background: var(--orange-soft); }
     .tag.pending { color: #0f766e; background: var(--teal-soft); }
     .tag.new { color: #6b7280; background: #eef0f2; }
+    .tag.attention { color: #a16207; background: var(--orange-soft); }
     .row-person { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
     .row-avatar { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: #dfe8ee; color: #496579; font-size: 10px; font-weight: 800; }
     .table-footer { padding: 13px 20px; display:flex; align-items:center; justify-content:space-between; color: var(--muted); font-size: 12px; border-top: 1px solid #f0eeea; }
@@ -163,6 +166,7 @@
     .field.full { grid-column:1/-1; }
     .field label { display:block; color: #5f6872; font-weight:800; font-size:12px; margin-bottom:7px; }
     .field input, .field textarea, .field select { width:100%; border:1px solid #dedbd6; border-radius:9px; padding:10px 11px; outline:none; background:#fff; color:var(--ink); }
+    .readonly-field { min-height:39px; display:flex; align-items:center; border:1px solid #dedbd6; border-radius:9px; padding:0 11px; background:#f7f8f8; color:var(--ink); font-size:13px; }
     .field textarea { min-height: 92px; resize: vertical; line-height:1.6; }
     .form-actions { padding: 15px 23px; display:flex; justify-content:flex-end; gap:9px; border-top:1px solid var(--line); }
     .form-section { grid-column:1/-1; padding-top:3px; }
@@ -185,6 +189,10 @@
     .remove-part { width:34px; height:34px; border:0; border-radius:8px; background:#f7e8e5; color:#a54c3f; font-size:17px; }
     .add-part { margin-top:9px; }
     .detail-content { padding:20px 23px; display:grid; gap:16px; }
+    .detail-status-grid { display:grid; grid-template-columns:minmax(0,2fr) minmax(180px,.7fr); gap:12px; }
+    .detail-status-values { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; margin-top:10px; }
+    .detail-status-values span { display:block; color:var(--muted-2); font-size:11px; }
+    .detail-status-values strong { display:block; margin-top:5px; color:var(--ink); font-size:13px; line-height:1.5; }
     .detail-meta { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
     .detail-meta div,.detail-block { background:#fff; border:1px solid #ece8e2; border-radius:11px; padding:12px; }
     .detail-meta small,.detail-block small { display:block; color:var(--muted); font-size:11px; margin-bottom:5px; }
@@ -194,8 +202,9 @@
     .detail-parts th,.detail-parts td { padding:8px 10px; }
     .detail-status { max-width:210px; }
     .detail-delete { margin-right:auto; }
+    #workflowActions { margin-right:auto; }
     .empty-row { padding:30px!important; text-align:center; color:var(--muted); }
-    .view[hidden] { display: none; }
+    [hidden] { display: none !important; }
     .data-modal { width: min(540px, 100%); }
     .data-modal-content { padding: 22px 23px; display: grid; gap: 16px; }
     .data-modal-content p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.7; }
@@ -207,14 +216,31 @@
     .server-status { display:flex; align-items:center; gap:7px; color:var(--muted); font-size:11px; }
     .server-status::before { content:""; width:7px; height:7px; border-radius:50%; background:var(--teal); }
     .server-status.offline::before { background:#b45309; }
+    .export-bar,.settings-row,.workflow-actions { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    .export-bar { padding:10px 18px; border-bottom:1px solid #f0eeea; font-size:12px; }
+    .export-bar button { min-height:32px; padding:0 10px; font-size:11px; }
+    .settings-panel { padding:18px 20px; margin-top:16px; }
+    .settings-panel h2 { font-size:16px; margin:0 0 7px; }
+    .settings-panel p { color:var(--muted); font-size:12px; }
+    .settings-row { margin:12px 0; }
+    .settings-row label { display:grid; gap:5px; font-size:12px; }
+    .settings-row input { border:1px solid #dedbd6; border-radius:8px; padding:8px; }
+    .workflow-actions button { min-height:34px; padding:0 10px; }
+    .responsibility-item,.qa-item { border:1px solid #e8e4de; border-radius:9px; padding:10px; margin:7px 0; }
+    .responsibility-item label { display:inline-flex; align-items:center; gap:5px; margin:5px 10px 5px 0; }
+    .responsibility-department-head { display:flex; align-items:center; justify-content:space-between; gap:10px; padding-bottom:9px; border-bottom:1px solid #eeeae5; }
+    .responsibility-actions { display:flex; flex-wrap:wrap; gap:6px; }
+    .responsibility-reason-list { display:grid; gap:6px; margin-top:9px; }
+    .responsibility-reason-item { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:8px 10px; border:1px solid #eeeae5; border-radius:8px; background:#fff; font-size:12px; }
+    .responsibility-reason-form { display:flex; gap:8px; margin-top:10px; padding-top:10px; border-top:1px dashed #e5e1dc; }
+    .responsibility-reason-form input { flex:1; min-width:0; border:1px solid #dedbd6; border-radius:8px; padding:9px 10px; }
+    .responsibility-row { display:grid; grid-template-columns:1fr 1fr auto; gap:8px; align-items:center; margin:8px 0; }
+    .responsibility-row select { width:100%; border:1px solid #dedbd6; border-radius:8px; padding:9px 10px; background:#fff; color:var(--ink); }
+    .remove-responsibility { width:34px; height:34px; border:0; border-radius:8px; background:#f7e8e5; color:#a54c3f; font-size:17px; }
+    .qa-item p { margin:5px 0; white-space:pre-wrap; }
     .guest-note { margin:0 0 18px; padding:11px 14px; border:1px solid #cfe4e0; border-radius:11px; background:#f0faf6; color:#17665d; font-size:12px; }
     .login-modal { width:min(430px,100%); }
     .login-help { padding:0 23px 18px; color:var(--muted); font-size:12px; line-height:1.7; }
-    .similar-intro { padding: 22px 23px; margin-bottom: 18px; display:flex; align-items:flex-start; justify-content:space-between; gap:20px; }
-    .similar-intro h2 { margin:0; font-size:19px; }
-    .similar-intro p { margin:6px 0 0; color:var(--muted); font-size:13px; line-height:1.7; }
-    .similar-intro-badge { flex:0 0 auto; padding:8px 11px; border-radius:10px; background:var(--teal-soft); color:#12665d; font-size:12px; font-weight:800; }
-    .similar-layout { display:grid; grid-template-columns:minmax(0,1fr) 290px; gap:18px; align-items:start; }
     .similar-main { min-width:0; }
     .similar-filter-grid { padding:19px 20px; display:grid; grid-template-columns:1.3fr .9fr .9fr .9fr; gap:10px; border-bottom:1px solid #f0eeea; }
     .filter-field { min-width:0; }
@@ -241,6 +267,29 @@
     .category-pill { border:1px solid #e7e3dd; background:#fff; color:#56616a; border-radius:999px; padding:7px 10px; font-size:11px; cursor:pointer; }
     .category-pill:hover, .category-pill.active { border-color:#8bb5aa; background:#f0faf6; color:#135e55; }
     .category-pill small { color:var(--muted-2); margin-left:3px; }
+    .responsibility-summary-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; margin-bottom:18px; align-items:stretch; }
+    .responsibility-stat { padding:19px; }
+    .responsibility-stat small { display:block; color:var(--muted); font-size:11px; font-weight:800; }
+    .responsibility-stat strong { display:block; margin-top:9px; color:var(--navy-2); font-size:25px; line-height:1.1; }
+    .responsibility-stat span { display:block; margin-top:7px; color:var(--muted-2); font-size:11px; line-height:1.5; }
+    .responsibility-overview-card { padding:19px; }
+    .responsibility-overview-card h2 { margin:0; font-size:15px; }
+    .responsibility-overview-card p { margin:6px 0 0; color:var(--muted); font-size:11px; line-height:1.6; }
+    .responsibility-overview-card .category-pills { margin-top:11px; }
+    .responsibility-overview-card .search-guide { margin-top:11px; gap:7px; }
+    .responsibility-overview-card .search-guide div { font-size:11px; line-height:1.45; }
+    .responsibility-overview-card .guide-icon { width:20px; height:20px; flex-basis:20px; }
+    .responsibility-layout { min-width:0; }
+    .responsibility-filter-grid { padding:19px 20px; display:grid; grid-template-columns:1.3fr .9fr .9fr .9fr; gap:10px; border-bottom:1px solid #f0eeea; }
+    .responsibility-filter-actions { grid-column:1/-1; display:flex; justify-content:space-between; align-items:center; gap:10px; padding-top:2px; }
+    .responsibility-table { min-width:1050px; }
+    .responsibility-table th, .responsibility-table td { padding-left:15px; padding-right:15px; vertical-align:top; }
+    .responsibility-count { color:var(--navy-2); font-size:16px; font-weight:900; }
+    .responsibility-count-note { display:block; margin-top:4px; color:var(--muted-2); font-size:11px; }
+    .responsibility-summary-list { max-width:190px; color:#5f6872; font-size:12px; line-height:1.6; }
+    .responsibility-case-links { display:flex; flex-wrap:wrap; gap:5px; max-width:220px; }
+    .responsibility-case-links .case-no { font-size:11px; }
+    .responsibility-empty-note { padding:30px!important; text-align:center; color:var(--muted); }
     .search-guide { display:grid; gap:10px; margin-top:15px; }
     .search-guide div { display:flex; align-items:flex-start; gap:9px; color:#5f6872; font-size:12px; line-height:1.6; }
     .guide-icon { width:23px; height:23px; flex:0 0 23px; display:grid; place-items:center; border-radius:7px; background:#edf4f7; color:var(--navy-2); font-weight:900; }
@@ -334,12 +383,13 @@
     }
 
     @media (max-width: 1050px) {
-      .sidebar { width: 218px; flex-basis: 218px; }
+      .sidebar { width: 200px; flex-basis: 200px; }
       .main { padding-left: 22px; padding-right: 22px; }
       .workspace { grid-template-columns: 1fr; }
-      .similar-layout { grid-template-columns: 1fr; }
       .master-grid { grid-template-columns:1fr; }
       .right-stack { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .metrics { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .responsibility-summary-grid { grid-template-columns:1fr; }
     }
     @media (max-width: 760px) {
       .sidebar { width: 68px; flex-basis: 68px; padding: 20px 10px; }
@@ -353,7 +403,7 @@
       .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .right-stack { grid-template-columns: 1fr; }
       .similar-filter-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
-      .similar-intro { flex-direction:column; }
+      .responsibility-filter-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
       .form-grid { grid-template-columns: 1fr; }
       .field.full { grid-column:auto; }
       .case-section { grid-template-columns:1fr; }
@@ -374,9 +424,10 @@
         <div class="nav-label">工作區</div>
         <button class="nav-item active" data-view="overview"><span class="nav-icon">▦</span><span>案件總覽</span><span class="nav-count">24</span></button>
         <button class="nav-item" data-view="similar"><span class="nav-icon">⌕</span><span>同類型問題</span></button>
+        <button class="nav-item" data-view="responsibility"><span class="nav-icon">◌</span><span>責任探討</span></button>
       </nav>
       <nav class="nav-section admin-management" aria-label="管理功能">
-        <div class="nav-label">管理</div>
+        <div class="nav-label" id="masterNavLabel">主檔</div>
         <button class="nav-item" data-view="masters"><span class="nav-icon">◫</span><span>客戶與機型</span></button>
         <button class="nav-item" data-view="categories"><span class="nav-icon">◈</span><span>問題類別</span><span class="nav-count" id="categoryNavCount">3</span></button>
         <button class="nav-item" data-view="parts"><span class="nav-icon">◇</span><span>零件清單</span><span class="nav-count" id="partNavCount">0</span></button>
@@ -385,23 +436,24 @@
 
       <div class="sidebar-spacer"></div>
       <div class="help-card"><strong>分類待整理</strong><p>有 3 個現場新增的問題類別等待主管確認。</p></div>
-      <div class="user-mini"><div class="avatar">管</div><div><strong>管理者登入</strong><small>共用管理密碼</small></div></div>
+      <div class="user-mini"><div class="avatar">售</div><div><strong>目前使用角色</strong><small id="sidebarRole">訪客瀏覽</small></div></div>
     </aside>
 
     <main class="main">
       <header class="topbar">
         <div><div class="eyebrow" id="pageEyebrow">SERVICE DESK · 2026.10.20</div><h1 id="pageTitle">案件總覽</h1></div>
-        <div class="top-actions"><span class="server-status" id="serverStatus">連線中</span><span class="field-hint" id="identityLabel">訪客瀏覽</span><button class="outline-btn" id="loginButton" type="button">管理者登入</button><button class="outline-btn" id="logoutButton" type="button" hidden>登出</button><button class="outline-btn admin-only" id="openDataModal" type="button">資料備份</button><button class="primary-btn admin-only" id="openModal"><span class="plus">＋</span>新增案件</button></div>
+        <div class="top-actions"><span class="server-status" id="serverStatus">連線中</span><span class="field-hint" id="identityLabel">訪客瀏覽</span><button class="outline-btn" id="loginButton" type="button">登入</button><button class="outline-btn" id="logoutButton" type="button" hidden>登出</button><button class="outline-btn admin-only" id="openDataModal" type="button">資料備份</button><button class="primary-btn case-writer" id="openModal"><span class="plus">＋</span>新增案件</button></div>
       </header>
 
-      <div class="guest-note" id="guestNote">目前為訪客唯讀模式。可查看、搜尋、篩選與列印案件；需要修改資料時請由管理者登入。</div>
+      <div class="guest-note" id="guestNote">目前為訪客唯讀模式。請以業務、售服或管理者角色登入後操作。</div>
 
       <div id="overviewView">
       <section class="metrics" aria-label="案件統計">
-        <div class="metric"><div class="metric-label">案件總數</div><div class="metric-value" id="metricTotal">0</div><div class="metric-note">目前共用資料庫的案件</div></div>
-        <div class="metric"><div class="metric-label">處理中與待處理</div><div class="metric-value" id="metricActive">0</div><div class="metric-note">包含等待客戶或零件</div></div>
-        <div class="metric"><div class="metric-label">待確認</div><div class="metric-value" id="metricPending">0</div><div class="metric-note">等待客戶或主管確認</div></div>
-        <div class="metric"><div class="metric-label">已結案</div><div class="metric-value" id="metricClosed">0</div><div class="metric-note">已完成服務紀錄</div></div>
+        <button class="metric metric-shortcut" type="button" data-reminder-status="all"><div class="metric-label">案件總數</div><div class="metric-value" id="metricTotal">0</div><div class="metric-note">點選查看全部案件</div></button>
+        <button class="metric metric-shortcut" type="button" data-reminder-status="processing"><div class="metric-label">處理中</div><div class="metric-value" id="metricActive">0</div><div class="metric-note">點選查看處理中案件</div></button>
+        <button class="metric metric-shortcut" type="button" data-reminder-status="new"><div class="metric-label">新建</div><div class="metric-value" id="metricPending">0</div><div class="metric-note">點選查看新建案件</div></button>
+        <button class="metric metric-shortcut" type="button" data-reminder-status="closed"><div class="metric-label">已結案</div><div class="metric-value" id="metricClosed">0</div><div class="metric-note">點選查看已結案案件</div></button>
+        <button class="metric metric-shortcut" type="button" data-queue-filter="mine"><div class="metric-label" id="metricAttentionLabel">待我確認</div><div class="metric-value" id="metricAttention">0</div><div class="metric-note" id="metricAttentionNote">售服回報後會出現在這裡</div></button>
       </section>
 
       <div class="workspace">
@@ -409,29 +461,28 @@
           <div class="panel-head"><div><h2 class="panel-title">最近案件</h2><p class="panel-subtitle">依最近更新時間排列，共 128 筆案件</p></div><button class="icon-btn" title="更多設定">⋯</button></div>
           <div class="filter-bar">
             <div class="search-box"><span>⌕</span><input id="searchInput" type="search" placeholder="搜尋案號、訂單號碼、客戶、機型、改善單位或關鍵字" /></div>
-            <select class="select" id="statusFilter"><option value="all">全部狀態</option><option value="new">新建</option><option value="processing">處理中</option><option value="waitingCustomer">等待客戶</option><option value="waiting">等待零件</option><option value="pending">待確認</option><option value="closed">已結案</option><option value="void">作廢</option></select>
+            <select class="select" id="statusFilter"><option value="all">全部狀態</option><option value="new">新建</option><option value="processing">處理中</option><option value="closed">已結案</option><option value="void">作廢</option></select>
           </div>
+          <div class="export-bar" id="exportBar"><label><input type="checkbox" id="selectVisibleCases" /> 選取本頁</label><span id="selectedCaseCount">已選 0 筆；未選時匯出全部</span><button class="outline-btn" type="button" data-export="customers">客戶資料 Excel</button><button class="outline-btn" type="button" data-export="faults">故障資料 Excel</button><button class="outline-btn" type="button" data-export="responsibility">責任歸屬 Excel</button></div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>服務案號</th><th>訂單號碼</th><th>客戶與設備</th><th>出廠日期</th><th>改善單位</th><th>問題類別</th><th>狀態</th><th>提案者</th><th>更新日期</th></tr></thead>
+              <thead><tr><th>選取</th><th>服務案號</th><th>訂單號碼</th><th>客戶與設備</th><th>狀態</th><th>目前處理方</th><th>待辦</th><th>提案者</th><th>更新日期</th></tr></thead>
               <tbody id="caseRows"></tbody>
             </table>
           </div>
           <div class="table-footer"><span id="resultCount">顯示 0 筆案件</span><div class="pager" id="casePager" aria-label="案件分頁"></div></div>
         </section>
 
-        <aside class="right-stack">
-          <section class="panel side-panel"><h2>待處理提醒</h2><p>點選狀態即可查看對應案件。</p><div class="quick-list" id="pendingReminderList"></div></section>
-        </aside>
       </div>
       </div>
 
       <div id="similarIssuesView" class="view" hidden>
-        <section class="panel similar-intro">
-          <div><h2>從歷史案件找到可複用的處理經驗</h2><p>用問題類別、機台型號、關鍵字或零件縮小範圍，快速查看過往故障描述與處理方式。</p></div>
-          <div class="similar-intro-badge">資料來源：共用資料庫</div>
-        </section>
-        <div class="similar-layout">
+        <div class="responsibility-summary-grid">
+          <section class="panel responsibility-stat"><small>最高頻問題</small><strong id="similarTopIssue">—</strong><span id="similarTopIssueNote">尚無統計資料</span></section>
+          <section class="panel responsibility-overview-card"><h2>常見問題類別</h2><p>點選類別即可快速套用篩選。</p><div class="category-pills" id="similarCategoryPills"></div></section>
+          <section class="panel responsibility-overview-card"><h2>搜尋提示</h2><div class="search-guide"><div><span class="guide-icon">1</span><span>用故障現象搜尋，可找到跨機型的相似案例。</span></div><div><span class="guide-icon">2</span><span>用零件名稱或料號搜尋，可比對過往處理方式。</span></div><div><span class="guide-icon">3</span><span>點選案號可查看完整故障與處理紀錄。</span></div></div></section>
+        </div>
+        <div class="responsibility-layout">
           <section class="panel similar-main">
             <div class="similar-filter-grid">
               <div class="filter-field"><label for="similarKeyword">關鍵字</label><input id="similarKeyword" type="search" placeholder="搜尋故障描述、客戶、案號或處理情況" /></div>
@@ -448,10 +499,32 @@
               </table>
             </div>
           </section>
-          <aside class="similar-side">
-            <section class="panel side-panel"><h2>常見問題類別</h2><p>點選類別即可快速套用篩選。</p><div class="category-pills" id="similarCategoryPills"></div></section>
-            <section class="panel side-panel"><h2>搜尋小提示</h2><div class="search-guide"><div><span class="guide-icon">1</span><span>用「異音」、「漏油」等現象描述搜尋，能找到跨機型的相似案例。</span></div><div><span class="guide-icon">2</span><span>用零件名稱或料號搜尋，可直接比對過去的更換與維修方式。</span></div><div><span class="guide-icon">3</span><span>打開案件可查看完整處理情況，必要時再編輯或更新狀態。</span></div></div></section>
-          </aside>
+        </div>
+      </div>
+
+      <div id="responsibilityView" class="view" hidden>
+        <div class="responsibility-summary-grid">
+          <section class="panel responsibility-stat"><small>最高頻責任</small><strong id="responsibilityTopCause">—</strong><span id="responsibilityTopCauseNote">尚無統計資料</span></section>
+          <section class="panel responsibility-overview-card"><h2>常見責任原因</h2><p>點選原因即可快速套用篩選。</p><div class="category-pills" id="responsibilityReasonPills"></div></section>
+          <section class="panel responsibility-overview-card"><h2>統計說明</h2><div class="search-guide"><div><span class="guide-icon">1</span><span>責任探討只顯示已結案案件。</span></div><div><span class="guide-icon">2</span><span>同一案件可有多個責任部門或原因。</span></div><div><span class="guide-icon">3</span><span>點選案號可查看完整故障與處理紀錄。</span></div></div></section>
+        </div>
+        <div class="responsibility-layout">
+          <section class="panel similar-main">
+            <div class="responsibility-filter-grid">
+              <div class="filter-field"><label for="responsibilityKeyword">關鍵字</label><input id="responsibilityKeyword" type="search" placeholder="搜尋案號、客戶、故障描述或責任原因" /></div>
+              <div class="filter-field"><label for="responsibilityDepartmentFilter">責任部門</label><select id="responsibilityDepartmentFilter"><option value="all">全部責任部門</option></select></div>
+              <div class="filter-field"><label for="responsibilityReasonFilter">責任原因</label><select id="responsibilityReasonFilter"><option value="all">全部責任原因</option></select></div>
+              <div class="filter-field"><label for="responsibilityCategoryFilter">問題類別</label><select id="responsibilityCategoryFilter"><option value="all">全部問題類別</option></select></div>
+              <div class="responsibility-filter-actions"><span class="similar-filter-hint">僅顯示已結案案件；同一案件可同時出現在多個責任原因。</span><button class="outline-btn" id="clearResponsibilityFilters" type="button">清除條件</button></div>
+            </div>
+            <div class="similar-summary"><span id="responsibilityResultCount">找到 0 個責任原因</span><span id="responsibilityActiveFilters">目前未套用條件</span></div>
+            <div class="table-wrap">
+              <table class="responsibility-table">
+                <thead><tr><th>責任部門</th><th>責任原因</th><th>案件數</th><th>佔比</th><th>常見問題類別</th><th>常見機型</th><th>最近案件</th><th>案件</th></tr></thead>
+                <tbody id="responsibilityRows"></tbody>
+              </table>
+            </div>
+          </section>
         </div>
       </div>
 
@@ -489,13 +562,15 @@
       </div>
 
       <div id="staffView" class="view" hidden>
-        <div class="panel master-intro">獨立管理售服人員清單。停用人員不會出現在新案件的提案者選單，但歷史案件仍會保留原本的提案者。</div>
+        <div class="panel master-intro">管理業務與售服人員。共用密碼不代表個人身分；問答時須手動選擇人員。</div>
         <section class="panel">
-          <div class="category-toolbar"><div><h2>售服人員管理</h2><p>新增、修改或停用未來加入的售服人員。</p></div><button class="primary-btn admin-only" id="openStaffModal" type="button">＋ 新增人員</button></div>
+          <div class="category-toolbar"><div><h2>業務與售服人員</h2><p>新增、修改或停用人員。</p></div><button class="primary-btn admin-only" id="openStaffModal" type="button">＋ 新增人員</button></div>
           <div class="category-filters"><select class="select" id="staffStatusFilter"><option value="all">全部狀態</option><option value="active">啟用中</option><option value="inactive">已停用</option></select></div>
-          <div class="table-wrap"><table class="staff-table"><thead><tr><th>姓名</th><th>使用案件</th><th>狀態</th><th>操作</th></tr></thead><tbody id="staffRows"></tbody></table></div>
+          <div class="table-wrap"><table class="staff-table"><thead><tr><th>姓名</th><th>角色</th><th>使用案件</th><th>狀態</th><th>操作</th></tr></thead><tbody id="staffRows"></tbody></table></div>
           <div class="table-footer" id="staffCount"></div>
         </section>
+        <section class="panel settings-panel admin-only"><h2>共用密碼</h2><p>設定業務與售服兩組密碼；變更後該角色現有登入會失效。</p><div class="settings-row"><label>業務密碼 <input id="salesPassword" type="password" minlength="8" autocomplete="new-password" /></label><button class="outline-btn" type="button" data-password-role="sales">儲存業務密碼</button><label>售服密碼 <input id="servicePassword" type="password" minlength="8" autocomplete="new-password" /></label><button class="outline-btn" type="button" data-password-role="service">儲存售服密碼</button></div><p id="passwordStatus" role="status"></p></section>
+        <section class="panel settings-panel"><h2>責任歸屬選項</h2><p>先建立責任部門，再在各部門下新增原因；停用後不影響歷史案件。</p><form id="responsibilityOptionForm" class="settings-row admin-only"><label>新責任部門 <input id="responsibilityDepartmentName" required /></label><button class="primary-btn" type="submit">新增部門</button></form><div id="responsibilityOptionList"></div></section>
       </div>
     </main>
   </div>
@@ -506,7 +581,7 @@
         <div class="form-grid case-form-grid">
           <div class="case-section case-top-section">
             <div class="field"><label for="owner">提案者 *</label><select id="owner" required></select></div>
-            <div class="field"><label for="caseStatus">案件狀態</label><select id="caseStatus"><option value="new">新建</option><option value="processing">處理中</option><option value="waitingCustomer">等待客戶</option><option value="waiting">等待零件</option><option value="pending">待確認</option><option value="closed">已結案</option><option value="void">作廢</option></select></div>
+            <div class="field"><label>目前處理方</label><div class="readonly-field" id="currentHandlerLabel">業務</div></div>
           </div>
           <div class="case-section">
           <div class="form-section"><h3 class="form-section-title">案件與客戶資料</h3></div>
@@ -514,6 +589,7 @@
           <div class="field"><label for="machine">機台型號 *</label><input id="machine" list="machineOptions" required placeholder="選擇或輸入新機型" /><datalist id="machineOptions"></datalist></div>
           <div class="field"><label for="contact">聯絡人</label><input id="contact" placeholder="客戶聯絡人" /></div>
           <div class="field"><label for="phone">聯絡電話</label><input id="phone" type="tel" placeholder="電話或分機" /></div>
+          <div class="field"><label for="email">Email</label><input id="email" type="email" placeholder="客戶 Email" /></div>
           <div class="field full"><label for="address">維護地址</label><input id="address" placeholder="服務地點" /></div>
           <div class="field"><label for="warranty">保修卡號</label><input id="warranty" list="warrantyOptions" placeholder="選擇此客戶的保修卡或輸入新卡號" /><datalist id="warrantyOptions"></datalist><div class="field-hint">選取已登記保修卡會自動帶入對應機型。</div></div>
           <div class="field"><label for="orderNumber">訂單號碼</label><input id="orderNumber" placeholder="選填" /></div>
@@ -527,7 +603,7 @@
           <div class="field full"><label>問題類別（可複選）</label><div class="category-grid" id="categoryGrid"></div><div class="other-category"><input id="newCategory" placeholder="找不到類別？輸入新類別名稱" /><button class="outline-btn" type="button" id="addCategory">＋ 加入待確認</button></div><div class="field-hint" id="categoryHint">新分類會標記為待確認，之後由主管整理。</div></div>
           <div class="field full"><label for="description">故障描述 *</label><textarea id="description" required placeholder="描述現場狀況、發生時間、錯誤訊息或初步判斷"></textarea></div>
           <div class="form-section"><h3 class="form-section-title">詢問紀錄</h3></div>
-          <div class="field full"><div class="inquiry-list" id="inquiryList"></div><div class="inquiry-actions"><button class="outline-btn" type="button" id="addInquiry">＋ 新增詢問紀錄</button><span class="field-hint">記錄誰在何時向誰詢問了什麼，以及得到的回覆。</span></div></div>
+          <div class="field full"><div class="inquiry-list" id="inquiryList" hidden></div><div class="inquiry-actions"><button class="outline-btn" type="button" id="addInquiry" hidden>＋ 新增詢問紀錄</button><span class="field-hint">問答紀錄請在儲存案件後，從案件詳細資料新增或編輯。</span></div></div>
           <div class="field full"><label for="handling">處理結果</label><textarea id="handling" placeholder="記錄檢查方式、處理結果與後續安排"></textarea></div>
           </div>
           <div class="case-section">
@@ -543,7 +619,8 @@
     </div>
   </div>
 
-  <div class="modal-backdrop" id="detailBackdrop" role="dialog" aria-modal="true" aria-labelledby="detailTitle"><div class="modal"><div class="modal-head"><div><h2 id="detailTitle">案件詳細資料</h2><div class="field-hint" id="detailCaseNo"></div></div><button class="close" id="closeDetail" aria-label="關閉">×</button></div><div class="detail-content" id="detailContent"></div><div class="form-actions"><select class="detail-status admin-only detail-status" id="detailStatus" aria-label="更新案件狀態"><option value="new">新建</option><option value="processing">處理中</option><option value="waitingCustomer">等待客戶</option><option value="waiting">等待零件</option><option value="pending">待確認</option><option value="closed">已結案</option><option value="void">作廢</option></select><button class="outline-btn danger-btn detail-delete admin-only" id="deleteCase" type="button">刪除案件</button><button class="outline-btn" id="printCase" type="button">列印案件</button><button class="outline-btn admin-only" id="editCase" type="button">編輯案件</button><button class="primary-btn" id="doneDetail" type="button">完成</button></div></div></div>
+  <div class="modal-backdrop" id="detailBackdrop" role="dialog" aria-modal="true" aria-labelledby="detailTitle"><div class="modal"><div class="modal-head"><div><h2 id="detailTitle">案件詳細資料</h2><div class="field-hint" id="detailCaseNo"></div></div><button class="close" id="closeDetail" aria-label="關閉">×</button></div><div class="detail-content" id="detailContent"></div><div class="form-actions"><span id="workflowActions" class="workflow-actions"></span><button class="outline-btn danger-btn detail-delete admin-only" id="deleteCase" type="button">刪除案件</button><button class="outline-btn" id="printCase" type="button">列印案件</button><button class="outline-btn" id="editCase" type="button">編輯案件</button><button class="primary-btn" id="doneDetail" type="button">完成</button></div></div></div>
+  <div class="modal-backdrop" id="inquiryModal" role="dialog" aria-modal="true" aria-labelledby="inquiryModalTitle"><div class="modal"><div class="modal-head"><h2 id="inquiryModalTitle">新增問答紀錄</h2><button class="close" id="closeInquiryModal" type="button">×</button></div><form id="inquiryForm"><div class="form-grid"><div class="field"><label for="inquiryAsker">提問者／事項提出者</label><select id="inquiryAsker" required></select></div><div class="field"><label for="inquiryRespondent">回覆者（可留空）</label><select id="inquiryRespondent"></select></div><div class="field full"><label for="inquiryQuestion">問題／內部事項 *</label><textarea id="inquiryQuestion" required></textarea></div><div class="field full"><label for="inquiryAnswer">回覆（可稍後補）</label><textarea id="inquiryAnswer"></textarea></div></div><div class="form-actions"><button class="primary-btn" type="submit">儲存紀錄</button></div></form></div></div>
 
   <div class="modal-backdrop" id="printBackdrop" role="dialog" aria-modal="true" aria-labelledby="printTitle"><div class="print-modal"><div class="print-header"><div><div class="print-brand">AFTER SERVICE DESK</div><h2 id="printTitle">售服案件服務紀錄</h2></div><div class="print-header-meta" id="printHeaderMeta"></div></div><div class="print-content" id="printContent"></div><div class="form-actions print-actions"><button class="outline-btn" id="closePrint" type="button">返回案件</button><button class="primary-btn" id="confirmPrint" type="button">列印</button></div></div></div>
 
@@ -553,19 +630,21 @@
 
   <div class="modal-backdrop" id="partModalBackdrop" role="dialog" aria-modal="true" aria-labelledby="partModalTitle"><div class="modal part-modal"><div class="modal-head"><div><h2 id="partModalTitle">新增零件</h2><div class="field-hint" id="partModalHint">新增後會立即套用到案件表單輸入提示。</div></div><button class="close" id="closePartModal" aria-label="關閉">×</button></div><form id="partForm"><div class="form-grid"><div class="field"><label for="partSku">零件料號 *</label><input id="partSku" required placeholder="例如：SV-24A" /></div><div class="field"><label for="partName">零件名稱 *</label><input id="partName" required placeholder="例如：電磁閥" /></div><div class="field"><label for="partMethod">常用處理方式</label><select id="partMethod"><option>更換</option><option>維修</option><option>銷售</option><option>借用</option><option>退回</option><option>待確認</option></select></div><div class="field"><label>使用狀態</label><label class="checkbox-field"><input id="partActive" type="checkbox" checked />啟用這筆零件</label></div><div class="field full"><label for="partNote">備註</label><input id="partNote" placeholder="規格、適用機型或其他提醒" /></div></div><div class="form-actions"><button type="button" class="outline-btn" id="cancelPartModal">取消</button><button type="submit" class="primary-btn" id="savePart">新增零件</button></div></form></div></div>
 
-  <div class="modal-backdrop" id="customerModal" role="dialog" aria-modal="true" aria-labelledby="customerModalTitle"><div class="modal"><div class="modal-head"><h2 id="customerModalTitle">新增客戶</h2><button class="close" id="closeCustomerModal" aria-label="關閉">×</button></div><form id="customerForm"><div class="form-grid"><div class="field full"><label for="masterCustomerName">客戶名稱 *</label><input id="masterCustomerName" required /></div><div class="field"><label for="masterContact">常用聯絡人</label><input id="masterContact" /></div><div class="field"><label for="masterPhone">電話</label><input id="masterPhone" type="tel" /></div><div class="field full"><label for="masterAddress">服務地址</label><input id="masterAddress" /></div></div><div class="form-actions"><button class="outline-btn" type="button" id="cancelCustomerModal">取消</button><button class="primary-btn" type="submit" id="saveCustomer">新增客戶</button></div></form></div></div>
+  <div class="modal-backdrop" id="customerModal" role="dialog" aria-modal="true" aria-labelledby="customerModalTitle"><div class="modal"><div class="modal-head"><h2 id="customerModalTitle">新增客戶</h2><button class="close" id="closeCustomerModal" aria-label="關閉">×</button></div><form id="customerForm"><div class="form-grid"><div class="field full"><label for="masterCustomerName">客戶名稱 *</label><input id="masterCustomerName" required /></div><div class="field"><label for="masterContact">常用聯絡人</label><input id="masterContact" /></div><div class="field"><label for="masterPhone">電話</label><input id="masterPhone" type="tel" /></div><div class="field"><label for="masterEmail">Email</label><input id="masterEmail" type="email" /></div><div class="field full"><label for="masterAddress">服務地址</label><input id="masterAddress" /></div></div><div class="form-actions"><button class="outline-btn" type="button" id="cancelCustomerModal">取消</button><button class="primary-btn" type="submit" id="saveCustomer">新增客戶</button></div></form></div></div>
   <div class="modal-backdrop" id="machineModal" role="dialog" aria-modal="true" aria-labelledby="machineModalTitle"><div class="modal"><div class="modal-head"><h2 id="machineModalTitle">新增機型</h2><button class="close" id="closeMachineModal" aria-label="關閉">×</button></div><form id="machineForm"><div class="form-grid"><div class="field full"><label for="masterMachineName">機台型號 *</label><input id="masterMachineName" required /></div><div class="field full"><label for="masterMachineNote">備註</label><input id="masterMachineNote" placeholder="例如：適用系列" /></div></div><div class="form-actions"><button class="outline-btn" type="button" id="cancelMachineModal">取消</button><button class="primary-btn" type="submit" id="saveMachine">新增機型</button></div></form></div></div>
 
-  <div class="modal-backdrop" id="staffModal" role="dialog" aria-modal="true" aria-labelledby="staffModalTitle"><div class="modal staff-modal"><div class="modal-head"><div><h2 id="staffModalTitle">新增售服人員</h2><div class="field-hint">人員管理不會建立個別登入帳號。</div></div><button class="close" id="closeStaffModal" aria-label="關閉">×</button></div><form id="staffForm"><div class="form-grid"><div class="field full"><label for="staffName">姓名 *</label><input id="staffName" required placeholder="例如：王小明" /></div><div class="field full"><label class="checkbox-field"><input id="staffActive" type="checkbox" checked />啟用這位人員</label></div></div><div class="form-actions"><button class="outline-btn" type="button" id="cancelStaffModal">取消</button><button class="primary-btn" type="submit" id="saveStaff">新增人員</button></div></form></div></div>
+  <div class="modal-backdrop" id="staffModal" role="dialog" aria-modal="true" aria-labelledby="staffModalTitle"><div class="modal staff-modal"><div class="modal-head"><div><h2 id="staffModalTitle">新增人員</h2><div class="field-hint">人員管理不會建立個別登入帳號。</div></div><button class="close" id="closeStaffModal" aria-label="關閉">×</button></div><form id="staffForm"><div class="form-grid"><div class="field full"><label for="staffName">姓名 *</label><input id="staffName" required placeholder="例如：王小明" /></div><div class="field"><label for="staffRole">角色</label><select id="staffRole"><option value="sales">業務</option><option value="service">售服</option></select></div><div class="field full"><label class="checkbox-field"><input id="staffActive" type="checkbox" checked />啟用這位人員</label></div></div><div class="form-actions"><button class="outline-btn" type="button" id="cancelStaffModal">取消</button><button class="primary-btn" type="submit" id="saveStaff">新增人員</button></div></form></div></div>
 
   <div class="modal-backdrop" id="dataModal" role="dialog" aria-modal="true" aria-labelledby="dataModalTitle"><div class="modal data-modal"><div class="modal-head"><div><h2 id="dataModalTitle">資料備份與還原</h2><div class="field-hint">管理共用資料庫的售服資料</div></div><button class="close" id="closeDataModal" aria-label="關閉">×</button></div><div class="data-modal-content"><p>備份檔會包含案件、問題類別、零件、客戶與機型資料。還原會先建立伺服器資料庫備份，再以交易方式覆蓋共用資料。</p><div class="data-actions"><button class="outline-btn data-action" id="downloadBackup" type="button"><strong>下載備份檔</strong><small>保存目前全部資料</small></button><button class="outline-btn data-action" id="selectRestore" type="button"><strong>從備份還原</strong><small>選擇 JSON 備份檔</small></button></div><input id="restoreFile" type="file" accept=".json,application/json" hidden /><div class="field-hint data-status" id="dataStatus" role="status"></div><div class="test-cleaner"><h3>測試資料清理</h3><p>只會永久刪除明確標記為測試的案件及其附件，不影響未標記案件、客戶、機台與保修卡。</p><div class="field-hint" id="testCaseCount">載入測試案件數量中…</div><div class="field"><label for="testDeletePhrase">確認清除時，請輸入「刪除測試資料」</label><input id="testDeletePhrase" autocomplete="off" placeholder="刪除測試資料" /></div><button class="outline-btn danger-btn" id="deleteTestCases" type="button" disabled>清除已標記測試案件</button></div></div></div></div>
 
-  <div class="modal-backdrop" id="loginBackdrop" role="dialog" aria-modal="true" aria-labelledby="loginTitle"><div class="modal login-modal"><div class="modal-head"><div><h2 id="loginTitle">管理者登入</h2><div class="field-hint">登入後才能新增、修改、刪除或還原資料</div></div><button class="close" id="closeLogin" aria-label="關閉">×</button></div><form id="loginForm"><div class="form-grid"><div class="field full"><label for="adminPassword">管理者密碼</label><input id="adminPassword" type="password" autocomplete="current-password" required /></div></div><div class="login-help" id="loginStatus" role="status"></div><div class="form-actions"><button type="button" class="outline-btn" id="cancelLogin">取消</button><button type="submit" class="primary-btn">登入</button></div></form></div></div>
+  <div class="modal-backdrop" id="loginBackdrop" role="dialog" aria-modal="true" aria-labelledby="loginTitle"><div class="modal login-modal"><div class="modal-head"><div><h2 id="loginTitle">登入售服系統</h2><div class="field-hint">選擇角色並輸入該組共用密碼</div></div><button class="close" id="closeLogin" aria-label="關閉">×</button></div><form id="loginForm"><div class="form-grid"><div class="field full"><label for="loginRole">登入角色</label><select id="loginRole"><option value="sales">業務</option><option value="service">售服</option><option value="admin">管理者</option></select></div><div class="field full"><label for="adminPassword">密碼</label><input id="adminPassword" type="password" autocomplete="current-password" required /></div></div><div class="login-help" id="loginStatus" role="status"></div><div class="form-actions"><button type="button" class="outline-btn" id="cancelLogin">取消</button><button type="submit" class="primary-btn">登入</button></div></form></div></div>
 
   <script>
-    const statusLabels = {new:'新建',processing:'處理中',waitingCustomer:'等待客戶',waiting:'等待零件',pending:'待確認',closed:'已結案',void:'作廢'};
-    const statusClasses = {new:'new',processing:'processing',waitingCustomer:'waiting',waiting:'waiting',pending:'pending',closed:'pending',void:'new'};
+    const statusLabels = {new:'新建',processing:'處理中',closed:'已結案',void:'作廢'};
+    const statusClasses = {new:'new',processing:'processing',closed:'pending',void:'new'};
     let isAdmin = false;
+    let currentRole = 'guest';
+    let currentRevision = null;
     let cases = [];
     let categories = [];
     let groups = [];
@@ -574,10 +653,15 @@
     let machines = [];
     let staff = [];
     let warrantyCards = [];
+    let responsibilityDepartments = [];
+    let responsibilityReasons = [];
+    const selectedCaseIds = new Set();
+    let editingInquiryId = null;
     let editingId = null;
     let selectedCustomer = null;
     let activeDetailId = null;
     let casePage = 1;
+    let caseQueueFilter = 'all';
     let currentView = 'overview';
     const casePageSize = 10;
     const modal = document.getElementById('modalBackdrop');
@@ -587,9 +671,10 @@
     const searchInput = document.getElementById('searchInput');
     const statusFilter = document.getElementById('statusFilter');
     const casePager = document.getElementById('casePager');
-    const pendingReminderList = document.getElementById('pendingReminderList');
+    const metrics = document.querySelector('.metrics');
     const overviewView = document.getElementById('overviewView');
     const similarIssuesView = document.getElementById('similarIssuesView');
+    const responsibilityView = document.getElementById('responsibilityView');
     const pageEyebrow = document.getElementById('pageEyebrow');
     const pageTitle = document.getElementById('pageTitle');
     const similarKeyword = document.getElementById('similarKeyword');
@@ -599,6 +684,13 @@
     const similarRows = document.getElementById('similarRows');
     const similarResultCount = document.getElementById('similarResultCount');
     const similarActiveFilters = document.getElementById('similarActiveFilters');
+    const responsibilityKeyword = document.getElementById('responsibilityKeyword');
+    const responsibilityDepartmentFilter = document.getElementById('responsibilityDepartmentFilter');
+    const responsibilityReasonFilter = document.getElementById('responsibilityReasonFilter');
+    const responsibilityCategoryFilter = document.getElementById('responsibilityCategoryFilter');
+    const responsibilityRows = document.getElementById('responsibilityRows');
+    const responsibilityResultCount = document.getElementById('responsibilityResultCount');
+    const responsibilityActiveFilters = document.getElementById('responsibilityActiveFilters');
     const categoryView = document.getElementById('categoryView');
     const categorySearch = document.getElementById('categorySearch');
     const categoryStatusFilter = document.getElementById('categoryStatusFilter');
@@ -651,13 +743,26 @@
       if (Number.isNaN(date.getTime())) return '—';
       return `${formatDate(value)} ${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}`;
     };
+    const handlerLabels = {sales:'業務',service:'售服'};
+    const handlerLabel = item => handlerLabels[item?.currentHandler] || '業務';
+    const pendingActionLabel = item => {
+      if (!item || ['closed','void'].includes(item.status)) return '—';
+      if (item.status === 'new') return item.currentHandler === 'service' ? '待售服處理' : '待業務處理';
+      return item.currentHandler === 'service' ? '待售服處理' : '待業務確認';
+    };
+    const isAwaitingMyAction = item => {
+      if (!item || ['closed','void'].includes(item.status)) return false;
+      if (currentRole === 'service') return item.status === 'processing' && item.currentHandler === 'service';
+      if (currentRole === 'sales' || currentRole === 'admin') return item.status === 'processing' && item.currentHandler === 'sales';
+      return false;
+    };
     const apiRequest = async (url, options = {}) => {
       const response = await fetch(url, {credentials:'same-origin', headers:{'Content-Type':'application/json', ...(options.headers||{})}, ...options});
       const payload = await response.json().catch(()=>({}));
       if (!response.ok) throw new Error(payload.error || `伺服器錯誤（${response.status}）`);
       return payload;
     };
-    const applyState = state => { cases=state.cases||[]; categories=state.categories||[]; groups=state.groups||[]; parts=state.parts||[]; customers=state.customers||[]; machines=state.machines||[]; staff=state.staff||[]; warrantyCards=state.warrantyCards||[]; ensureLocalGroups(); };
+    const applyState = state => { cases=state.cases||[]; categories=state.categories||[]; groups=state.groups||[]; parts=state.parts||[]; customers=state.customers||[]; machines=state.machines||[]; staff=state.staff||[]; warrantyCards=state.warrantyCards||[]; responsibilityDepartments=state.responsibilityDepartments||[]; responsibilityReasons=state.responsibilityReasons||[]; ensureLocalGroups(); };
     function ensureLocalGroups() {
       if (!groups.some(group=>group.name==='待確認')) groups.unshift({name:'待確認',protected:true});
       for (const category of categories) if (!groups.some(group=>group.name===category.group)) groups.push({name:category.group||'待確認',protected:false});
@@ -665,9 +770,11 @@
     async function loadState() {
       try {
         const session = await apiRequest('/api/session', {method:'GET', headers:{}});
-        isAdmin = session.role === 'admin';
+        currentRole = session.role || 'guest'; isAdmin = ['admin','sales'].includes(currentRole);
         const result = await apiRequest('/api/state', {method:'GET', headers:{}});
         applyState(result.data);
+        currentRevision = result.revision;
+        for (const id of selectedCaseIds) if (!cases.some(item=>item.id===id)) selectedCaseIds.delete(id);
         serverStatus.textContent = '伺服器已連線';
         serverStatus.classList.remove('offline');
         updatePermissions();
@@ -678,30 +785,41 @@
         guestNote.textContent = error.message || '無法連線到售服伺服器。';
       }
     }
-    const persist = async () => {
+    let persistQueue = Promise.resolve();
+    const persist = () => {
       if (!isAdmin) { alert('目前為訪客唯讀模式，請先登入管理者帳號。'); return false; }
-      try { await apiRequest('/api/state', {method:'PUT', body:JSON.stringify({cases,categories,groups,parts,customers,machines,staff,warrantyCards})}); return true; }
-      catch (error) { alert(error.message || '資料儲存失敗。'); await loadState(); return false; }
+      const snapshot = JSON.stringify({cases,categories,groups,parts,customers,machines,staff,warrantyCards,responsibilityDepartments,responsibilityReasons});
+      const save = async () => {
+        try { const result = await apiRequest('/api/state', {method:'PUT', body:JSON.stringify({...JSON.parse(snapshot),revision:currentRevision})}); currentRevision=result.revision; return true; }
+        catch (error) { alert(error.message || '資料儲存失敗。'); await loadState(); return false; }
+      };
+      persistQueue = persistQueue.then(save,save);
+      return persistQueue;
     };
     const setDataStatus = message => { dataStatus.textContent = message; };
     function updatePermissions() {
       document.querySelectorAll('.admin-only').forEach(element => { element.hidden = !isAdmin; });
-      document.querySelectorAll('.admin-management').forEach(element => { element.hidden = !isAdmin; });
-      if (!isAdmin && ['masters','categories','parts','staff'].includes(currentView)) switchView('overview');
-      identityLabel.textContent = isAdmin ? '管理者' : '訪客瀏覽';
-      document.getElementById('loginButton').hidden = isAdmin;
-      document.getElementById('logoutButton').hidden = !isAdmin;
-      guestNote.hidden = isAdmin;
+      document.querySelectorAll('.admin-management').forEach(element => { element.hidden = currentRole === 'guest'; });
+      document.querySelectorAll('.case-writer').forEach(element => { element.hidden = currentRole === 'guest'; });
+      if (currentRole === 'guest' && ['masters','categories','parts','staff'].includes(currentView)) switchView('overview');
+      document.getElementById('masterNavLabel').textContent = isAdmin ? '主檔管理' : '主檔查詢';
+      identityLabel.textContent = {admin:'管理者',sales:'業務',service:'售服',guest:'訪客瀏覽'}[currentRole];
+      document.getElementById('sidebarRole').textContent = identityLabel.textContent;
+      document.querySelector('.user-mini .avatar').textContent = {admin:'管',sales:'業',service:'售',guest:'訪'}[currentRole];
+      document.getElementById('loginButton').hidden = currentRole !== 'guest';
+      document.getElementById('logoutButton').hidden = currentRole === 'guest';
+      guestNote.hidden = currentRole !== 'guest';
+      document.getElementById('exportBar').hidden = currentRole === 'guest';
     }
-    async function loginAdmin(password) {
-      const result = await apiRequest('/api/login', {method:'POST', body:JSON.stringify({password})});
-      isAdmin = result.role === 'admin';
+    async function loginAdmin(password, role) {
+      const result = await apiRequest('/api/login', {method:'POST', body:JSON.stringify({password,role})});
+      currentRole = result.role; isAdmin = ['admin','sales'].includes(currentRole);
       updatePermissions();
       await loadState();
     }
     async function logoutAdmin() {
       await apiRequest('/api/logout', {method:'POST', body:'{}'});
-      isAdmin = false; updatePermissions(); await loadState();
+      currentRole = 'guest'; isAdmin = false; updatePermissions(); await loadState();
     }
     function downloadBackup() {
       const link = document.createElement('a'); link.href = '/api/backup'; link.download = `售服系統備份-${new Date().toISOString().slice(0,10)}.json`; document.body.appendChild(link); link.click(); link.remove(); setDataStatus('備份檔已下載，伺服器也已建立資料庫快照。');
@@ -732,10 +850,7 @@
         const summary = `案件 ${data.cases.length} 筆、類別 ${data.categories.length} 個、零件 ${data.parts.length} 筆、客戶 ${data.customers.length} 位、機型 ${data.machines.length} 種、保修卡 ${data.warrantyCards.length} 張、人員 ${data.staff.length} 位`;
         if (!confirm(`確定要還原這份備份嗎？\n\n${summary}\n\n還原後會覆蓋目前資料。`)) return;
         const restored = await apiRequest('/api/restore', {method:'POST', body:JSON.stringify({format:'service-desk-backup',version:1,data})});
-        applyState(restored.data);
-        renderSimilarFilterOptions();
-        renderPartOptions();
-        renderCases();
+        await loadState();
         dataModal.classList.remove('open');
         alert(`資料還原完成：${summary}`);
       } catch (error) {
@@ -744,43 +859,35 @@
         restoreFile.value = '';
       }
     }
-    function renderPendingReminders() {
-      const reminders = [
-        {status:'new',label:'新建',hint:'尚未開始處理'},
-        {status:'processing',label:'處理中',hint:'正在處理中的案件'},
-        {status:'waitingCustomer',label:'等待客戶',hint:'等待客戶提供資訊'},
-        {status:'waiting',label:'等待零件',hint:'等待零件到貨'},
-        {status:'pending',label:'待確認',hint:'等待確認後結案'}
-      ];
-      pendingReminderList.innerHTML = reminders.map(reminder=>{
-        const count = cases.filter(item=>item.status===reminder.status).length;
-        return `<button class="quick-item" type="button" data-reminder-status="${reminder.status}"><span><strong>${reminder.label}</strong><small>${reminder.hint}</small></span><span class="quick-number">${count}</span></button>`;
-      }).join('');
-    }
     function renderCases() {
       const keyword = searchInput.value.trim().toLocaleLowerCase();
       const selected = statusFilter.value;
       const filteredCases = [...cases].sort((a,b) => new Date(b.updated)-new Date(a.updated)).filter(item => {
         const searchText = [item.id,item.orderNumber,item.customer,item.machine,item.manufacturedDate,item.improvementUnit,item.address,item.contact,item.description,item.handling,(item.categories||[]).join(' '),(item.parts||[]).map(part => `${part.sku} ${part.name}`).join(' '),(item.inquiries||[]).map(inquiry=>`${inquiry.asker} ${inquiry.respondent} ${inquiry.question} ${inquiry.answer}`).join(' ')].join(' ').toLocaleLowerCase();
-        return (!keyword || searchText.includes(keyword)) && (selected === 'all' || item.status === selected);
+        return (!keyword || searchText.includes(keyword)) && (selected === 'all' || item.status === selected) && (caseQueueFilter !== 'mine' || isAwaitingMyAction(item));
       });
       const totalPages = Math.max(1, Math.ceil(filteredCases.length / casePageSize));
       casePage = Math.min(casePage, totalPages);
       const start = (casePage - 1) * casePageSize;
       const visibleCases = filteredCases.slice(start, start + casePageSize);
-      document.getElementById('caseRows').innerHTML = visibleCases.length ? visibleCases.map(item => `<tr data-case-id="${escapeHtml(item.id)}"><td><button class="case-no case-open" data-open-case="${escapeHtml(item.id)}">${escapeHtml(item.id)}</button></td><td>${escapeHtml(item.orderNumber||'—')}</td><td><span class="client">${escapeHtml(item.customer)}</span><small>${escapeHtml(item.machine)} · ${escapeHtml(item.address||'未填地址')}</small></td><td>${escapeHtml(item.manufacturedDate||'—')}</td><td>${escapeHtml(item.improvementUnit||'—')}</td><td>${(item.categories||[]).map(escapeHtml).join('　')||'—'}</td><td><span class="tag ${statusClasses[item.status]||'new'}">${statusLabels[item.status]||'新建'}</span></td><td><span class="row-person"><span class="row-avatar">${escapeHtml((item.owner||'').slice(0,1))}</span>${escapeHtml(item.owner||'—')}</span></td><td>${formatUpdated(item.updated)}</td></tr>`).join('') : '<tr><td class="empty-row" colspan="9">沒有符合條件的案件，試試其他關鍵字或狀態。</td></tr>';
+      document.getElementById('caseRows').innerHTML = visibleCases.length ? visibleCases.map(item => `<tr data-case-id="${escapeHtml(item.id)}"><td><input type="checkbox" data-select-case="${escapeHtml(item.id)}" ${selectedCaseIds.has(item.id)?'checked':''} aria-label="選取案件 ${escapeHtml(item.id)}"></td><td><button class="case-no case-open" data-open-case="${escapeHtml(item.id)}">${escapeHtml(item.id)}</button></td><td>${escapeHtml(item.orderNumber||'—')}</td><td><span class="client">${escapeHtml(item.customer)}</span><small>${escapeHtml(item.machine||'—')}</small></td><td><span class="tag ${statusClasses[item.status]||'new'}">${statusLabels[item.status]||'新建'}</span></td><td>${escapeHtml(handlerLabel(item))}</td><td><span class="tag ${pendingActionLabel(item)==='待業務確認'?'attention':pendingActionLabel(item)==='—'?'new':'processing'}">${escapeHtml(pendingActionLabel(item))}</span></td><td><span class="row-person"><span class="row-avatar">${escapeHtml((item.owner||'').slice(0,1))}</span>${escapeHtml(item.owner||'—')}</span></td><td>${formatUpdated(item.updated)}</td></tr>`).join('') : '<tr><td class="empty-row" colspan="9">沒有符合條件的案件，試試其他關鍵字或狀態。</td></tr>';
+      document.getElementById('selectedCaseCount').textContent = selectedCaseIds.size ? `已選 ${selectedCaseIds.size} 筆案件` : '未選時匯出全部案件';
+      document.getElementById('selectVisibleCases').checked = visibleCases.length > 0 && visibleCases.every(item=>selectedCaseIds.has(item.id));
       const rangeLabel = filteredCases.length ? `顯示 ${start + 1}–${Math.min(start + visibleCases.length, filteredCases.length)} / ${filteredCases.length} 筆案件` : '顯示 0 筆案件';
       document.getElementById('resultCount').textContent = rangeLabel;
       casePager.innerHTML = totalPages > 1 ? [`<button type="button" data-case-page="${casePage - 1}" ${casePage===1?'disabled':''}>‹</button>`, ...Array.from({length:totalPages}, (_,index)=>`<button type="button" data-case-page="${index + 1}" class="${index + 1===casePage?'active':''}">${index + 1}</button>`), `<button type="button" data-case-page="${casePage + 1}" ${casePage===totalPages?'disabled':''}>›</button>`].join('') : '';
       document.querySelector('.panel-subtitle').textContent = `依最近更新時間排列，共 ${cases.length} 筆案件`;
       document.querySelector('.nav-count').textContent = cases.length;
       document.getElementById('metricTotal').textContent = cases.length;
-      document.getElementById('metricActive').textContent = cases.filter(item=>['processing','waitingCustomer','waiting'].includes(item.status)).length;
-      document.getElementById('metricPending').textContent = cases.filter(item=>item.status==='pending').length;
+      document.getElementById('metricActive').textContent = cases.filter(item=>item.status==='processing').length;
+      document.getElementById('metricPending').textContent = cases.filter(item=>item.status==='new').length;
       document.getElementById('metricClosed').textContent = cases.filter(item=>item.status==='closed').length;
-      renderPendingReminders();
+      document.getElementById('metricAttention').textContent = cases.filter(isAwaitingMyAction).length;
+      document.getElementById('metricAttentionLabel').textContent = currentRole === 'service' ? '待我處理' : '待我確認';
+      document.getElementById('metricAttentionNote').textContent = currentRole === 'service' ? '目前由售服接續處理' : '售服回報後會出現在這裡';
       renderSimilarIssues();
       renderSimilarCategoryPills();
+      renderResponsibilityAnalysis();
       renderCategoryManager();
       renderPartsManager();
       renderMasters();
@@ -794,6 +901,9 @@
     }
     function renderSimilarCategoryPills() {
       const counts = categories.map(category => ({...category, count:cases.filter(item=>(item.categories||[]).includes(category.name)).length})).filter(category=>category.count>0).sort((a,b)=>b.count-a.count || a.name.localeCompare(b.name,'zh-Hant')).slice(0,8);
+      const topIssue = counts[0];
+      document.getElementById('similarTopIssue').textContent = topIssue ? topIssue.name : '—';
+      document.getElementById('similarTopIssueNote').textContent = topIssue ? `${topIssue.group||'未分組'}／${topIssue.count} 筆案件` : '尚無統計資料';
       document.getElementById('similarCategoryPills').innerHTML = counts.length ? counts.map(category=>`<button class="category-pill${similarCategoryFilter.value===category.name?' active':''}" type="button" data-category="${escapeHtml(category.name)}">${escapeHtml(category.name)}<small>${category.count}</small></button>`).join('') : '<span class="field-hint">目前還沒有可統計的問題類別。</span>';
     }
     function renderSimilarIssues() {
@@ -821,6 +931,100 @@
       if (part) active.push(`零件「${part}」`);
       similarActiveFilters.textContent = active.length ? `已套用：${active.join('、')}` : '目前未套用條件';
       renderSimilarCategoryPills();
+    }
+    function getResponsibilityRecords() {
+      const records = [];
+      cases.filter(item=>item.status==='closed').forEach(item=>{
+        const seen = new Set();
+        (item.responsibility||[]).forEach(entry=>{
+          const department = String(entry.department||'').trim();
+          [...new Set((entry.reasons||[]).map(reason=>String(reason||'').trim()).filter(Boolean))].forEach(reason=>{
+            const key = `${item.id}|||${department}|||${reason}`;
+            if (!department || seen.has(key)) return;
+            seen.add(key);
+            records.push({item,department,reason});
+          });
+        });
+      });
+      return records;
+    }
+    function renderResponsibilityFilterOptions(records = getResponsibilityRecords()) {
+      const selectedDepartment = responsibilityDepartmentFilter.value || 'all';
+      const selectedReason = responsibilityReasonFilter.value || 'all';
+      const selectedCategory = responsibilityCategoryFilter.value || 'all';
+      const departments = [...new Set([...responsibilityDepartments.map(item=>item.name),...records.map(record=>record.department)].filter(Boolean))].sort((a,b)=>a.localeCompare(b,'zh-Hant'));
+      responsibilityDepartmentFilter.innerHTML = `<option value="all">全部責任部門</option>${departments.map(name=>`<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join('')}`;
+      responsibilityDepartmentFilter.value = departments.includes(selectedDepartment) ? selectedDepartment : 'all';
+      const reasons = [...new Set(records.filter(record=>responsibilityDepartmentFilter.value==='all' || record.department===responsibilityDepartmentFilter.value).map(record=>record.reason).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'zh-Hant'));
+      responsibilityReasonFilter.innerHTML = `<option value="all">全部責任原因</option>${reasons.map(name=>`<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join('')}`;
+      responsibilityReasonFilter.value = reasons.includes(selectedReason) ? selectedReason : 'all';
+      const categoriesInCases = [...new Set(cases.flatMap(item=>item.categories||[]).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'zh-Hant'));
+      responsibilityCategoryFilter.innerHTML = `<option value="all">全部問題類別</option>${categoriesInCases.map(name=>`<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join('')}`;
+      responsibilityCategoryFilter.value = categoriesInCases.includes(selectedCategory) ? selectedCategory : 'all';
+    }
+    function renderResponsibilityReasonPills(records) {
+      const counts = new Map();
+      records.forEach(record=>{
+        const key = `${record.department}|||${record.reason}`;
+        const current = counts.get(key) || {department:record.department,reason:record.reason,count:0};
+        current.count += 1;
+        counts.set(key,current);
+      });
+      const top = [...counts.values()].sort((a,b)=>b.count-a.count || a.reason.localeCompare(b.reason,'zh-Hant')).slice(0,8);
+      document.getElementById('responsibilityReasonPills').innerHTML = top.length ? top.map(item=>`<button class="category-pill${responsibilityReasonFilter.value===item.reason?' active':''}" type="button" data-responsibility-reason="${escapeHtml(item.reason)}">${escapeHtml(item.department)}／${escapeHtml(item.reason)}<small>${item.count}</small></button>`).join('') : '<span class="field-hint">目前還沒有可統計的責任歸屬。</span>';
+    }
+    function renderResponsibilityAnalysis() {
+      if (!responsibilityRows) return;
+      const records = getResponsibilityRecords();
+      renderResponsibilityFilterOptions(records);
+      const overallCounts = new Map();
+      records.forEach(record=>{
+        const key = `${record.department}|||${record.reason}`;
+        const current = overallCounts.get(key) || {department:record.department,reason:record.reason,count:0};
+        current.count += 1;
+        overallCounts.set(key,current);
+      });
+      const topOverall = [...overallCounts.values()].sort((a,b)=>b.count-a.count || a.reason.localeCompare(b.reason,'zh-Hant'))[0];
+      document.getElementById('responsibilityTopCause').textContent = topOverall ? topOverall.reason : '—';
+      document.getElementById('responsibilityTopCauseNote').textContent = topOverall ? `${topOverall.department}／${topOverall.count} 筆案件` : '尚無統計資料';
+
+      const keyword = responsibilityKeyword.value.trim().toLocaleLowerCase();
+      const department = responsibilityDepartmentFilter.value;
+      const reason = responsibilityReasonFilter.value;
+      const category = responsibilityCategoryFilter.value;
+      const visibleRecords = records.filter(record=>{
+        const item = record.item;
+        const searchText = [item.id,item.orderNumber,item.customer,item.machine,item.description,item.handling,item.owner,(item.categories||[]).join(' '),record.department,record.reason].join(' ').toLocaleLowerCase();
+        return (!keyword || searchText.includes(keyword)) && (department==='all' || record.department===department) && (reason==='all' || record.reason===reason) && (category==='all' || (item.categories||[]).includes(category));
+      });
+      const filteredCaseIds = new Set(visibleRecords.map(record=>record.item.id));
+      const grouped = new Map();
+      visibleRecords.forEach(record=>{
+        const key = `${record.department}|||${record.reason}`;
+        let group = grouped.get(key);
+        if (!group) { group = {department:record.department,reason:record.reason,cases:new Map(),categories:new Map(),machines:new Map()}; grouped.set(key,group); }
+        group.cases.set(record.item.id,record.item);
+        (record.item.categories||[]).filter(Boolean).forEach(name=>group.categories.set(name,(group.categories.get(name)||0)+1));
+        if (record.item.machine) group.machines.set(record.item.machine,(group.machines.get(record.item.machine)||0)+1);
+      });
+      const topLabels = counts => [...counts.entries()].sort((a,b)=>b[1]-a[1] || a[0].localeCompare(b[0],'zh-Hant')).slice(0,3).map(([name,count])=>`${escapeHtml(name)}（${count}）`).join('、') || '—';
+      const groups = [...grouped.values()].sort((a,b)=>b.cases.size-a.cases.size || a.department.localeCompare(b.department,'zh-Hant') || a.reason.localeCompare(b.reason,'zh-Hant'));
+      responsibilityRows.innerHTML = groups.length ? groups.map(group=>{
+        const recentCase = [...group.cases.values()].sort((a,b)=>new Date(b.updated)-new Date(a.updated))[0];
+        const caseList = [...group.cases.values()].sort((a,b)=>new Date(b.updated)-new Date(a.updated));
+        const caseLinks = caseList.slice(0,4).map(item=>`<button class="case-no" type="button" data-open-case="${escapeHtml(item.id)}">${escapeHtml(item.id)}</button>`).join('');
+        const remaining = caseList.length>4 ? `<span class="field-hint">＋${caseList.length-4} 筆</span>` : '';
+        const percentage = filteredCaseIds.size ? `${Math.round(group.cases.size / filteredCaseIds.size * 100)}%` : '0%';
+        return `<tr><td><strong>${escapeHtml(group.department)}</strong></td><td>${escapeHtml(group.reason)}</td><td><span class="responsibility-count">${group.cases.size}</span><span class="responsibility-count-note">筆案件</span></td><td>${percentage}</td><td><div class="responsibility-summary-list">${topLabels(group.categories)}</div></td><td><div class="responsibility-summary-list">${topLabels(group.machines)}</div></td><td>${recentCase ? `<span class="similar-date">${formatDate(recentCase.reportDate)}</span>` : '—'}</td><td><div class="responsibility-case-links">${caseLinks}${remaining}</div></td></tr>`;
+      }).join('') : '<tr><td class="responsibility-empty-note" colspan="8">目前沒有符合條件的已結案責任歸屬資料。</td></tr>';
+      responsibilityResultCount.textContent = `找到 ${groups.length} 個責任原因，涵蓋 ${filteredCaseIds.size} 筆案件`;
+      const active = [];
+      if (keyword) active.push(`關鍵字「${keyword}」`);
+      if (department !== 'all') active.push(`部門「${department}」`);
+      if (reason !== 'all') active.push(`原因「${reason}」`);
+      if (category !== 'all') active.push(`類別「${category}」`);
+      responsibilityActiveFilters.textContent = active.length ? `已套用：${active.join('、')}` : '目前未套用條件';
+      renderResponsibilityReasonPills(records);
     }
     function renderCategoryManager() {
       if (!categoryRows) return;
@@ -859,7 +1063,7 @@
       const activeStaff = staff.filter(item=>item.active !== false);
       const options = [...activeStaff];
       if (selected && !options.some(item=>item.name===selected)) options.unshift({name:selected,active:false});
-      document.getElementById('owner').innerHTML = options.length ? options.map(item=>`<option value="${escapeHtml(item.name)}">${escapeHtml(item.name)}${item.active===false?'（已停用）':''}</option>`).join('') : '<option value="">請先在管理頁新增售服人員</option>';
+      document.getElementById('owner').innerHTML = options.length ? options.map(item=>`<option value="${escapeHtml(item.name)}">${escapeHtml(item.name)}${item.active===false?'（已停用）':''}</option>`).join('') : '<option value="">請先由管理者新增業務人員</option>';
       document.getElementById('owner').value = selected && options.some(item=>item.name===selected) ? selected : (options[0]?.name||'');
     }
     function renderStaffManager() {
@@ -869,9 +1073,20 @@
       staffRows.innerHTML = visible.length ? visible.map(item=>{
         const usage = cases.filter(entry=>entry.owner===item.name).length;
         const actions = isAdmin ? `<button class="outline-btn" type="button" data-edit-staff="${escapeHtml(item.name)}">編輯</button><button class="outline-btn" type="button" data-toggle-staff="${escapeHtml(item.name)}">${item.active===false?'啟用':'停用'}</button>${usage ? '' : `<button class="outline-btn danger-btn" type="button" data-delete-staff="${escapeHtml(item.name)}">刪除</button>`}` : '<span class="field-hint">唯讀</span>';
-        return `<tr><td><span class="client">${escapeHtml(item.name)}</span></td><td>${usage} 件</td><td><span class="staff-status">${item.active===false?'已停用':'啟用中'}</span></td><td><div class="category-actions">${actions}</div></td></tr>`;
-      }).join('') : '<tr><td class="empty-row" colspan="4">沒有符合條件的人員。</td></tr>';
+        return `<tr><td><span class="client">${escapeHtml(item.name)}</span></td><td>${item.role==='sales'?'業務':'售服'}</td><td>${usage} 件</td><td><span class="staff-status">${item.active===false?'已停用':'啟用中'}</span></td><td><div class="category-actions">${actions}</div></td></tr>`;
+      }).join('') : '<tr><td class="empty-row" colspan="5">沒有符合條件的人員。</td></tr>';
       document.getElementById('staffCount').textContent = `顯示 ${visible.length} / ${staff.length} 位人員`;
+      renderResponsibilityOptions();
+    }
+    function renderResponsibilityOptions() {
+      const panel = document.getElementById('responsibilityOptionList');
+      panel.innerHTML = responsibilityDepartments.map(department => {
+        const reasons = responsibilityReasons.filter(reason=>reason.department===department.name);
+        const departmentActions = isAdmin ? `<div class="responsibility-actions"><button class="outline-btn" type="button" data-toggle-department="${escapeHtml(department.name)}">${department.active?'停用':'啟用'}</button><button class="outline-btn danger-btn" type="button" data-delete-department="${escapeHtml(department.name)}">刪除部門</button></div>` : '';
+        const reasonList = reasons.map(reason=>`<div class="responsibility-reason-item"><span>${escapeHtml(reason.name)} ${reason.active?'':'（已停用）'}</span>${isAdmin?`<div class="responsibility-actions"><button class="outline-btn" type="button" data-reason-department="${escapeHtml(department.name)}" data-reason-name="${escapeHtml(reason.name)}">${reason.active?'停用':'啟用'}</button><button class="outline-btn danger-btn" type="button" data-delete-reason-department="${escapeHtml(department.name)}" data-delete-reason-name="${escapeHtml(reason.name)}">刪除</button></div>`:''}</div>`).join('') || '<small>尚無原因</small>';
+        const addReasonForm = isAdmin ? `<form class="responsibility-reason-form" data-add-reason-department="${escapeHtml(department.name)}"><input name="reason" required placeholder="新增 ${escapeHtml(department.name)} 的責任原因" /><button class="outline-btn" type="submit">新增原因</button></form>` : '';
+        return `<div class="responsibility-item"><div class="responsibility-department-head"><strong>${escapeHtml(department.name)} ${department.active?'':'（已停用）'}</strong>${departmentActions}</div><div class="responsibility-reason-list">${reasonList}</div>${addReasonForm}</div>`;
+      }).join('') || '<p>尚未建立責任部門。</p>';
     }
     function renderPartOptions() {
       const activeParts = parts.filter(part=>part.active !== false);
@@ -941,23 +1156,26 @@
       document.getElementById('machine').value=card.machine;
     }
     function switchView(view) {
-      if (!isAdmin && ['masters','categories','parts','staff'].includes(view)) return;
+      if (currentRole === 'guest' && ['masters','categories','parts','staff'].includes(view)) return;
       currentView = view;
       const showingSimilar = view === 'similar';
+      const showingResponsibility = view === 'responsibility';
       const showingCategories = view === 'categories';
       const showingParts = view === 'parts';
       const showingMasters = view === 'masters';
       const showingStaff = view === 'staff';
-      overviewView.hidden = showingSimilar || showingCategories || showingParts || showingMasters || showingStaff;
+      overviewView.hidden = showingSimilar || showingResponsibility || showingCategories || showingParts || showingMasters || showingStaff;
       similarIssuesView.hidden = !showingSimilar;
+      responsibilityView.hidden = !showingResponsibility;
       categoryView.hidden = !showingCategories;
       partsView.hidden = !showingParts;
       mastersView.hidden = !showingMasters;
       staffView.hidden = !showingStaff;
-      pageTitle.textContent = showingSimilar ? '同類型問題' : showingCategories ? '問題類別管理' : showingParts ? '零件清單管理' : showingMasters ? '客戶與機型管理' : showingStaff ? '人員管理' : '案件總覽';
-      pageEyebrow.textContent = showingSimilar ? 'SERVICE DESK · CASE KNOWLEDGE' : showingCategories || showingParts || showingMasters || showingStaff ? 'SERVICE DESK · MASTER DATA' : 'SERVICE DESK · 2026.10.20';
+      pageTitle.textContent = showingSimilar ? '同類型問題' : showingResponsibility ? '責任探討' : showingCategories ? '問題類別管理' : showingParts ? '零件清單管理' : showingMasters ? '客戶與機型管理' : showingStaff ? '人員管理' : '案件總覽';
+      pageEyebrow.textContent = showingSimilar ? 'SERVICE DESK · CASE KNOWLEDGE' : showingResponsibility ? 'SERVICE DESK · RESPONSIBILITY ANALYSIS' : showingCategories || showingParts || showingMasters || showingStaff ? 'SERVICE DESK · MASTER DATA' : 'SERVICE DESK · 2026.10.20';
       document.querySelectorAll('.nav-item[data-view]').forEach(button=>button.classList.toggle('active', button.dataset.view===view));
       if (showingSimilar) { renderSimilarFilterOptions(); renderSimilarIssues(); }
+      if (showingResponsibility) renderResponsibilityAnalysis();
       if (showingCategories) renderCategoryManager();
       if (showingParts) renderPartsManager();
       if (showingMasters) renderMasters();
@@ -982,6 +1200,8 @@
     function addInquiryRow(inquiry = {}) {
       const row = document.createElement('div');
       row.className = 'inquiry-row';
+      row.dataset.id = inquiry.id || '';
+      row.dataset.createdByRole = inquiry.createdByRole || 'admin';
       row.innerHTML = `<input data-inquiry="askedAt" type="datetime-local" aria-label="詢問時間" value="${escapeHtml(localDateTimeValue(inquiry.askedAt))}"><input data-inquiry="asker" aria-label="詢問人" placeholder="詢問人" value="${escapeHtml(inquiry.asker||'')}"><input data-inquiry="respondent" aria-label="詢問對象" placeholder="詢問對象／回答人" value="${escapeHtml(inquiry.respondent||'')}"><button class="remove-inquiry" type="button" aria-label="移除此詢問紀錄">×</button><textarea data-inquiry="question" aria-label="詢問內容" placeholder="問了什麼">${escapeHtml(inquiry.question||'')}</textarea><textarea data-inquiry="answer" aria-label="回覆內容" placeholder="得到的回覆">${escapeHtml(inquiry.answer||'')}</textarea>`;
       row.querySelector('.remove-inquiry').addEventListener('click', () => row.remove());
       document.getElementById('inquiryList').appendChild(row);
@@ -990,7 +1210,7 @@
       return [...document.querySelectorAll('.inquiry-row')].map(row=>{
         const value = name => row.querySelector(`[data-inquiry="${name}"]`).value.trim();
         const askedAt = row.querySelector('[data-inquiry="askedAt"]').value;
-        return {askedAt: askedAt ? new Date(askedAt).toISOString() : new Date().toISOString(), asker:value('asker'), respondent:value('respondent'), question:value('question'), answer:value('answer')};
+        return {id:Number(row.dataset.id)||null,createdByRole:row.dataset.createdByRole,askedAt: askedAt ? new Date(askedAt).toISOString() : new Date().toISOString(), asker:value('asker'), respondent:value('respondent'), question:value('question'), answer:value('answer')};
       }).filter(item=>item.asker||item.respondent||item.question||item.answer);
     }
     function resetForm() {
@@ -1004,20 +1224,25 @@
     }
     function openForm(caseId = null) {
       resetForm();
+      const item = caseId ? cases.find(entry => entry.id === caseId) : null;
       if (caseId) {
-        const item = cases.find(entry => entry.id === caseId);
         if (!item) return;
         editingId = caseId; form.dataset.caseId = caseId;
         document.getElementById('saveCase').textContent = '儲存修改';
-        for (const [key,id] of Object.entries({customer:'customer',machine:'machine',contact:'contact',phone:'phone',address:'address',warranty:'warranty',orderNumber:'orderNumber',manufacturedDate:'manufacturedDate',improvementUnit:'improvementUnit',reportDate:'reportDate',serviceDate:'serviceDate',owner:'owner',status:'caseStatus',description:'description',handling:'handling'})) document.getElementById(id).value = item[key] || (key==='status'?'new':'');
+        for (const [key,id] of Object.entries({customer:'customer',machine:'machine',contact:'contact',phone:'phone',email:'email',address:'address',warranty:'warranty',orderNumber:'orderNumber',manufacturedDate:'manufacturedDate',improvementUnit:'improvementUnit',reportDate:'reportDate',serviceDate:'serviceDate',owner:'owner',description:'description',handling:'handling'})) document.getElementById(id).value = item[key] || '';
         document.getElementById('caseIsTest').checked = item.isTest === true;
         selectedCustomer = customers.find(entry=>entry.name===item.customer) || null;
         renderWarrantyOptions(item.customer);
         renderOwnerOptions(item.owner||'');
         renderCategories(item.categories||[]);
-        (item.inquiries||[]).forEach(addInquiryRow);
         (item.parts||[]).forEach(addPartRow);
-      } else addPartRow();
+      } else if (isAdmin) addPartRow();
+      document.getElementById('newCategory').disabled = !isAdmin;
+      document.getElementById('addCategory').disabled = !isAdmin;
+      document.querySelector('.other-category').hidden = !isAdmin;
+      document.getElementById('categoryHint').textContent = isAdmin ? '新分類會標記為待確認，之後由管理者整理。' : '可選擇現有問題類別；新增類別由管理者處理。';
+      document.getElementById('currentHandlerLabel').textContent = item?.currentHandler === 'service' ? '售服' : currentRole === 'service' ? '售服' : '業務';
+      document.getElementById('saveCase').textContent = editingId ? '儲存修改' : '建立案件';
       modal.classList.add('open');
       document.querySelector('.modal',modal).scrollTop = 0;
     }
@@ -1031,9 +1256,10 @@
     function renderAttachments(attachments = []) {
       const panel = document.getElementById('detailAttachments');
       if (!panel) return;
-      const list = attachments.length ? `<div class="attachment-list">${attachments.map(file=>`<div class="attachment-item"><div><strong>${escapeHtml(file.originalName)}</strong><small>${escapeHtml(file.mimeType||'檔案')} · ${formatBytes(file.size)} · ${escapeHtml(formatUpdated(file.uploadedAt))}</small></div><div class="attachment-actions"><a class="outline-btn" href="/api/cases/${encodeURIComponent(activeDetailId)}/attachments/${file.id}" download>下載</a>${isAdmin?`<button class="outline-btn danger-btn" type="button" data-delete-attachment="${file.id}">刪除</button>`:''}</div></div>`).join('')}</div>` : '<div class="inquiry-empty">目前尚未上傳附件。</div>';
-      panel.innerHTML = `<div class="detail-block"><div style="display:flex;align-items:center;justify-content:space-between;gap:10px"><div><small>附件</small><strong>${attachments.length} 個檔案</strong></div><div class="attachment-actions">${isAdmin?'<input id="detailAttachmentInput" type="file" accept="image/*,video/*" multiple hidden><button class="outline-btn" type="button" id="uploadAttachments">＋ 上傳附件</button><button class="outline-btn" type="button" id="openCaseFolder">開啟資料夾</button>':'<span class="field-hint">可下載檔案</span>'}</div></div>${list}<div class="field-hint">附件實際儲存在伺服器；單檔上限 200 MB，僅接受圖片與影片。</div></div>`;
-      if (isAdmin) {
+      const canManageAttachments = currentRole !== 'guest';
+      const list = attachments.length ? `<div class="attachment-list">${attachments.map(file=>`<div class="attachment-item"><div><strong>${escapeHtml(file.originalName)}</strong><small>${escapeHtml(file.mimeType||'檔案')} · ${formatBytes(file.size)} · ${escapeHtml(formatUpdated(file.uploadedAt))}</small></div><div class="attachment-actions"><a class="outline-btn" href="/api/cases/${encodeURIComponent(activeDetailId)}/attachments/${file.id}" download>下載</a>${canManageAttachments?`<button class="outline-btn danger-btn" type="button" data-delete-attachment="${file.id}">刪除</button>`:''}</div></div>`).join('')}</div>` : '<div class="inquiry-empty">目前尚未上傳附件。</div>';
+      panel.innerHTML = `<div class="detail-block"><div style="display:flex;align-items:center;justify-content:space-between;gap:10px"><div><small>附件</small><strong>${attachments.length} 個檔案</strong></div><div class="attachment-actions">${canManageAttachments?'<input id="detailAttachmentInput" type="file" accept="image/*,video/*" multiple hidden><button class="outline-btn" type="button" id="uploadAttachments">＋ 上傳附件</button><button class="outline-btn" type="button" id="openCaseFolder">開啟資料夾</button>':'<span class="field-hint">可下載檔案</span>'}</div></div>${list}<div class="field-hint">附件實際儲存在伺服器；單檔上限 200 MB，僅接受圖片與影片。</div></div>`;
+      if (canManageAttachments) {
         const input = document.getElementById('detailAttachmentInput');
         document.getElementById('uploadAttachments').addEventListener('click',()=>input.click());
         input.addEventListener('change',event=>uploadAttachments(event.target.files));
@@ -1065,19 +1291,78 @@
       try { await apiRequest(`/api/cases/${encodeURIComponent(activeDetailId)}/attachments/open-folder`, {method:'POST', body:'{}'}); alert('已在伺服器電腦開啟案件附件資料夾。'); }
       catch (error) { alert(error.message||'無法開啟伺服器資料夾。'); }
     }
+    function renderInquiryPanel(item) {
+      const canAdd = currentRole !== 'guest';
+      const list = (item.inquiries||[]).map(inquiry => {
+        const canChange = canAdd;
+        return `<div class="qa-item"><small>${escapeHtml(formatUpdated(inquiry.askedAt))} · ${inquiry.createdByRole==='sales'?'業務':inquiry.createdByRole==='service'?'售服':'管理者'}新增</small><p><strong>${escapeHtml(inquiry.asker||'—')}：</strong>${escapeHtml(inquiry.question||'—')}</p><p><strong>${escapeHtml(inquiry.respondent||'待回覆')}：</strong>${escapeHtml(inquiry.answer||'尚未回覆')}</p>${canChange?`<button class="outline-btn" type="button" data-edit-inquiry="${inquiry.id}">編輯</button> <button class="outline-btn danger-btn" type="button" data-delete-inquiry="${inquiry.id}">刪除</button>`:''}</div>`;
+      }).join('') || '<p>尚未記錄問題或內部事項。</p>';
+      return `<div class="detail-block"><small>問答／溝通紀錄</small>${list}${canAdd?'<button class="outline-btn" type="button" id="openInquiryForm">＋ 新增問答／內部事項</button>':''}</div>`;
+    }
+    function responsibilityReasonOptions(department, selected = '') {
+      const reasons = responsibilityReasons.filter(reason=>reason.department===department && (reason.active || reason.name===selected));
+      return `<option value="">請選擇原因</option>${reasons.map(reason=>`<option value="${escapeHtml(reason.name)}" ${reason.name===selected?'selected':''}>${escapeHtml(reason.name)}${reason.active?'':'（已停用）'}</option>`).join('')}`;
+    }
+    function responsibilityDepartmentOptions(selected = '') {
+      const departments = responsibilityDepartments.filter(dept=>dept.active || dept.name===selected);
+      return `<option value="">請選擇部門</option>${departments.map(dept=>`<option value="${escapeHtml(dept.name)}" ${dept.name===selected?'selected':''}>${escapeHtml(dept.name)}${dept.active?'':'（已停用）'}</option>`).join('')}`;
+    }
+    function responsibilityRowMarkup(row = {}) {
+      const department = row.department || '';
+      const reason = row.reason || '';
+      return `<div class="responsibility-row" data-responsibility-row><select data-responsibility-department aria-label="責任部門">${responsibilityDepartmentOptions(department)}</select><select data-responsibility-reason aria-label="責任原因">${responsibilityReasonOptions(department,reason)}</select><button class="remove-responsibility" type="button" data-remove-responsibility aria-label="移除責任歸屬">×</button></div>`;
+    }
+    function renderResponsibilityPanel(item) {
+      const selections = item.responsibility||[];
+      const summary = selections.map(entry=>`${entry.department}${entry.reasons?.length?`：${entry.reasons.join('、')}`:''}`).join('；') || '尚未填寫';
+      if (item.status !== 'closed') return '';
+      if (currentRole === 'guest') return `<div class="detail-block"><small>結案責任歸屬</small><p>${escapeHtml(summary)}</p></div>`;
+      const rows = selections.flatMap(entry => entry.reasons?.length ? entry.reasons.map(reason=>({department:entry.department,reason})) : [{department:entry.department,reason:''}]).slice(0,5);
+      if (!rows.length) rows.push({});
+      return `<div class="detail-block"><small>結案責任歸屬（最多 5 組）</small><p>${escapeHtml(summary)}</p><div id="responsibilityRows">${rows.map(responsibilityRowMarkup).join('')}</div><button class="outline-btn" id="addResponsibility" type="button" ${rows.length>=5?'hidden':''}>＋ 新增責任歸屬</button><button class="outline-btn" id="saveResponsibility" type="button">儲存責任歸屬</button></div>`;
+    }
+    function renderWorkflowActions(item) {
+      const actions = [];
+      if (currentRole !== 'guest' && !['closed','void'].includes(item.status)) {
+        if ((currentRole === 'sales' && item.currentHandler !== 'service') || (currentRole === 'admin' && item.currentHandler === 'sales')) actions.push(['submit','交由售服查證']);
+        if ((currentRole === 'service' && item.currentHandler !== 'sales') || (currentRole === 'admin' && item.currentHandler === 'service')) actions.push(['return_to_business','回報業務確認']);
+        if (['sales','admin'].includes(currentRole) && item.currentHandler === 'sales') actions.push(['close','結案']);
+      }
+      document.getElementById('workflowActions').innerHTML = actions.map(([action,label])=>`<button class="outline-btn" type="button" data-transfer="${action}">${label}</button>`).join('');
+      document.getElementById('editCase').hidden = currentRole === 'guest';
+    }
     function openDetail(caseId) {
       const item = cases.find(entry => entry.id === caseId);
       if (!item) return;
       activeDetailId = caseId;
       document.getElementById('detailTitle').textContent = `${item.customer} · ${item.machine}`;
       document.getElementById('detailCaseNo').textContent = item.id;
-      document.getElementById('detailStatus').value = item.status;
       const parts = (item.parts||[]).length ? `<div class="detail-block"><small>零件修售清單</small><div class="table-wrap"><table class="detail-parts"><thead><tr><th>料號</th><th>零件</th><th>方式</th><th>數量</th></tr></thead><tbody>${item.parts.map(part=>`<tr><td>${escapeHtml(part.sku||'—')}</td><td>${escapeHtml(part.name||'—')}</td><td>${escapeHtml(part.method)}</td><td>${escapeHtml(part.quantity)}</td></tr>`).join('')}</tbody></table></div></div>` : '';
-      const inquiries = (item.inquiries||[]).length ? `<div class="detail-block"><small>詢問紀錄</small><div class="table-wrap"><table class="inquiry-table"><thead><tr><th>時間</th><th>詢問人</th><th>詢問對象</th><th>問了什麼</th><th>回覆</th></tr></thead><tbody>${item.inquiries.map(inquiry=>`<tr><td>${escapeHtml(formatUpdated(inquiry.askedAt))}</td><td>${escapeHtml(inquiry.asker||'—')}</td><td>${escapeHtml(inquiry.respondent||'—')}</td><td>${escapeHtml(inquiry.question||'—')}</td><td>${escapeHtml(inquiry.answer||'—')}</td></tr>`).join('')}</tbody></table></div></div>` : '<div class="detail-block"><small>詢問紀錄</small><p>尚未記錄詢問過程。</p></div>';
-      document.getElementById('detailContent').innerHTML = `<div class="detail-meta"><div><small>訂單號碼</small><strong>${escapeHtml(item.orderNumber||'—')}</strong></div><div><small>出廠日期</small><strong>${escapeHtml(item.manufacturedDate||'—')}</strong></div><div><small>改善單位</small><strong>${escapeHtml(item.improvementUnit||'—')}</strong></div><div><small>客戶聯絡人</small><strong>${escapeHtml(item.contact||'—')}</strong></div><div><small>聯絡電話</small><strong>${escapeHtml(item.phone||'—')}</strong></div><div><small>維修地址</small><strong>${escapeHtml(item.address||'—')}</strong></div><div><small>保修卡號</small><strong>${escapeHtml(item.warranty||'—')}</strong></div><div><small>報修日期</small><strong>${escapeHtml(item.reportDate||'—')}</strong></div><div><small>服務日期</small><strong>${escapeHtml(item.serviceDate||'—')}</strong></div><div><small>提案者</small><strong>${escapeHtml(item.owner||'—')}</strong></div>${item.isTest?'<div><small>資料標記</small><strong>測試案件</strong></div>':''}</div><div class="detail-block"><small>問題類別</small><p>${(item.categories||[]).map(escapeHtml).join('、')||'尚未選擇'}</p></div><div class="detail-block"><small>故障描述</small><p>${escapeHtml(item.description||'—')}</p></div><div class="detail-block"><small>處理情況</small><p>${escapeHtml(item.handling||'尚未填寫')}</p></div>${inquiries}${parts}<div id="detailAttachments"></div>`;
+      const inquiries = renderInquiryPanel(item);
+      document.getElementById('detailContent').innerHTML = `<div class="detail-meta"><div><small>訂單號碼</small><strong>${escapeHtml(item.orderNumber||'—')}</strong></div><div><small>出廠日期</small><strong>${escapeHtml(item.manufacturedDate||'—')}</strong></div><div><small>保修卡號</small><strong>${escapeHtml(item.warranty||'—')}</strong></div><div><small>客戶聯絡人</small><strong>${escapeHtml(item.contact||'—')}</strong></div><div><small>聯絡電話</small><strong>${escapeHtml(item.phone||'—')}</strong></div><div><small>Email</small><strong>${escapeHtml(item.email||'—')}</strong></div><div><small>維修地址</small><strong>${escapeHtml(item.address||'—')}</strong></div><div><small>報修日期</small><strong>${escapeHtml(item.reportDate||'—')}</strong></div><div><small>服務日期</small><strong>${escapeHtml(item.serviceDate||'—')}</strong></div>${item.isTest?'<div><small>資料標記</small><strong>測試案件</strong></div>':''}</div><div class="detail-block"><small>問題類別</small><p>${(item.categories||[]).map(escapeHtml).join('、')||'尚未選擇'}</p></div><div class="detail-block"><small>故障描述</small><p>${escapeHtml(item.description||'—')}</p></div><div class="detail-block"><small>處理情況</small><p>${escapeHtml(item.handling||'尚未填寫')}</p></div>${inquiries}${parts}<div id="detailAttachments"></div>`;
+      document.getElementById('detailContent').insertAdjacentHTML('afterbegin',`<div class="detail-status-grid"><div class="detail-block"><small>案件狀態與待辦</small><div class="detail-status-values"><div><span>案件狀態</span><strong>${escapeHtml(statusLabels[item.status]||item.status)}</strong></div><div><span>目前處理方</span><strong>${escapeHtml(handlerLabel(item))}</strong></div><div><span>待辦</span><strong>${escapeHtml(pendingActionLabel(item))}</strong></div></div></div><div class="detail-block"><small>提案者</small><p>${escapeHtml(item.owner||'—')}</p></div></div>`);
+      document.getElementById('detailContent').insertAdjacentHTML('beforeend',renderResponsibilityPanel(item));
+      if (item.returnReason) document.getElementById('detailContent').insertAdjacentHTML('beforeend',`<div class="detail-block"><small>退回售服原因</small><p>${escapeHtml(item.returnReason)}</p></div>`);
+      renderWorkflowActions(item);
       detailBackdrop.classList.add('open');
       renderAttachments([]);
       loadAttachments(caseId);
+    }
+    function openInquiryForm(inquiryId = null) {
+      const item = cases.find(entry=>entry.id===activeDetailId);
+      const inquiry = item?.inquiries?.find(entry=>entry.id===inquiryId);
+      editingInquiryId = inquiryId;
+      const people = ['客戶',...staff.filter(person=>person.active!==false).map(person=>person.name)];
+      for (const name of [inquiry?.asker,inquiry?.respondent]) if (name && !people.includes(name)) people.push(name);
+      const options = people.map(name=>`<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join('');
+      document.getElementById('inquiryAsker').innerHTML = `<option value="">請選擇</option>${options}`;
+      document.getElementById('inquiryRespondent').innerHTML = `<option value="">稍後回覆</option>${options}`;
+      document.getElementById('inquiryAsker').value = inquiry?.asker || '';
+      document.getElementById('inquiryRespondent').value = inquiry?.respondent || '';
+      document.getElementById('inquiryQuestion').value = inquiry?.question || '';
+      document.getElementById('inquiryAnswer').value = inquiry?.answer || '';
+      document.getElementById('inquiryModalTitle').textContent = inquiryId ? '編輯問答紀錄' : '新增問答紀錄';
+      document.getElementById('inquiryModal').classList.add('open');
     }
     function openPrintPreview(caseId = activeDetailId) {
       const item = cases.find(entry => entry.id === caseId);
@@ -1141,6 +1426,7 @@
         document.getElementById('masterCustomerName').value = item.name;
         document.getElementById('masterContact').value = item.contact||'';
         document.getElementById('masterPhone').value = item.phone||'';
+        document.getElementById('masterEmail').value = item.email||'';
         document.getElementById('masterAddress').value = item.address||'';
       }
       customerModal.classList.add('open');
@@ -1161,13 +1447,15 @@
     function openStaffForm(name = null) {
       editingStaffName = name;
       staffForm.reset();
-      document.getElementById('staffModalTitle').textContent = name ? '編輯售服人員' : '新增售服人員';
+      document.getElementById('staffModalTitle').textContent = name ? '編輯人員' : '新增人員';
       document.getElementById('saveStaff').textContent = name ? '儲存修改' : '新增人員';
       document.getElementById('staffActive').checked = true;
+      document.getElementById('staffRole').value = 'service';
       if (name) {
         const item = staff.find(entry=>entry.name===name);
         if (!item) return;
         document.getElementById('staffName').value = item.name;
+        document.getElementById('staffRole').value = item.role || 'service';
         document.getElementById('staffActive').checked = item.active !== false;
       }
       staffModal.classList.add('open');
@@ -1178,7 +1466,7 @@
     document.getElementById('closeLogin').addEventListener('click',()=>loginBackdrop.classList.remove('open'));
     document.getElementById('cancelLogin').addEventListener('click',()=>loginBackdrop.classList.remove('open'));
     loginBackdrop.addEventListener('click',event=>{if(event.target===loginBackdrop) loginBackdrop.classList.remove('open');});
-    loginForm.addEventListener('submit',async event=>{event.preventDefault();loginStatus.textContent='登入中…';try{await loginAdmin(document.getElementById('adminPassword').value);loginBackdrop.classList.remove('open');}catch(error){loginStatus.textContent=error.message||'登入失敗。';}});
+    loginForm.addEventListener('submit',async event=>{event.preventDefault();loginStatus.textContent='登入中…';try{await loginAdmin(document.getElementById('adminPassword').value,document.getElementById('loginRole').value);loginBackdrop.classList.remove('open');}catch(error){loginStatus.textContent=error.message||'登入失敗。';}});
     document.querySelectorAll('.nav-item[data-view]').forEach(button=>button.addEventListener('click',()=>switchView(button.dataset.view)));
     document.getElementById('openDataModal').addEventListener('click',async()=>{setDataStatus('');dataModal.classList.add('open');await refreshTestCaseCount();});
     document.getElementById('closeDataModal').addEventListener('click',()=>dataModal.classList.remove('open'));
@@ -1187,7 +1475,7 @@
     document.getElementById('selectRestore').addEventListener('click',()=>restoreFile.click());
     restoreFile.addEventListener('change',event=>{const [file]=event.target.files;if(file) restoreBackup(file);});
     const cancelCaseForm = () => {
-      const hasInput = [...form.querySelectorAll('input:not([type="checkbox"]):not([type="date"]),textarea')].some(input=>input.value.trim()) || [...form.querySelectorAll('input[type="checkbox"]')].some(input=>input.checked) || [...form.querySelectorAll('select')].some(select=>select.id==='caseStatus' && select.value!=='new');
+      const hasInput = [...form.querySelectorAll('input:not([type="checkbox"]):not([type="date"]),textarea')].some(input=>input.value.trim()) || [...form.querySelectorAll('input[type="checkbox"]')].some(input=>input.checked);
       if (!hasInput || confirm('確定要取消嗎？尚未儲存的內容將會放棄。')) modal.classList.remove('open');
     };
     document.getElementById('cancelModal').addEventListener('click', cancelCaseForm);
@@ -1197,7 +1485,7 @@
     document.getElementById('customer').addEventListener('input', event => {
       const item = customers.find(entry=>entry.name.toLocaleLowerCase()===event.target.value.trim().toLocaleLowerCase());
       if (selectedCustomer && selectedCustomer !== item) {
-        for (const key of ['contact','phone','address']) {
+        for (const key of ['contact','phone','email','address']) {
           const field = document.getElementById(key);
           if (field.value === (selectedCustomer[key]||'')) field.value = '';
         }
@@ -1207,7 +1495,7 @@
       selectedCustomer = item || null;
       const cards = renderWarrantyOptions(event.target.value);
       if (!item) return;
-      for (const key of ['contact','phone','address']) document.getElementById(key).value = item[key]||'';
+      for (const key of ['contact','phone','email','address']) document.getElementById(key).value = item[key]||'';
       if (cards.length===1) selectWarranty(cards[0].number);
     });
     document.getElementById('warranty').addEventListener('input',event=>selectWarranty(event.target.value));
@@ -1241,14 +1529,29 @@
       const reportDate = document.getElementById('reportDate').value;
       const dateCode = (reportDate||now.toISOString().slice(0,10)).replaceAll('-','');
       const nextId = editingId || `SV-${dateCode}-${String(cases.filter(item=>item.id.startsWith(`SV-${dateCode}-`)).length+1).padStart(3,'0')}`;
-      const item = {id:nextId,customer:document.getElementById('customer').value.trim(),machine:document.getElementById('machine').value.trim(),contact:document.getElementById('contact').value.trim(),phone:document.getElementById('phone').value.trim(),address:document.getElementById('address').value.trim(),warranty:document.getElementById('warranty').value.trim(),orderNumber:document.getElementById('orderNumber').value.trim(),manufacturedDate:document.getElementById('manufacturedDate').value,improvementUnit:document.getElementById('improvementUnit').value.trim(),reportDate,serviceDate:document.getElementById('serviceDate').value,owner:document.getElementById('owner').value,status:document.getElementById('caseStatus').value,isTest:document.getElementById('caseIsTest').checked,categories:[...form.querySelectorAll('input[name="categories"]:checked')].map(box=>box.value),description:document.getElementById('description').value.trim(),handling:document.getElementById('handling').value.trim(),inquiries:readInquiryRows(),parts,updated:now.toISOString()};
+      const item = {id:nextId,customer:document.getElementById('customer').value.trim(),machine:document.getElementById('machine').value.trim(),contact:document.getElementById('contact').value.trim(),phone:document.getElementById('phone').value.trim(),email:document.getElementById('email').value.trim(),address:document.getElementById('address').value.trim(),warranty:document.getElementById('warranty').value.trim(),orderNumber:document.getElementById('orderNumber').value.trim(),manufacturedDate:document.getElementById('manufacturedDate').value,improvementUnit:document.getElementById('improvementUnit').value.trim(),reportDate,serviceDate:document.getElementById('serviceDate').value,owner:document.getElementById('owner').value,status:editingId ? cases.find(entry=>entry.id===editingId)?.status || 'new' : 'new',isTest:document.getElementById('caseIsTest').checked,categories:[...form.querySelectorAll('input[name="categories"]:checked')].map(box=>box.value),description:document.getElementById('description').value.trim(),handling:document.getElementById('handling').value.trim(),inquiries:editingId ? cases.find(entry=>entry.id===editingId)?.inquiries || [] : [],parts,updated:now.toISOString()};
+      if (currentRole === 'sales' || currentRole === 'service') {
+        try {
+          const url = editingId ? `/api/cases/${encodeURIComponent(editingId)}/edit` : '/api/cases';
+          item.expectedUpdated = editingId ? cases.find(entry=>entry.id===editingId)?.updated : undefined;
+          await apiRequest(url,{method:editingId?'PUT':'POST',body:JSON.stringify(item)});
+          modal.classList.remove('open'); form.reset(); await loadState();
+          if (editingId) openDetail(editingId);
+        } catch (error) { alert(error.message || '儲存失敗。'); }
+        return;
+      }
+      if (editingId) {
+        const previous = cases.find(entry=>entry.id===editingId);
+        item.returnReason = previous?.returnReason || '';
+        item.responsibility = previous?.responsibility || [];
+      }
       const knownCustomer = customers.find(entry=>entry.name.toLocaleLowerCase()===item.customer.toLocaleLowerCase());
       const knownMachine = machines.find(entry=>entry.name.toLocaleLowerCase()===item.machine.toLocaleLowerCase());
       if (knownCustomer) item.customer = knownCustomer.name;
       if (knownMachine) item.machine = knownMachine.name;
       const card = warrantyCards.find(entry=>entry.number.toLocaleLowerCase()===item.warranty.toLocaleLowerCase());
       if (card && (card.customer!==item.customer || card.machine!==item.machine)) { alert(`保修卡「${item.warranty}」已綁定客戶「${card.customer}」與機型「${card.machine}」，不能改綁其他資料。`); return; }
-      if (!knownCustomer) customers.push({name:item.customer,contact:item.contact,phone:item.phone,address:item.address});
+      if (!knownCustomer) customers.push({name:item.customer,contact:item.contact,phone:item.phone,email:item.email,address:item.address});
       if (!knownMachine) machines.push({name:item.machine,note:''});
       if (item.warranty && !card) warrantyCards.push({number:item.warranty,customer:item.customer,machine:item.machine});
       if (editingId) cases = cases.map(entry=>entry.id===editingId?item:entry); else cases.unshift(item);
@@ -1256,6 +1559,106 @@
       if (saved) { renderCases(); renderMasters(); modal.classList.remove('open'); form.reset(); }
     });
     document.getElementById('caseRows').addEventListener('click', event => { const button=event.target.closest('[data-open-case]'); if(button) openDetail(button.dataset.openCase); });
+    document.getElementById('caseRows').addEventListener('change',event=>{
+      const box = event.target.closest('[data-select-case]'); if (!box) return;
+      if (box.checked) selectedCaseIds.add(box.dataset.selectCase); else selectedCaseIds.delete(box.dataset.selectCase);
+      renderCases();
+    });
+    document.getElementById('selectVisibleCases').addEventListener('change',event=>{
+      for (const box of document.querySelectorAll('[data-select-case]')) {
+        if (event.target.checked) selectedCaseIds.add(box.dataset.selectCase); else selectedCaseIds.delete(box.dataset.selectCase);
+      }
+      renderCases();
+    });
+    document.getElementById('exportBar').addEventListener('click',event=>{
+      const button = event.target.closest('[data-export]'); if (!button) return;
+      const query = selectedCaseIds.size ? `?ids=${encodeURIComponent([...selectedCaseIds].join(','))}` : '';
+      const link = document.createElement('a'); link.href = `/api/export/${button.dataset.export}${query}`; document.body.appendChild(link); link.click(); link.remove();
+    });
+    async function updateDetailRouting(field, value) {
+      const item = cases.find(entry=>entry.id===activeDetailId);
+      if (!item || currentRole === 'guest') return;
+      const payload = {...item, [field]:value, expectedUpdated:item.updated};
+      try {
+        if (isAdmin) {
+          item[field] = value;
+          await persist();
+        } else {
+          await apiRequest(`/api/cases/${encodeURIComponent(activeDetailId)}/edit`,{method:'PUT',body:JSON.stringify(payload)});
+          await loadState();
+        }
+        openDetail(activeDetailId);
+      } catch (error) { alert(error.message||'案件狀態更新失敗。'); await loadState(); openDetail(activeDetailId); }
+    }
+    document.getElementById('workflowActions').addEventListener('click',async event=>{
+      const button = event.target.closest('[data-transfer]');
+      if (!button || !activeDetailId) return;
+      if (button.dataset.transfer === 'close' && !confirm('確定要將這筆案件結案嗎？')) return;
+      try {
+        await apiRequest(`/api/cases/${encodeURIComponent(activeDetailId)}/transition`,{method:'POST',body:JSON.stringify({action:button.dataset.transfer})});
+        await loadState();
+        openDetail(activeDetailId);
+      } catch (error) { alert(error.message||'案件轉交失敗。'); }
+    });
+    document.getElementById('detailContent').addEventListener('click',async event=>{
+      if (event.target.closest('#openInquiryForm')) { openInquiryForm(); return; }
+      const edit = event.target.closest('[data-edit-inquiry]');
+      if (edit) { openInquiryForm(Number(edit.dataset.editInquiry)); return; }
+      const remove = event.target.closest('[data-delete-inquiry]');
+      if (remove) {
+        if (!confirm('確定刪除這筆問答紀錄嗎？')) return;
+        try { await apiRequest(`/api/cases/${encodeURIComponent(activeDetailId)}/inquiries/${remove.dataset.deleteInquiry}`,{method:'DELETE',body:'{}'}); await loadState(); openDetail(activeDetailId); }
+        catch (error) { alert(error.message||'刪除失敗。'); }
+        return;
+      }
+      if (event.target.closest('#saveResponsibility')) {
+        const rows = [...document.querySelectorAll('#responsibilityRows [data-responsibility-row]')];
+        const data = [];
+        for (const row of rows) {
+          const department = row.querySelector('[data-responsibility-department]').value;
+          const reason = row.querySelector('[data-responsibility-reason]').value;
+          if (!department) continue;
+          if (!reason) { alert(`請選擇「${department}」的責任原因。`); return; }
+          data.push({ department, reasons:[reason] });
+        }
+        try { await apiRequest(`/api/cases/${encodeURIComponent(activeDetailId)}/responsibility`,{method:'PUT',body:JSON.stringify(data)}); await loadState(); openDetail(activeDetailId); }
+        catch (error) { alert(error.message||'責任歸屬儲存失敗。'); }
+      }
+      if (event.target.closest('#addResponsibility')) {
+        const rows = document.getElementById('responsibilityRows');
+        if (!rows || rows.querySelectorAll('[data-responsibility-row]').length >= 5) return;
+        rows.insertAdjacentHTML('beforeend',responsibilityRowMarkup());
+        const addButton = document.getElementById('addResponsibility');
+        if (addButton && rows.querySelectorAll('[data-responsibility-row]').length >= 5) addButton.hidden = true;
+        return;
+      }
+      const removeResponsibilityButton = event.target.closest('[data-remove-responsibility]');
+      if (removeResponsibilityButton) {
+        const rows = document.getElementById('responsibilityRows');
+        const row = removeResponsibilityButton.closest('[data-responsibility-row]');
+        if (row) row.remove();
+        if (rows && !rows.querySelector('[data-responsibility-row]')) rows.insertAdjacentHTML('beforeend',responsibilityRowMarkup());
+        const addButton = document.getElementById('addResponsibility');
+        if (addButton) addButton.hidden = rows.querySelectorAll('[data-responsibility-row]').length >= 5;
+      }
+    });
+    document.getElementById('detailContent').addEventListener('change',event=>{
+      if (event.target.matches('[data-responsibility-department]')) {
+        const row = event.target.closest('[data-responsibility-row]');
+        const reason = row?.querySelector('[data-responsibility-reason]');
+        if (reason) reason.innerHTML = responsibilityReasonOptions(event.target.value);
+      }
+    });
+    document.getElementById('closeInquiryModal').addEventListener('click',()=>document.getElementById('inquiryModal').classList.remove('open'));
+    document.getElementById('inquiryForm').addEventListener('submit',async event=>{
+      event.preventDefault();
+      const payload = { asker:document.getElementById('inquiryAsker').value, respondent:document.getElementById('inquiryRespondent').value, question:document.getElementById('inquiryQuestion').value.trim(), answer:document.getElementById('inquiryAnswer').value, askedAt:new Date().toISOString() };
+      const previous = cases.find(item=>item.id===activeDetailId)?.inquiries?.find(entry=>entry.id===editingInquiryId);
+      if (previous) payload.askedAt = previous.askedAt;
+      const url = `/api/cases/${encodeURIComponent(activeDetailId)}/inquiries${editingInquiryId?`/${editingInquiryId}`:''}`;
+      try { await apiRequest(url,{method:editingInquiryId?'PUT':'POST',body:JSON.stringify(payload)}); document.getElementById('inquiryModal').classList.remove('open'); await loadState(); openDetail(activeDetailId); }
+      catch (error) { alert(error.message||'問答紀錄儲存失敗。'); }
+    });
     similarRows.addEventListener('click', event => { const button=event.target.closest('[data-open-case]'); if(button) openDetail(button.dataset.openCase); });
     document.getElementById('closeDetail').addEventListener('click',()=>detailBackdrop.classList.remove('open'));
     document.getElementById('doneDetail').addEventListener('click',()=>detailBackdrop.classList.remove('open'));
@@ -1454,7 +1857,7 @@
       const name = document.getElementById('masterCustomerName').value.trim();
       if (!name) return;
       if (customers.some(item=>item.name.toLocaleLowerCase()===name.toLocaleLowerCase() && item.name!==editingCustomerName)) { alert('這個客戶名稱已存在。'); return; }
-      const item = {name,contact:document.getElementById('masterContact').value.trim(),phone:document.getElementById('masterPhone').value.trim(),address:document.getElementById('masterAddress').value.trim()};
+      const item = {name,contact:document.getElementById('masterContact').value.trim(),phone:document.getElementById('masterPhone').value.trim(),email:document.getElementById('masterEmail').value.trim(),address:document.getElementById('masterAddress').value.trim()};
       if (editingCustomerName) {
         customers = customers.map(entry=>entry.name===editingCustomerName?item:entry);
         warrantyCards = warrantyCards.map(card=>card.customer===editingCustomerName?{...card,customer:name}:card);
@@ -1482,13 +1885,14 @@
       event.preventDefault();
       const name = document.getElementById('staffName').value.trim();
       const active = document.getElementById('staffActive').checked;
+      const role = document.getElementById('staffRole').value;
       if (!name) return;
       if (staff.some(item=>item.name.toLocaleLowerCase()===name.toLocaleLowerCase() && item.name!==editingStaffName)) { alert('這位售服人員已經存在。'); return; }
       if (editingStaffName) {
         const oldName = editingStaffName;
-        staff = staff.map(item=>item.name===oldName?{name,active}:item);
+        staff = staff.map(item=>item.name===oldName?{name,role,active}:item);
         if (oldName !== name) cases = cases.map(item=>item.owner===oldName?{...item,owner:name}:item);
-      } else staff.push({name,active});
+      } else staff.push({name,role,active});
       persist(); renderOwnerOptions(); renderStaffManager(); renderCases(); staffModal.classList.remove('open');
     });
     staffRows.addEventListener('click',event=>{
@@ -1510,12 +1914,77 @@
         persist(); renderOwnerOptions(); renderStaffManager();
       }
     });
+    document.querySelectorAll('[data-password-role]').forEach(button=>button.addEventListener('click',async()=>{
+      const role = button.dataset.passwordRole;
+      const input = document.getElementById(`${role}Password`);
+      if (input.value.length < 8) { document.getElementById('passwordStatus').textContent = '密碼至少需要 8 個字元。'; return; }
+      try { await apiRequest(`/api/passwords/${role}`,{method:'PUT',body:JSON.stringify({password:input.value})}); input.value=''; document.getElementById('passwordStatus').textContent = `${role==='sales'?'業務':'售服'}共用密碼已更新。`; }
+      catch (error) { document.getElementById('passwordStatus').textContent = error.message; }
+    }));
+    document.getElementById('responsibilityOptionForm').addEventListener('submit',async event=>{
+      event.preventDefault();
+      const department = document.getElementById('responsibilityDepartmentName').value.trim();
+      if (!department) return;
+      if (!responsibilityDepartments.some(item=>item.name===department)) responsibilityDepartments.push({name:department,active:true});
+      else responsibilityDepartments.find(item=>item.name===department).active = true;
+      if (await persist()) { event.target.reset(); renderResponsibilityOptions(); }
+    });
+    document.getElementById('responsibilityOptionList').addEventListener('submit',async event=>{
+      const reasonForm = event.target.closest('[data-add-reason-department]');
+      if (!reasonForm) return;
+      event.preventDefault();
+      const department = reasonForm.dataset.addReasonDepartment;
+      const reason = reasonForm.querySelector('input[name="reason"]').value.trim();
+      if (!department || !reason) return;
+      const existing = responsibilityReasons.find(item=>item.department===department && item.name===reason);
+      if (existing) existing.active = true;
+      else responsibilityReasons.push({department,name:reason,active:true});
+      if (await persist()) renderResponsibilityOptions();
+    });
+    document.getElementById('responsibilityOptionList').addEventListener('click',async event=>{
+      const deleteDepartmentButton = event.target.closest('[data-delete-department]');
+      const deleteReasonButton = event.target.closest('[data-delete-reason-name]');
+      const departmentButton = event.target.closest('[data-toggle-department]');
+      const reasonButton = event.target.closest('[data-reason-name]');
+      if (deleteDepartmentButton) {
+        const department = deleteDepartmentButton.dataset.deleteDepartment;
+        const reasonCount = responsibilityReasons.filter(item=>item.department===department).length;
+        if (!confirm(`確定刪除責任部門「${department}」${reasonCount ? `及其 ${reasonCount} 個原因` : ''}嗎？\n\n歷史案件已保存的責任歸屬不會被刪除。`)) return;
+        responsibilityDepartments = responsibilityDepartments.filter(item=>item.name!==department);
+        responsibilityReasons = responsibilityReasons.filter(item=>item.department!==department);
+      } else if (deleteReasonButton) {
+        const department = deleteReasonButton.dataset.deleteReasonDepartment;
+        const name = deleteReasonButton.dataset.deleteReasonName;
+        if (!confirm(`確定刪除「${department}／${name}」嗎？\n\n歷史案件已保存的責任歸屬不會被刪除。`)) return;
+        responsibilityReasons = responsibilityReasons.filter(item=>!(item.department===department && item.name===name));
+      } else if (departmentButton) {
+        const item = responsibilityDepartments.find(entry=>entry.name===departmentButton.dataset.toggleDepartment);
+        if (item) item.active = !item.active;
+      } else if (reasonButton) {
+        const department = reasonButton.dataset.reasonDepartment;
+        const name = reasonButton.dataset.reasonName;
+        const item = responsibilityReasons.find(entry=>entry.department===department && entry.name===name);
+        if (item) item.active = !item.active;
+      } else return;
+      if (await persist()) renderResponsibilityOptions();
+    });
     document.getElementById('editCase').addEventListener('click',()=>{const id=activeDetailId;detailBackdrop.classList.remove('open');openForm(id);});
-    document.getElementById('detailStatus').addEventListener('change',event=>{const item=cases.find(entry=>entry.id===activeDetailId);if(!item)return;item.status=event.target.value;item.updated=new Date().toISOString();persist();renderCases();openDetail(item.id);});
     document.addEventListener('keydown', event => { if(event.key==='Escape'){modal.classList.remove('open');detailBackdrop.classList.remove('open');printBackdrop.classList.remove('open');categoryModal.classList.remove('open');groupModal.classList.remove('open');partModal.classList.remove('open');customerModal.classList.remove('open');machineModal.classList.remove('open');staffModal.classList.remove('open');dataModal.classList.remove('open');loginBackdrop.classList.remove('open');} });
-    pendingReminderList.addEventListener('click',event=>{
+    metrics.addEventListener('click',event=>{
+      const queueButton = event.target.closest('[data-queue-filter]');
+      if (queueButton) {
+        caseQueueFilter = queueButton.dataset.queueFilter || 'all';
+        searchInput.value = '';
+        statusFilter.value = 'all';
+        casePage = 1;
+        switchView('overview');
+        renderCases();
+        window.scrollTo({top:0,behavior:'smooth'});
+        return;
+      }
       const button = event.target.closest('[data-reminder-status]');
       if (!button) return;
+      caseQueueFilter = 'all';
       searchInput.value = '';
       statusFilter.value = button.dataset.reminderStatus;
       casePage = 1;
@@ -1525,7 +1994,7 @@
     });
     casePager.addEventListener('click',event=>{const button=event.target.closest('[data-case-page]');if(!button || button.disabled)return;casePage=Number(button.dataset.casePage);renderCases();});
     searchInput.addEventListener('input',()=>{casePage=1;renderCases();});
-    statusFilter.addEventListener('change',()=>{casePage=1;renderCases();});
+    statusFilter.addEventListener('change',()=>{caseQueueFilter='all';casePage=1;renderCases();});
     categorySearch.addEventListener('input',renderCategoryManager);
     categoryStatusFilter.addEventListener('change',renderCategoryManager);
     partSearch.addEventListener('input',renderPartsManager);
@@ -1537,7 +2006,13 @@
     similarCategoryFilter.addEventListener('change',renderSimilarIssues);
     document.getElementById('clearSimilarFilters').addEventListener('click',()=>{similarKeyword.value='';similarCategoryFilter.value='all';similarMachineFilter.value='';similarPartFilter.value='';renderSimilarIssues();});
     document.getElementById('similarCategoryPills').addEventListener('click',event=>{const button=event.target.closest('[data-category]');if(!button)return;similarCategoryFilter.value=button.dataset.category;renderSimilarIssues();});
+    responsibilityKeyword.addEventListener('input',renderResponsibilityAnalysis);
+    [responsibilityDepartmentFilter,responsibilityReasonFilter,responsibilityCategoryFilter].forEach(input=>input.addEventListener('change',renderResponsibilityAnalysis));
+    document.getElementById('clearResponsibilityFilters').addEventListener('click',()=>{responsibilityKeyword.value='';responsibilityDepartmentFilter.value='all';responsibilityReasonFilter.value='all';responsibilityCategoryFilter.value='all';renderResponsibilityAnalysis();});
+    document.getElementById('responsibilityReasonPills').addEventListener('click',event=>{const button=event.target.closest('[data-responsibility-reason]');if(!button)return;responsibilityReasonFilter.value=button.dataset.responsibilityReason;renderResponsibilityAnalysis();});
+    responsibilityRows.addEventListener('click',event=>{const button=event.target.closest('[data-open-case]');if(button) openDetail(button.dataset.openCase);});
     renderSimilarFilterOptions();
+    renderResponsibilityAnalysis();
     renderPartOptions();
     renderOwnerOptions();
     renderCases();

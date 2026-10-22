@@ -1,0 +1,27 @@
+{
+  "format": "service-desk-backup",
+  "version": 1,
+  "exportedAt": "2026-10-21T00:00:00.000Z",
+  "data": {
+    "format": "service-desk-backup",
+    "version": 1,
+    "cases": [],
+    "categories": [],
+    "groups": [],
+    "parts": [],
+    "customers": [],
+    "machines": [],
+    "staff": [],
+    "warrantyCards": [],
+    "data": {
+      "cases": [],
+      "categories": [],
+      "groups": [],
+      "parts": [],
+      "customers": [],
+      "machines": [],
+      "staff": [],
+      "warrantyCards": []
+    }
+  }
+}
